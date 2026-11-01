@@ -68,3 +68,6 @@ h1 span,.section-head h2 span,.debrief-screen h2 span,.overlay-card h2 span{colo
 .nav-action strong{color:var(--amber)}
 @media(max-width:760px){.navigation-strip{grid-template-columns:1fr .7fr .7fr}.nav-action{grid-column:1/-1}}
 @media(max-width:430px){.navigation-strip>div{padding:8px}.navigation-strip strong{font-size:10px}}
+
+#game-canvas{outline:none;cursor:crosshair}
+#game-canvas:focus-visible{outline:2px solid var(--cyan);outline-offset:-3px}
