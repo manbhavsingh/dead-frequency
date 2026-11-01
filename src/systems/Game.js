@@ -236,21 +236,32 @@ export class Game {
     const extraction = this.level.extraction;
     const pulse = 0.65 + 0.25 * Math.sin(this.elapsed * 3);
 
-    ctx.fillStyle = `rgba(242,182,93,${pulse * 0.18})`;
-    ctx.fillRect(terminal.x * 20 - 12, terminal.y * 20 - 12, 24, 24);
+    ctx.fillStyle = `rgba(242,182,93,${pulse * 0.2})`;
+    ctx.fillRect(terminal.x * 20 - 14, terminal.y * 20 - 14, 28, 28);
+    ctx.strokeStyle = '#f2b65d';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(terminal.x * 20 - 9, terminal.y * 20 - 9, 18, 18);
     ctx.fillStyle = '#f2b65d';
-    ctx.fillRect(terminal.x * 20 - 6, terminal.y * 20 - 6, 12, 12);
+    ctx.fillRect(terminal.x * 20 - 5, terminal.y * 20 - 5, 10, 10);
     ctx.fillStyle = '#07111d';
-    ctx.fillRect(terminal.x * 20 - 3, terminal.y * 20 - 3, 6, 6);
+    ctx.fillRect(terminal.x * 20 - 2, terminal.y * 20 - 2, 4, 4);
+    ctx.font = 'bold 8px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#f2b65d';
+    ctx.fillText('DATA', terminal.x * 20, terminal.y * 20 - 17);
 
-    ctx.fillStyle = `rgba(85,226,220,${pulse * 0.22})`;
+    ctx.fillStyle = `rgba(85,226,220,${pulse * 0.28})`;
     ctx.beginPath();
-    ctx.arc(extraction.x * 20, extraction.y * 20, 15, 0, Math.PI * 2);
+    ctx.arc(extraction.x * 20, extraction.y * 20, 20 + Math.sin(this.elapsed * 4) * 2, 0, Math.PI * 2);
     ctx.fill();
     ctx.strokeStyle = '#55e2dc';
-    ctx.strokeRect(extraction.x * 20 - 8, extraction.y * 20 - 8, 16, 16);
+    ctx.lineWidth = 2;
+    ctx.strokeRect(extraction.x * 20 - 10, extraction.y * 20 - 10, 20, 20);
     ctx.fillStyle = '#55e2dc';
-    ctx.fillRect(extraction.x * 20 - 2, extraction.y * 20 - 2, 4, 4);
+    ctx.fillRect(extraction.x * 20 - 3, extraction.y * 20 - 3, 6, 6);
+    ctx.font = 'bold 8px monospace';
+    ctx.fillStyle = '#55e2dc';
+    ctx.fillText('EXIT', extraction.x * 20, extraction.y * 20 - 18);
 
     for (const camera of this.cameras) {
       ctx.fillStyle = this.securityDirector.isJammed() ? '#536b73' : '#d66fe8';
