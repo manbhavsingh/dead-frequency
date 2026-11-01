@@ -32,7 +32,7 @@ export class Game {
     this.player.decoys = this.level.decoys;
     this.player.jammers = this.level.jammers;
     this.guards = this.level.guards.map(config => new Guard(config));
-    this.cameras = this.level.cameras || [];
+    this.cameras = (this.level.cameras || []).map(camera => ({ ...camera }));
     this.decoys = [];
     this.noises = new NoiseSystem(this.map);
     this.security = new DetectionSystem();
@@ -40,15 +40,19 @@ export class Game {
     this.elapsed = 0;
     this.status = 'NO HOSTILES IN RANGE';
     this.interactProgress = 0;
+    this.relayProgress = 0;
     this.extractProgress = 0;
+    this.actionProgress = 0;
+    this.hackNoiseTimer = 0;
+    this.disabledRelays = new Set();
     this.finished = false;
     this.navTimer = 0;
     this.navPath = [];
     this.navDirection = '—';
     this.navDistance = 0;
-    this.navLabel = 'MEMORY TERMINAL';
-    this.interactionHint = 'FOLLOW THE SIGNAL TO YOUR OBJECTIVE';
-    this.notify('OPERATION LIVE — STAY OFF THE GRID');
+    this.navLabel = 'SECURITY RELAY';
+    this.interactionHint = 'FOLLOW THE SIGNAL TO YOUR FIRST RELAY';
+    this.notify('OPERATION LIVE — SECURITY NETWORK ACTIVE');
   }
 
   notify(text) {
@@ -77,16 +81,31 @@ export class Game {
     this.hud?.update(this);
   }
 
+  cameraDirection(camera) {
+    return camera.dir + Math.sin(this.elapsed * 0.78 + (camera.phase || 0)) * (camera.sweep || 0);
+  }
+
   updateNavigation(dt) {
     this.navTimer -= dt;
     const player = this.player;
-    const target = player.memory ? this.level.extraction : this.level.terminal;
-    this.navLabel = player.memory ? 'EXTRACTION ZONE' : 'MEMORY TERMINAL';
+    const nextRelay = (this.level.relays || []).findIndex((_, index) => !this.disabledRelays.has(index));
+    let target;
+
+    if (player.memory) {
+      target = this.level.extraction;
+      this.navLabel = 'EXTRACTION ZONE';
+    } else if (nextRelay >= 0) {
+      target = this.level.relays[nextRelay];
+      this.navLabel = 'SECURITY RELAY ' + String(nextRelay + 1).padStart(2, '0') + ' / ' + String(this.level.relays.length).padStart(2, '0');
+    } else {
+      target = this.level.terminal;
+      this.navLabel = 'MEMORY TERMINAL';
+    }
 
     if (this.navTimer <= 0) {
       const targetWorld = { x: target.x * 20, y: target.y * 20 };
       this.navPath = findPath(this.map, { x: player.x, y: player.y }, targetWorld);
-      this.navTimer = 0.45;
+      this.navTimer = 0.4;
     }
 
     const targetWorld = { x: target.x * 20, y: target.y * 20 };
@@ -105,57 +124,131 @@ export class Game {
       const y = camera.y * 20;
       const distance = Math.hypot(this.player.x - x, this.player.y - y);
       const angle = Math.atan2(this.player.y - y, this.player.x - x);
-      const delta = Math.atan2(Math.sin(angle - camera.dir), Math.cos(angle - camera.dir));
-      if (distance < 112 && Math.abs(delta) < 0.62 &&
+      const direction = this.cameraDirection(camera);
+      const delta = Math.atan2(Math.sin(angle - direction), Math.cos(angle - direction));
+      if (distance < 126 && Math.abs(delta) < 0.52 &&
           this.map.lineOfSight(x, y, this.player.x, this.player.y)) {
-        this.security.add(dt * 13);
-        this.status = 'CAMERA SWEEP — BREAK LINE OF SIGHT';
+        this.security.add(dt * 15);
+        this.status = 'CAMERA SWEEP — BREAK LINE OF SIGHT OR JAM IT';
       }
+    }
+  }
+
+  applyHackPressure(dt, noiseIntensity, type = 'hack') {
+    this.security.add(dt * 1.35);
+    this.hackNoiseTimer -= dt;
+    if (this.hackNoiseTimer <= 0) {
+      this.noises.emit(this.player.x, this.player.y, noiseIntensity, type, 0.8);
+      this.hackNoiseTimer = 0.88;
     }
   }
 
   updateInteractions(dt, input) {
     const player = this.player;
+    const relays = this.level.relays || [];
+    const nextRelayIndex = relays.findIndex((_, index) => !this.disabledRelays.has(index));
     const terminal = { x: this.level.terminal.x * 20, y: this.level.terminal.y * 20 };
     const extraction = { x: this.level.extraction.x * 20, y: this.level.extraction.y * 20 };
-    const nearTerminal = Math.hypot(player.x - terminal.x, player.y - terminal.y) < 25;
-    const nearExtraction = Math.hypot(player.x - extraction.x, player.y - extraction.y) < 27;
+    const nearTerminal = Math.hypot(player.x - terminal.x, player.y - terminal.y) < 27;
+    const nearExtraction = Math.hypot(player.x - extraction.x, player.y - extraction.y) < 28;
+
+    this.actionProgress = 0;
+
+    if (!player.memory && nextRelayIndex >= 0) {
+      const relay = relays[nextRelayIndex];
+      const relayWorld = { x: relay.x * 20, y: relay.y * 20 };
+      const nearRelay = Math.hypot(player.x - relayWorld.x, player.y - relayWorld.y) < 26;
+      const duration = relay.hackTime || 2.3;
+
+      this.interactionHint = nearRelay
+        ? player.moving
+          ? 'STOP MOVING — HOLD F TO DISABLE RELAY'
+          : input.down('f')
+            ? 'BYPASSING RELAY ' + (nextRelayIndex + 1) + ' — KEEP HOLDING F'
+            : 'HOLD F — DISABLE SECURITY RELAY'
+        : 'DISABLE RELAY ' + (nextRelayIndex + 1) + ' / ' + relays.length + ' BEFORE THE TERMINAL';
+
+      if (nearRelay && input.down('f') && !player.moving) {
+        this.relayProgress += dt;
+        this.actionProgress = Math.min(1, this.relayProgress / duration);
+        this.applyHackPressure(dt, 58, 'hack');
+        this.status = 'BYPASSING SECURITY RELAY ' + (nextRelayIndex + 1);
+        if (this.relayProgress >= duration) {
+          this.disabledRelays.add(nextRelayIndex);
+          this.relayProgress = 0;
+          this.actionProgress = 0;
+          player.score += 225;
+          this.security.add(5);
+          this.sound.play('success');
+          this.notify('SECURITY RELAY ' + this.disabledRelays.size + '/' + relays.length + ' DISABLED');
+        }
+      } else {
+        this.relayProgress = 0;
+        if (nearRelay && player.moving) this.status = 'STOP MOVING TO BYPASS THE RELAY';
+        if (nearTerminal) this.status = 'TERMINAL INTERLOCKED — DISABLE ALL SECURITY RELAYS';
+      }
+
+      this.interactProgress = 0;
+      this.extractProgress = 0;
+      return;
+    }
 
     if (!player.memory) {
+      const duration = this.level.terminalHackTime || 3.5;
       this.interactionHint = nearTerminal
-        ? (input.down('f') ? 'DOWNLOADING — KEEP HOLDING F' : 'HOLD F — DOWNLOAD MEMORY')
-        : 'FOLLOW NAVIGATION — FIND THE MEMORY TERMINAL';
-    } else {
-      this.interactionHint = nearExtraction
-        ? (input.down('f') ? 'EXTRACTING — KEEP HOLDING F' : 'HOLD F — EXTRACT')
-        : 'MEMORY SECURED — FOLLOW NAVIGATION TO EXTRACTION';
-    }
+        ? player.moving
+          ? 'STOP MOVING — HOLD F TO DOWNLOAD'
+          : input.down('f')
+            ? 'DOWNLOADING MEMORY — STAY ON THE TERMINAL'
+            : 'HOLD F — DOWNLOAD MEMORY'
+        : 'ALL RELAYS OFFLINE — FOLLOW NAVIGATION TO THE TERMINAL';
 
-    if (input.down('f') && nearTerminal && !player.memory) {
-      this.interactProgress += dt;
-      this.status = 'DOWNLOADING MEMORY FRAGMENT';
-      if (this.interactProgress >= 1.2) {
-        player.memory = true;
-        player.score += 500;
+      if (input.down('f') && nearTerminal && !player.moving) {
+        this.interactProgress += dt;
+        this.actionProgress = Math.min(1, this.interactProgress / duration);
+        this.applyHackPressure(dt, 68, 'hack');
+        this.status = 'DOWNLOADING MEMORY — SIGNAL TRACE RISING';
+        if (this.interactProgress >= duration) {
+          player.memory = true;
+          player.score += 650;
+          this.interactProgress = 0;
+          this.actionProgress = 0;
+          this.security.add(7);
+          this.sound.play('success');
+          this.notify('MEMORY FRAGMENT SECURED — REACH EXTRACTION');
+        }
+      } else {
         this.interactProgress = 0;
-        this.sound.play('success');
-        this.notify('MEMORY FRAGMENT SECURED — REACH EXTRACTION');
+        if (nearTerminal && player.moving) this.status = 'STOP MOVING TO DOWNLOAD THE MEMORY';
+        else if (nearTerminal) this.status = 'TERMINAL READY — HOLD F TO DOWNLOAD';
       }
-    } else if (!nearTerminal) {
-      this.interactProgress = 0;
-    } else if (nearTerminal && !player.memory) {
-      this.status = 'TERMINAL IN RANGE — HOLD F TO HACK';
+      this.relayProgress = 0;
+      this.extractProgress = 0;
+      return;
     }
 
-    if (input.down('f') && nearExtraction && player.memory) {
+    const duration = this.level.extractionTime || 2.4;
+    this.interactionHint = nearExtraction
+      ? player.moving
+        ? 'STOP MOVING — HOLD F TO EXTRACT'
+        : input.down('f')
+          ? 'EXTRACTION IN PROGRESS — HOLD POSITION'
+          : 'HOLD F — COMPLETE EXTRACTION'
+      : 'MEMORY SECURED — REACH THE EXTRACTION ZONE';
+
+    if (input.down('f') && nearExtraction && !player.moving) {
       this.extractProgress += dt;
-      this.status = 'EXTRACTION IN PROGRESS';
-      if (this.extractProgress >= 1) this.finish(true);
-    } else if (!nearExtraction) {
+      this.actionProgress = Math.min(1, this.extractProgress / duration);
+      this.applyHackPressure(dt, 48, 'extract');
+      this.status = 'EXTRACTION IN PROGRESS — SIGNAL TRACE RISING';
+      if (this.extractProgress >= duration) this.finish(true);
+    } else {
       this.extractProgress = 0;
-    } else if (nearExtraction && player.memory) {
-      this.status = 'EXTRACTION ZONE — HOLD F';
+      if (nearExtraction && player.moving) this.status = 'STOP MOVING TO COMPLETE EXTRACTION';
+      else if (nearExtraction) this.status = 'EXTRACTION ZONE — HOLD F';
     }
+    this.interactProgress = 0;
+    this.relayProgress = 0;
   }
 
   handleActions(input) {
@@ -180,11 +273,11 @@ export class Game {
     if (input.pressed('q')) {
       if (this.player.jammers > 0) {
         this.player.jammers--;
-        this.player.jammerTime = 4;
-        this.securityDirector.jam(4);
+        this.player.jammerTime = 4.5;
+        this.securityDirector.jam(4.5);
         this.noises.emit(this.player.x, this.player.y, 16, 'jam', 0.5);
         this.sound.play('jam');
-        this.notify('SIGNAL JAMMER ACTIVE');
+        this.notify('SIGNAL JAMMER ACTIVE — CAMERAS BLIND');
       } else {
         this.notify('JAMMER CHARGES DEPLETED');
       }
@@ -236,7 +329,38 @@ export class Game {
     const extraction = this.level.extraction;
     const pulse = 0.65 + 0.25 * Math.sin(this.elapsed * 3);
 
-    ctx.fillStyle = `rgba(242,182,93,${pulse * 0.2})`;
+    (this.level.relays || []).forEach((relay, index) => {
+      const x = relay.x * 20;
+      const y = relay.y * 20;
+      const active = !this.disabledRelays.has(index);
+      const glow = active ? 0.2 + 0.1 * Math.sin(this.elapsed * 4 + index) : 0.12;
+
+      ctx.save();
+      ctx.shadowColor = active ? '#f2b65d' : '#55e2dc';
+      ctx.shadowBlur = active ? 11 : 5;
+      ctx.fillStyle = active ? 'rgba(242,182,93,' + glow + ')' : 'rgba(85,226,220,.12)';
+      ctx.beginPath();
+      ctx.arc(x, y, active ? 15 : 12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = active ? '#f2b65d' : '#55e2dc';
+      ctx.lineWidth = 1.6;
+      ctx.strokeRect(x - 8, y - 8, 16, 16);
+      ctx.fillStyle = active ? '#f2b65d' : '#55e2dc';
+      ctx.fillRect(x - 3, y - 3, 6, 6);
+      ctx.fillStyle = '#07111d';
+      ctx.fillRect(x - 1, y - 1, 2, 2);
+      ctx.shadowBlur = 0;
+      ctx.font = 'bold 7px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = active ? '#f2b65d' : '#55e2dc';
+      ctx.fillText(active ? 'RELAY ' + String(index + 1).padStart(2, '0') : 'OFFLINE', x, y - 17);
+      ctx.restore();
+    });
+
+    ctx.save();
+    ctx.shadowColor = '#f2b65d';
+    ctx.shadowBlur = this.disabledRelays.size === (this.level.relays || []).length ? 13 : 5;
+    ctx.fillStyle = 'rgba(242,182,93,' + (pulse * 0.2) + ')';
     ctx.fillRect(terminal.x * 20 - 14, terminal.y * 20 - 14, 28, 28);
     ctx.strokeStyle = '#f2b65d';
     ctx.lineWidth = 1.5;
@@ -245,12 +369,17 @@ export class Game {
     ctx.fillRect(terminal.x * 20 - 5, terminal.y * 20 - 5, 10, 10);
     ctx.fillStyle = '#07111d';
     ctx.fillRect(terminal.x * 20 - 2, terminal.y * 20 - 2, 4, 4);
+    ctx.shadowBlur = 0;
     ctx.font = 'bold 8px monospace';
     ctx.textAlign = 'center';
     ctx.fillStyle = '#f2b65d';
-    ctx.fillText('DATA', terminal.x * 20, terminal.y * 20 - 17);
+    ctx.fillText(this.disabledRelays.size === (this.level.relays || []).length ? 'DATA' : 'LOCKED', terminal.x * 20, terminal.y * 20 - 17);
+    ctx.restore();
 
-    ctx.fillStyle = `rgba(85,226,220,${pulse * 0.28})`;
+    ctx.save();
+    ctx.shadowColor = '#55e2dc';
+    ctx.shadowBlur = 12;
+    ctx.fillStyle = 'rgba(85,226,220,' + (pulse * 0.28) + ')';
     ctx.beginPath();
     ctx.arc(extraction.x * 20, extraction.y * 20, 20 + Math.sin(this.elapsed * 4) * 2, 0, Math.PI * 2);
     ctx.fill();
@@ -259,38 +388,54 @@ export class Game {
     ctx.strokeRect(extraction.x * 20 - 10, extraction.y * 20 - 10, 20, 20);
     ctx.fillStyle = '#55e2dc';
     ctx.fillRect(extraction.x * 20 - 3, extraction.y * 20 - 3, 6, 6);
+    ctx.shadowBlur = 0;
     ctx.font = 'bold 8px monospace';
-    ctx.fillStyle = '#55e2dc';
     ctx.fillText('EXIT', extraction.x * 20, extraction.y * 20 - 18);
+    ctx.restore();
 
     for (const camera of this.cameras) {
-      ctx.fillStyle = this.securityDirector.isJammed() ? '#536b73' : '#d66fe8';
-      ctx.fillRect(camera.x * 20 - 4, camera.y * 20 - 4, 8, 8);
-      if (!this.securityDirector.isJammed()) {
-        ctx.strokeStyle = 'rgba(214,111,232,.12)';
+      const x = camera.x * 20;
+      const y = camera.y * 20;
+      const direction = this.cameraDirection(camera);
+      const range = 112;
+      const halfFov = 0.52;
+      const jammed = this.securityDirector.isJammed();
+
+      if (!jammed) {
+        ctx.fillStyle = 'rgba(214,111,232,.075)';
+        ctx.strokeStyle = 'rgba(214,111,232,.26)';
         ctx.beginPath();
-        ctx.moveTo(camera.x * 20, camera.y * 20);
-        ctx.lineTo(
-          camera.x * 20 + Math.cos(camera.dir) * 95,
-          camera.y * 20 + Math.sin(camera.dir) * 95
-        );
+        ctx.moveTo(x, y);
+        ctx.arc(x, y, range, direction - halfFov, direction + halfFov);
+        ctx.closePath();
+        ctx.fill();
         ctx.stroke();
       }
+
+      ctx.save();
+      ctx.shadowColor = jammed ? '#55e2dc' : '#d66fe8';
+      ctx.shadowBlur = 9;
+      ctx.fillStyle = jammed ? '#536b73' : '#d66fe8';
+      ctx.fillRect(x - 5, y - 5, 10, 10);
+      ctx.fillStyle = '#07111d';
+      ctx.fillRect(x - 2, y - 2, 4, 4);
+      ctx.restore();
     }
   }
 
   drawEffects(ctx) {
     if (this.security.alert > 0) {
-      ctx.fillStyle = `rgba(255,45,65,${this.security.alert / 100 * 0.055})`;
+      ctx.fillStyle = 'rgba(255,45,65,' + (this.security.alert / 100 * 0.055) + ')';
       ctx.fillRect(0, 0, 640, 360);
     }
     if (this.player.memory) {
       ctx.fillStyle = '#55e2dc';
-      ctx.font = '9px monospace';
-      ctx.fillText('MEMORY SECURED', 12, 15);
+      ctx.font = 'bold 9px monospace';
+      ctx.fillText('MEMORY SECURED // EXTRACT NOW', 12, 15);
     }
     if (this.player.jammerTime > 0) {
-      ctx.strokeStyle = 'rgba(85,226,220,.35)';
+      ctx.strokeStyle = 'rgba(85,226,220,.55)';
+      ctx.lineWidth = 2;
       ctx.strokeRect(2, 2, 636, 356);
     }
   }
