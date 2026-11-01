@@ -71,3 +71,53 @@ h1 span,.section-head h2 span,.debrief-screen h2 span,.overlay-card h2 span{colo
 
 #game-canvas{outline:none;cursor:crosshair}
 #game-canvas:focus-visible{outline:2px solid var(--cyan);outline-offset:-3px}
+
+
+/* BUILD 0.2 — SIGNAL OPERATIONS INTERFACE */
+body{background:radial-gradient(ellipse at 78% 12%,rgba(20,65,83,.42),transparent 34%),radial-gradient(ellipse at 12% 72%,rgba(7,39,54,.3),transparent 42%),var(--bg)}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.11;background-image:linear-gradient(rgba(85,226,220,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(85,226,220,.13) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,black,transparent 90%)}
+.shell{position:relative;z-index:1;width:min(1220px,calc(100% - 52px))}
+.topbar{border-bottom-color:#244456}
+.brand-mark{box-shadow:0 0 18px rgba(85,226,220,.1),inset 0 0 12px rgba(85,226,220,.08)}
+.menu-screen{gap:42px}
+.menu-art{border-color:#2a5265;box-shadow:0 20px 70px rgba(0,0,0,.25),inset 0 0 45px rgba(85,226,220,.035)}
+.menu-art::before{content:"";position:absolute;inset:12px;border:1px solid rgba(85,226,220,.11);pointer-events:none}
+.menu-art::after{content:"";position:absolute;left:0;right:0;top:46%;height:1px;background:linear-gradient(90deg,transparent,rgba(85,226,220,.4),transparent);box-shadow:0 0 22px rgba(85,226,220,.22)}
+.art-core{filter:drop-shadow(0 0 18px rgba(85,226,220,.45))}
+.primary-button{box-shadow:0 7px 25px rgba(85,226,220,.1)}
+.primary-button:focus-visible,.text-button:focus-visible,.icon-button:focus-visible,.pause-button:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.manual-grid article{position:relative;overflow:hidden}
+.manual-grid article::after{content:"";position:absolute;right:0;top:0;width:34px;height:34px;border-top:1px solid rgba(85,226,220,.22);border-right:1px solid rgba(85,226,220,.22)}
+.game-topline{padding:11px 14px;border:1px solid var(--line);background:linear-gradient(90deg,rgba(12,31,45,.96),rgba(7,19,29,.78));}
+.game-topline strong{color:#eefafb}
+.game-frame{border-color:#315a6c;box-shadow:0 18px 60px rgba(0,0,0,.42),0 0 28px rgba(85,226,220,.055)}
+.game-frame::before{content:"";position:absolute;inset:0;pointer-events:none;border:1px solid rgba(85,226,220,.09);z-index:2}
+.canvas-vignette{box-shadow:inset 0 0 75px rgba(0,0,0,.34),inset 0 0 1px 1px rgba(85,226,220,.08)}
+.canvas-vignette::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.055) 4px);opacity:.42}
+.hud-row{grid-template-columns:1.45fr repeat(5,minmax(0,.72fr));}
+.hud-block{position:relative;overflow:hidden;border-top:1px solid rgba(85,226,220,.035)}
+.hud-block:first-child{background:linear-gradient(135deg,#102636,#0a1926)}
+.hud-value{font-size:14px}
+.navigation-strip{grid-template-columns:1.25fr .58fr .48fr 2fr}
+.navigation-strip>div{background:linear-gradient(145deg,#0b1e2c,#081723);border-top:1px solid rgba(85,226,220,.045)}
+.navigation-strip strong{font-size:10px}
+.nav-direction strong{font-size:13px;color:var(--amber)}
+.action-meter{height:3px;width:100%;margin-top:3px;background:#183344;overflow:hidden}
+.action-meter>div{height:100%;width:0;background:linear-gradient(90deg,#55e2dc,#f2b65d);box-shadow:0 0 12px rgba(85,226,220,.5);transition:width .08s linear,opacity .18s}
+.game-bottomline{padding:3px 2px 0}
+.toast{max-width:calc(100% - 24px);overflow:hidden;text-overflow:ellipsis;border-color:rgba(242,182,93,.8);box-shadow:0 8px 28px rgba(0,0,0,.45),0 0 16px rgba(242,182,93,.08)}
+.debrief-stats{box-shadow:0 12px 35px rgba(0,0,0,.18)}
+.debrief-stats div{background:linear-gradient(145deg,#0d2130,#091722)}
+@media(max-width:760px){
+  .shell{width:min(100% - 28px,680px)}
+  .hud-row{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .hud-block:first-child{grid-column:span 2}
+  .navigation-strip{grid-template-columns:1fr .7fr .55fr}
+  .nav-action{grid-column:1/-1}
+}
+@media(max-width:430px){
+  .hud-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hud-block:first-child{grid-column:span 2}
+  .navigation-strip{grid-template-columns:1fr .7fr}
+  .nav-distance{display:none!important}
+}
