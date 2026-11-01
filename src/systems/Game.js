@@ -123,10 +123,11 @@ export class Game {
       const x = camera.x * 20;
       const y = camera.y * 20;
       const distance = Math.hypot(this.player.x - x, this.player.y - y);
+      const cameraRange = this.player.crouching ? 92 : this.player.sprinting ? 140 : 126;
       const angle = Math.atan2(this.player.y - y, this.player.x - x);
       const direction = this.cameraDirection(camera);
       const delta = Math.atan2(Math.sin(angle - direction), Math.cos(angle - direction));
-      if (distance < 126 && Math.abs(delta) < 0.52 &&
+      if (distance < cameraRange && Math.abs(delta) < 0.52 &&
           this.map.lineOfSight(x, y, this.player.x, this.player.y)) {
         this.security.add(dt * 15);
         this.status = 'CAMERA SWEEP — BREAK LINE OF SIGHT OR JAM IT';
