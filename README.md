@@ -5,9 +5,16 @@
 DEAD FREQUENCY is an original top-down pixel-art stealth extraction browser game. Infiltrate a surveillance-controlled city, manipulate enemy hearing with signal decoys, recover encrypted memory fragments and escape before the network identifies you.
 
 **Status:** Early playable prototype (v0.1.0)  
+**Live demo:** [Play DEAD FREQUENCY](https://manbhavsingh.github.io/dead-frequency/)  
 **Platform:** Desktop browser  
 **Engine:** HTML5 Canvas 2D + vanilla JavaScript ES modules  
 **Competition:** Loadout AI Game Competition (November 2026)
+
+## Play online
+
+[https://manbhavsingh.github.io/dead-frequency/](https://manbhavsingh.github.io/dead-frequency/)
+
+The game is hosted on GitHub Pages. Each push to `main` runs the automated tests and JavaScript syntax checks before deploying the static site.
 
 ## Play locally
 
@@ -19,7 +26,7 @@ python3 -m http.server 4173
 
 Open <http://localhost:4173> in a desktop browser. ES modules require a local HTTP server; opening `index.html` directly with `file://` is not supported.
 
-Alternatively, use any static file server. The repository is designed for GitHub Pages deployment from the root directory.
+Alternatively, use any static file server.
 
 ## Controls
 
@@ -54,7 +61,7 @@ src/
   systems/     Game loop, noise, security and mission systems
   ui/          HUD
   world/       Tile map and acoustic propagation
- tests/        Node.js built-in tests
+tests/         Node.js built-in tests
 ```
 
 ## Development checks
@@ -66,10 +73,12 @@ npm test
 npm run check
 ```
 
+GitHub Actions runs both commands before each Pages deployment.
+
 ## Current limitations
 
 This is an initial playable implementation, not a finished commercial game. The current build uses procedural Canvas-drawn visuals and synthesized tones rather than a full custom sprite/audio pack. The three mission layouts and AI behaviours require hands-on playtesting and balancing. The Warden coordination and adaptive-decoy behaviour are intentionally lightweight and should be refined after the core experience is verified in a browser.
 
 ## Competition submission
 
-Read [SUBMISSION_CHECKLIST.md](SUBMISSION_CHECKLIST.md), [AI_USAGE.md](AI_USAGE.md), and [ASSET_CREDITS.md](ASSET_CREDITS.md) before submitting. Do not claim public deployment, completed testing, or gameplay footage that has not actually been verified.
+Read [SUBMISSION_CHECKLIST.md](SUBMISSION_CHECKLIST.md), [AI_USAGE.md](AI_USAGE.md), and [ASSET_CREDITS.md](ASSET_CREDITS.md) before submitting. Record real playtesting findings and genuine gameplay footage; do not invent metrics or player statistics.
