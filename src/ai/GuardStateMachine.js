@@ -88,18 +88,20 @@ export class GuardStateMachine {
     const distance = Math.hypot(p.x - g.x, p.y - g.y);
     const angle = Math.atan2(p.y - g.y, p.x - g.x);
     const delta = Math.atan2(Math.sin(angle - g.facing), Math.cos(angle - g.facing));
-    const canSee = distance < g.visionRange &&
+    const visualRange = g.visionRange * (p.crouching ? 0.68 : p.sprinting ? 1.12 : 1);
+    const canSee = distance < visualRange &&
       Math.abs(delta) < g.fov / 2 &&
       map.lineOfSight(g.x, g.y, p.x, p.y);
 
     if (canSee) {
-      g.suspicion = Math.min(100, g.suspicion + dt * (distance < 60 ? 90 : 45));
+      const exposure = p.crouching ? 0.58 : p.sprinting ? 1.22 : 1;
+      g.suspicion = Math.min(100, g.suspicion + dt * (distance < 60 ? 90 : 45) * exposure);
       this.lastKnown = { x: p.x, y: p.y };
       if (g.suspicion >= 100) {
         if (!this.detectionConfirmed) {
           p.detections++;
           this.detectionConfirmed = true;
-          game.security.addAlert(30);
+          game.security.add(30);
           game.notify('VISUAL CONTACT — MOVE!');
         }
         this.set(STATES.CHASE);
