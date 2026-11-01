@@ -29,7 +29,7 @@
           <button class="primary-button" id="start-button">INITIALIZE INFILTRATION <span>↗</span></button>
           <button class="text-button" id="controls-button">FIELD MANUAL <span>+</span></button>
         </div>
-        <div class="menu-foot"><span>BUILD 0.1.0 // PROTOTYPE</span><span>NO SIGNAL IS SAFE</span></div>
+        <div class="menu-foot"><span>BUILD 0.2.0 // SECURITY NETWORK OVERHAUL</span><span>NO SIGNAL IS SAFE</span></div>
       </div>
       <div class="menu-art" aria-hidden="true">
         <div class="art-grid"></div><div class="scanline"></div>
@@ -46,7 +46,7 @@
         <article><span class="manual-key">W A S D</span><h3>MOVE</h3><p>Move through the facility. Sprint with <kbd>SHIFT</kbd>; crouch with <kbd>C</kbd> to reduce your sound signature.</p></article>
         <article><span class="manual-key">E</span><h3>DECOY</h3><p>Throw a signal decoy. Guards investigate the sound's origin, not your current position.</p></article>
         <article><span class="manual-key">Q</span><h3>JAMMER</h3><p>Temporarily disrupt nearby cameras and mask your movement noise.</p></article>
-        <article><span class="manual-key">F</span><h3>INTERACT</h3><p>Hold F near the amber DATA terminal to recover the fragment. Follow the route indicator to the cyan EXIT marker, then hold F to escape. Click the game canvas once if keyboard input does not respond.</p></article>
+        <article><span class="manual-key">F</span><h3>INTERACT</h3><p>Disable every amber SECURITY RELAY in sequence before the DATA terminal unlocks. Hold F while standing still to bypass a relay, download the memory, and complete extraction. Every hack broadcasts your location. Crouch to reduce visibility and noise; use decoys and the jammer to create openings.</p></article>
         <article><span class="manual-key">ESC</span><h3>PAUSE</h3><p>Pause the operation. Watch the alert meter: a full lockdown ends the mission.</p></article>
         <article><span class="manual-key">◉</span><h3>LISTEN</h3><p>Cyan is safe tech. Amber is suspicion. Red means detection. Ripple rings show sound moving through the map.</p></article>
       </div>
@@ -60,14 +60,15 @@
         <div class="hud-block"><span class="hud-label">SIGNAL / ALERT</span><div class="meter"><div id="alert-fill" class="meter-fill"></div></div><span id="alert-label" class="hud-value">QUIET</span></div>
         <div class="hud-block"><span class="hud-label">DECOY CHARGES</span><span id="decoy-count" class="hud-value accent-cyan">03</span></div>
         <div class="hud-block"><span class="hud-label">JAMMER</span><span id="jammer-count" class="hud-value accent-cyan">02</span></div>
+        <div class="hud-block"><span class="hud-label">RELAYS</span><span id="relay-count" class="hud-value accent-cyan">0 / 1</span></div>
         <div class="hud-block"><span class="hud-label">MEMORY</span><span id="memory-count" class="hud-value">0 / 1</span></div>
         <div class="hud-block"><span class="hud-label">TIME</span><span id="timer" class="hud-value">00:00</span></div>
       </div>
       <div class="navigation-strip" aria-live="polite">
         <div class="nav-target"><span class="hud-label">OBJECTIVE ROUTE</span><strong id="nav-target">MEMORY TERMINAL</strong></div>
         <div class="nav-direction"><span class="hud-label">NEXT TURN</span><strong id="nav-direction">—</strong></div>
-        <div class="nav-distance"><span class="hud-label">RANGE</span><strong id="nav-distance">—</strong></div>
-        <div class="nav-action"><span class="hud-label">FIELD GUIDANCE</span><strong id="interaction-hint">FOLLOW THE SIGNAL TO YOUR OBJECTIVE</strong></div>
+        <div class="nav-distance"><span class="hud-label">STEPS</span><strong id="nav-distance">—</strong></div>
+        <div class="nav-action"><span class="hud-label">FIELD GUIDANCE</span><strong id="interaction-hint">FOLLOW THE SIGNAL TO YOUR OBJECTIVE</strong><div class="action-meter"><div id="action-progress-fill"></div></div></div>
       </div>
       <div class="game-bottomline"><span>WASD MOVE · SHIFT SPRINT · C CROUCH · E DECOY · Q JAMMER · F INTERACT</span><span id="status-line">NO HOSTILES IN RANGE</span></div>
     </section>
