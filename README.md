@@ -4,7 +4,7 @@
 
 DEAD FREQUENCY is an original top-down pixel-art stealth extraction browser game. Infiltrate a surveillance-controlled city, manipulate enemy hearing with signal decoys, recover encrypted memory fragments and escape before the network identifies you.
 
-**Status:** Early playable prototype (v0.1.0)  
+**Status:** Playable prototype with multi-stage mission objectives (v0.2.0)  
 **Live demo:** [Play DEAD FREQUENCY](https://manbhavsingh.github.io/dead-frequency/)  
 **Platform:** Desktop browser  
 **Engine:** HTML5 Canvas 2D + vanilla JavaScript ES modules  
@@ -42,12 +42,13 @@ Alternatively, use any static file server.
 
 ## Gameplay
 
+- **Multi-stage objectives:** disable 1, 2, then 3 security relays across the three missions before the memory terminal unlocks.
+- **Risky interactions:** relay bypasses, terminal downloads, and extraction require holding position; each hack emits a noise trace and slowly raises the network alert.
 - **Listen and manipulate:** noise propagates through the tile map; concrete walls block it, carpet dampens it, and metal floors transmit it farther.
-- **Decoy:** creates a false sound origin that guards can investigate.
-- **Enemy AI:** patrol guards, listeners and a warden use finite-state machines, hearing thresholds, line-of-sight and grid pathfinding.
-- **Echo Memory:** guards remember repeated decoy locations and may become skeptical of reused distractions.
-- **Jammer:** temporarily disrupts camera detection and masks player movement noise.
-- **Missions:** Dead Channel, The Silent Market and Antenna Zero.
+- **Decoy:** creates a false sound origin that guards can investigate; repeating the same throw location makes guards skeptical.
+- **Enemy AI:** patrol guards, listeners and a warden use finite-state machines, faster pursuit, line-of-sight, hearing thresholds and grid pathfinding.
+- **Surveillance:** camera cones sweep across rooms; crouching reduces visibility and sound, while sprinting makes the player easier to detect.
+- **Jammer:** temporarily blinds cameras and masks player movement noise. Charges are limited, so use them to cross exposed lanes or finish a hack.
 
 ## Project structure
 
@@ -77,7 +78,7 @@ GitHub Actions runs both commands before each Pages deployment.
 
 ## Current limitations
 
-This is an initial playable implementation, not a finished commercial game. The current build uses procedural Canvas-drawn visuals and synthesized tones rather than a full custom sprite/audio pack. The three mission layouts and AI behaviours require hands-on playtesting and balancing. The Warden coordination and adaptive-decoy behaviour are intentionally lightweight and should be refined after the core experience is verified in a browser.
+This is an initial playable implementation, not a finished commercial game. The current build uses procedural Canvas-drawn visuals and synthesized tones rather than a full custom sprite/audio pack. Mission difficulty and guard pressure have been increased, but the complete three-mission campaign still needs hands-on balance testing on different browsers and play styles.
 
 ## Competition submission
 
