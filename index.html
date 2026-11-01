@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#07111d" />
+  <meta name="description" content="DEAD FREQUENCY — a pixel-art stealth game where sound is your weapon." />
+  <title>DEAD FREQUENCY — The city hears everything</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="Dead Frequency home"><span class="brand-mark">DF</span><span>DEAD<span class="brand-muted">/</span>FREQUENCY</span></a>
+      <div class="top-meta"><span class="live-dot"></span> SIGNAL INTEGRITY: <strong>UNSTABLE</strong></div>
+      <button class="icon-button" id="sound-toggle" type="button" aria-label="Mute sound">♫ <span>SOUND ON</span></button>
+    </header>
+
+    <section id="screen-menu" class="screen menu-screen">
+      <div class="menu-copy">
+        <p class="eyebrow"><span class="eyebrow-line"></span> AN UNAUTHORIZED SIGNAL HAS BEEN DETECTED</p>
+        <h1>DEAD<br><span>FREQUENCY</span></h1>
+        <p class="tagline">THE CITY HEARS EVERYTHING.<br><em>MAKE IT HEAR THE WRONG THING.</em></p>
+        <p class="intro">A stealth extraction game. Manipulate the network's hearing, recover encrypted memories, and disappear before the city learns your signal.</p>
+        <div class="menu-actions">
+          <button class="primary-button" id="start-button">INITIALIZE INFILTRATION <span>↗</span></button>
+          <button class="text-button" id="controls-button">FIELD MANUAL <span>+</span></button>
+        </div>
+        <div class="menu-foot"><span>BUILD 0.1.0 // PROTOTYPE</span><span>NO SIGNAL IS SAFE</span></div>
+      </div>
+      <div class="menu-art" aria-hidden="true">
+        <div class="art-grid"></div><div class="scanline"></div>
+        <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+        <div class="art-core">◈</div><div class="art-crosshair">+</div>
+        <div class="art-label label-top">QUIET-NET / NODE 07</div><div class="art-label label-bottom">UNREGISTERED MOVEMENT</div>
+        <div class="signal-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+    </section>
+
+    <section id="screen-manual" class="screen manual-screen hidden">
+      <div class="section-head"><p class="eyebrow">FIELD MANUAL // 001</p><h2>KNOW YOUR<br><span>FREQUENCIES.</span></h2></div>
+      <div class="manual-grid">
+        <article><span class="manual-key">W A S D</span><h3>MOVE</h3><p>Move through the facility. Sprint with <kbd>SHIFT</kbd>; crouch with <kbd>C</kbd> to reduce your sound signature.</p></article>
+        <article><span class="manual-key">E</span><h3>DECOY</h3><p>Throw a signal decoy. Guards investigate the sound's origin, not your current position.</p></article>
+        <article><span class="manual-key">Q</span><h3>JAMMER</h3><p>Temporarily disrupt nearby cameras and mask your movement noise.</p></article>
+        <article><span class="manual-key">F</span><h3>INTERACT</h3><p>Hold near terminals to extract memory fragments. Reach the extraction marker to escape.</p></article>
+        <article><span class="manual-key">ESC</span><h3>PAUSE</h3><p>Pause the operation. Watch the alert meter: a full lockdown ends the mission.</p></article>
+        <article><span class="manual-key">◉</span><h3>LISTEN</h3><p>Cyan is safe tech. Amber is suspicion. Red means detection. Ripple rings show sound moving through the map.</p></article>
+      </div>
+      <button class="primary-button" id="manual-back">UNDERSTOOD — BEGIN <span>↗</span></button>
+    </section>
+
+    <section id="screen-game" class="screen game-screen hidden">
+      <div class="game-topline"><div><span class="eyebrow" id="mission-number">MISSION 01</span><strong id="mission-name">DEAD CHANNEL</strong></div><div class="mission-objective" id="objective-text">RECOVER THE MEMORY FRAGMENT</div><button class="pause-button" id="pause-button">Ⅱ PAUSE</button></div>
+      <div class="game-frame"><canvas id="game-canvas" width="640" height="360" aria-label="Dead Frequency game area"></canvas><div class="canvas-vignette"></div><div id="toast" class="toast hidden"></div></div>
+      <div class="hud-row">
+        <div class="hud-block"><span class="hud-label">SIGNAL / ALERT</span><div class="meter"><div id="alert-fill" class="meter-fill"></div></div><span id="alert-label" class="hud-value">QUIET</span></div>
+        <div class="hud-block"><span class="hud-label">DECOY CHARGES</span><span id="decoy-count" class="hud-value accent-cyan">03</span></div>
+        <div class="hud-block"><span class="hud-label">JAMMER</span><span id="jammer-count" class="hud-value accent-cyan">02</span></div>
+        <div class="hud-block"><span class="hud-label">MEMORY</span><span id="memory-count" class="hud-value">0 / 1</span></div>
+        <div class="hud-block"><span class="hud-label">TIME</span><span id="timer" class="hud-value">00:00</span></div>
+      </div>
+      <div class="game-bottomline"><span>WASD MOVE · SHIFT SPRINT · C CROUCH · E DECOY · Q JAMMER · F INTERACT</span><span id="status-line">NO HOSTILES IN RANGE</span></div>
+    </section>
+
+    <section id="screen-pause" class="overlay-screen hidden">
+      <div class="overlay-card"><p class="eyebrow">OPERATION SUSPENDED</p><h2>HOLD<br><span>POSITION.</span></h2><button class="primary-button" id="resume-button">RESUME <span>↗</span></button><button class="text-button" id="restart-button">RESTART MISSION</button><button class="text-button" id="quit-button">ABORT TO MENU</button></div>
+    </section>
+
+    <section id="screen-debrief" class="screen debrief-screen hidden">
+      <p class="eyebrow" id="debrief-kicker">EXTRACTION CONFIRMED</p><h2 id="debrief-title">GHOST<br><span>IN THE WIRES.</span></h2>
+      <p id="debrief-copy" class="intro">The memory fragment is secure. The city is still listening.</p>
+      <div class="debrief-stats"><div><span>MISSION SCORE</span><strong id="score-value">0000</strong></div><div><span>STEALTH RANK</span><strong id="rank-value">GHOST</strong></div><div><span>TIME</span><strong id="debrief-time">00:00</strong></div><div><span>DETECTIONS</span><strong id="detection-value">0</strong></div></div>
+      <button class="primary-button" id="next-button">NEXT OPERATION <span>↗</span></button><button class="text-button" id="debrief-menu">RETURN TO MENU</button>
+    </section>
+
+    <section id="screen-fail" class="screen debrief-screen hidden">
+      <p class="eyebrow danger-text">QUIET-NET LOCKDOWN</p><h2>SIGNAL<br><span>LOST.</span></h2><p class="intro">The facility has your position. Ghost is compromised. Reset the operation and try another approach.</p>
+      <button class="primary-button" id="retry-button">RETRY OPERATION <span>↻</span></button><button class="text-button" id="fail-menu">RETURN TO MENU</button>
+    </section>
+
+    <footer class="site-footer"><span>DEAD FREQUENCY // AN ORIGINAL STEALTH GAME</span><span>DESIGNED TO BE HEARD, NOT SEEN.</span></footer>
+  </main>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

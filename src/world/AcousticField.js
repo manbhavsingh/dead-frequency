@@ -1,0 +1,7 @@
+const ATTENUATION = {0:3.2,1:Infinity,2:6.0,3:1.5,4:2.2};
+class MinHeap{constructor(){this.a=[];}push(v){this.a.push(v);let i=this.a.length-1;while(i>0){const p=(i-1)>>1;if(this.a[p].cost<=v.cost)break;this.a[i]=this.a[p];i=p;}this.a[i]=v;}pop(){if(!this.a.length)return null;const root=this.a[0],last=this.a.pop();if(this.a.length){let i=0;while(true){let l=i*2+1,r=l+1,m=i;if(l<this.a.length&&this.a[l].cost<last.cost)m=l;if(r<this.a.length&&this.a[r].cost<this.a[m].cost)m=r;if(m===i)break;this.a[i]=this.a[m];i=m;}this.a[i]=last;}return root;}get size(){return this.a.length;}}
+export class AcousticField{
+  constructor(tileMap){this.map=tileMap;}
+  propagate(x,y,intensity=100,maxRadius=13){const start=this.map.cellAtWorld(x,y),heap=new MinHeap(),best=new Map(),key=(cx,cy)=>`${cx},${cy}`;heap.push({x:start.x,y:start.y,cost:0,steps:0});best.set(key(start.x,start.y),0);while(heap.size){const n=heap.pop(),k=key(n.x,n.y);if(n.cost!==best.get(k)||n.steps>maxRadius)continue;for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=n.x+dx,ny=n.y+dy,t=this.map.tileAt(nx,ny),loss=ATTENUATION[t]??Infinity;if(!Number.isFinite(loss))continue;const next=n.cost+loss;if(next>=intensity)continue;const nk=key(nx,ny);if(next<(best.get(nk)??Infinity)){best.set(nk,next);heap.push({x:nx,y:ny,cost:next,steps:n.steps+1});}}}const result=new Map();for(const [k,cost] of best)result.set(k,Math.max(0,intensity-cost));return result;}
+  intensityAt(field,x,y){const c=this.map.cellAtWorld(x,y);return field.get(`${c.x},${c.y}`)??0;}
+}

@@ -1,0 +1,1 @@
+export class SecurityDirector{constructor(){this.cameraDisabled=0;}jam(duration=4){this.cameraDisabled=Math.max(this.cameraDisabled,duration);}update(dt){this.cameraDisabled=Math.max(0,this.cameraDisabled-dt);}isJammed(){return this.cameraDisabled>0;}}

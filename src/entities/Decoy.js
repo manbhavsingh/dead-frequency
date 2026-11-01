@@ -1,0 +1,1 @@
+export class Decoy{constructor(x,y){this.x=x;this.y=y;this.life=1.35;this.age=0;}update(dt){this.age+=dt;}draw(ctx){const a=Math.max(0,1-this.age/this.life);ctx.strokeStyle=`rgba(85,226,220,${a})`;ctx.lineWidth=2;ctx.beginPath();ctx.arc(this.x,this.y,5+this.age*28,0,Math.PI*2);ctx.stroke();ctx.fillStyle=`rgba(85,226,220,${a})`;ctx.fillRect(this.x-3,this.y-3,6,6);}}

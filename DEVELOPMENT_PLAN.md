@@ -1,0 +1,32 @@
+# Development plan
+
+## Scope priorities
+
+### P0 — must work
+- [x] Static browser project and Canvas game shell.
+- [x] Player movement and collision.
+- [x] Weighted tile-grid sound propagation.
+- [x] Guard patrol, hearing, vision and pathfinding foundations.
+- [x] Decoy and jammer inputs.
+- [x] Terminal interaction and extraction loop.
+- [x] Mission data for three levels.
+- [x] Unit tests for acoustics, pathfinding and alert escalation.
+- [ ] Hands-on browser QA for all missions.
+
+### P1 — competition quality
+- [ ] Refine level layout and difficulty after playtesting.
+- [ ] Add more readable visual feedback for suspicion and acoustic propagation.
+- [ ] Add optional data caches and more meaningful score breakdown.
+- [ ] Refine Warden behaviour and Echo Memory fairness.
+- [ ] Improve pixel-art detail and animation consistency.
+- [ ] Add generated or hand-produced original sound cues.
+- [ ] Test with a clean browser profile and deploy publicly.
+
+### P2 — only if time allows
+- [ ] Secret caches and alternate mission routes.
+- [ ] Additional environmental sound emitters.
+- [ ] More patrol patterns and challenge modifiers.
+
+## Exit gate
+
+Prefer one excellent, complete mission with the distinctive sound mechanic over three levels containing progression blockers. A public link, real gameplay footage and accurate AI/asset disclosures are required before submitting.
