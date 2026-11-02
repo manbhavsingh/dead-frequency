@@ -75,6 +75,7 @@ export class Game {
     this.pacingStageLabel = this.pacing.initialLabel || 'INFILTRATE';
     this.pacingRestActive = false;
     this.pacingRestTimer = 0;
+    this.pacingRestDuration = 0;
     this.pacingPendingWave = null;
     this.pacingActivatedWaves = new Set();
     this.finished = false;
