@@ -314,7 +314,14 @@ $('story-button').addEventListener('click', () => {
   newCampaignRequested = false;
   openDossier('screen-menu');
 });
-$('dossier-begin').addEventListener('click', () => show('screen-manual'));
+function showManual() {
+  $('manual-back').innerHTML = newCampaignRequested
+    ? 'UNDERSTOOD — BEGIN <span>↗</span>'
+    : 'RETURN TO MENU <span>↩</span>';
+  show('screen-manual');
+}
+
+$('dossier-begin').addEventListener('click', showManual);
 $('dossier-back').addEventListener('click', () => show(dossierReturnScreen));
 $('manual-dossier').addEventListener('click', () => openDossier('screen-manual'));
 $('sidequest-button').addEventListener('click', () => {
@@ -330,12 +337,16 @@ $('politics-back').addEventListener('click', () => show('screen-menu'));
 $('contract-begin').addEventListener('click', () => start(-1, true));
 $('controls-button').addEventListener('click', () => {
   newCampaignRequested = false;
-  show('screen-manual');
+  showManual();
 });
 $('manual-back').addEventListener('click', () => {
-  if (newCampaignRequested) save.resetStory();
-  newCampaignRequested = false;
-  start(0);
+  if (newCampaignRequested) {
+    save.resetStory();
+    newCampaignRequested = false;
+    start(0);
+    return;
+  }
+  show('screen-menu');
 });
 $('pause-button').addEventListener('click', () => {
   if (!game) return;

@@ -83,8 +83,8 @@ h1,h2{font-family:var(--sans)}
 .menu-location{display:flex;align-items:center;gap:9px;margin:23px 0 0;color:#9bac9f;font:9px var(--mono);letter-spacing:.14em}
 .location-pulse{width:7px;height:7px;background:var(--red);border-radius:50%;box-shadow:0 0 0 4px rgba(231,108,103,.1),0 0 12px rgba(231,108,103,.55)}
 .location-divider{color:#61716b}
-.menu-copy h1{margin:17px 0 22px;color:#f0ede2;font:700 clamp(66px,7.7vw,112px)/.82 var(--sans);letter-spacing:-.095em}
-.menu-copy h1 span{color:var(--cyan);text-shadow:0 0 36px rgba(133,217,193,.1)}
+.menu-copy h1{margin:17px 0 22px;color:#f0ede2;font:700 clamp(58px,6.1vw,88px)/.86 var(--sans);letter-spacing:-.095em}
+.menu-copy h1 span{display:inline-block;white-space:nowrap;color:var(--cyan);text-shadow:0 0 36px rgba(133,217,193,.1)}
 .tagline{margin:0;color:#e6e3d8;font:600 clamp(11px,1.1vw,14px)/1.8 var(--mono);letter-spacing:.025em}
 .tagline em{color:var(--amber);font-style:normal}
 .menu-copy .intro{max-width:455px;margin:20px 0 26px}
