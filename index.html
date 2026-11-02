@@ -28,6 +28,7 @@
         <div class="menu-actions">
           <button class="primary-button" id="start-button">INITIALIZE NEW STORY <span>↗</span></button>
           <button class="text-button" id="controls-button">FIELD MANUAL <span>+</span></button>
+          <button class="text-button" id="story-button">GHOST // OPERATIVE DOSSIER <span>↗</span></button>
         </div>
         <div class="menu-foot"><span>BUILD 0.2.0 // SECURITY NETWORK OVERHAUL</span><span>NO SIGNAL IS SAFE</span></div>
       </div>
@@ -37,6 +38,39 @@
         <div class="art-core">◈</div><div class="art-crosshair">+</div>
         <div class="art-label label-top">QUIET-NET / NODE 07</div><div class="art-label label-bottom">UNREGISTERED MOVEMENT</div>
         <div class="signal-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+    </section>
+
+    <section id="screen-dossier" class="screen dossier-screen hidden" aria-labelledby="dossier-heading">
+      <div class="dossier-header">
+        <p class="eyebrow"><span class="eyebrow-line"></span> DECLASSIFIED OPERATIVE FILE // QUIET-NET EYES ONLY</p>
+        <p class="dossier-status">WANTED // FIVE-THOUSAND-CREDIT BOUNTY</p>
+        <h2 id="dossier-heading"><span id="dossier-name">KAEL VEYRIN</span><br><em id="dossier-alias">THE ASHEN FOX</em></h2>
+        <p id="dossier-summary" class="intro"></p>
+      </div>
+      <div class="dossier-meta">
+        <div><span>CALLSIGN</span><strong id="dossier-callsign">GHOST</strong></div>
+        <div><span>AGE</span><strong id="dossier-age">27</strong></div>
+        <div><span>ORIGIN</span><strong id="dossier-origin">ASH QUARTER // VALTHORNE</strong></div>
+        <div><span>ROLE</span><strong id="dossier-role">ROGUE SIGNAL INFILTRATOR</strong></div>
+      </div>
+      <div id="dossier-sections" class="dossier-sections"></div>
+      <div class="dossier-bottom-grid">
+        <article class="dossier-card">
+          <p class="eyebrow">FIELD NOTES // PERSONAL HABITS</p>
+          <h3>THE MAN BEHIND THE SIGNAL</h3>
+          <ul id="dossier-traits" class="dossier-traits"></ul>
+        </article>
+        <article class="dossier-card">
+          <p class="eyebrow">KNOWN CONNECTIONS</p>
+          <h3>PEOPLE IN HIS WAKE</h3>
+          <div id="dossier-relationships" class="dossier-relationships"></div>
+        </article>
+      </div>
+      <blockquote id="dossier-tagline" class="dossier-tagline"></blockquote>
+      <div class="dossier-actions">
+        <button class="primary-button" id="dossier-begin">CONTINUE TO FIELD MANUAL <span>↗</span></button>
+        <button class="text-button" id="dossier-back">RETURN <span>↩</span></button>
       </div>
     </section>
 
@@ -50,6 +84,7 @@
         <article><span class="manual-key">ESC</span><h3>PAUSE</h3><p>Pause the operation and release the captured mouse. At lockdown, you get one 3.2-second last-transmission window: break line of sight, then use E or Q. A second lockdown ends the mission.</p></article>
         <article><span class="manual-key">◉</span><h3>LISTEN</h3><p>Cyan is safe tech. Amber is suspicion. Red means detection. Ripple rings show sound moving through the map. A completed diversion fills Echo Resonance and can refund a decoy.</p></article><article><span class="manual-key">COMMS</span><h3>THE CITY REMEMBERS</h3><p>Relay and archive choices change later equipment and surveillance. Mara, Nix and the factions remember your decisions. Your decoys, detections and clean extractions shape the final transmission. INITIALIZE INFILTRATION begins a fresh story; saved scores and unlocks remain.</p></article>
       </div>
+      <button class="text-button manual-dossier-link" id="manual-dossier">READ GHOST'S OPERATIVE DOSSIER ↗</button>
       <button class="primary-button" id="manual-back">UNDERSTOOD — BEGIN <span>↗</span></button>
     </section>
 
