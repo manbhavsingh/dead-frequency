@@ -30,6 +30,7 @@ export class Game {
     this.map = new TileMap(this.level.makeMap(), 20, this.level.palette);
     this.player = new Player(this.level.start.x, this.level.start.y);
     this.player.decoys = this.level.decoys;
+    this.player.maxDecoys = this.level.decoys;
     this.player.jammers = this.level.jammers;
     this.guards = this.level.guards.map(config => new Guard(config));
     this.cameras = (this.level.cameras || []).map(camera => ({ ...camera }));
@@ -46,6 +47,13 @@ export class Game {
     this.hackNoiseTimer = 0;
     this.disabledRelays = new Set();
     this.bossAwakened = false;
+    this.echoResonance = 0;
+    this.echoDiversions = 0;
+    this.rewardedEchoInvestigations = new Set();
+    this.lockdownGraceActive = false;
+    this.lockdownGraceTimer = 0;
+    this.lockdownRescueUsed = false;
+    this.highAlertWarned = false;
     this.finished = false;
     this.navTimer = 0;
     this.navPath = [];
@@ -59,6 +67,72 @@ export class Game {
   notify(text) {
     this.status = text;
     if (this.hud) this.hud.toast(text);
+  }
+
+  onDecoyAccepted(guard, event) {
+    if (this.security?.lockdown && this.lockdownGraceActive) {
+      this.breakLockdown('DECOY', event);
+    }
+  }
+
+  rewardDecoyDiversion(guard, eventId) {
+    const guardIndex = this.guards.indexOf(guard);
+    if (guardIndex < 0 || eventId == null) return false;
+
+    const key = guardIndex + ':' + eventId;
+    if (this.rewardedEchoInvestigations.has(key)) return false;
+    this.rewardedEchoInvestigations.add(key);
+
+    this.echoDiversions++;
+    this.player.score += 85;
+    const nextResonance = this.echoResonance + 34;
+    const hasDecoySpace = this.player.decoys < this.player.maxDecoys;
+
+    if (nextResonance >= 100 && hasDecoySpace) {
+      this.echoResonance = nextResonance - 100;
+      this.player.decoys++;
+      this.player.score += 125;
+      this.sound.play('success');
+      this.notify('ECHO LOOP COMPLETE — ONE DECOY CHARGE RECOVERED');
+    } else {
+      this.echoResonance = Math.min(99, nextResonance);
+      this.notify('DIVERSION CONFIRMED — ECHO RESONANCE +' + (hasDecoySpace ? 34 : 0) + '%');
+    }
+    return true;
+  }
+
+  breakLockdown(source, event = null) {
+    if (!this.security?.lockdown || !this.lockdownGraceActive || this.lockdownRescueUsed) return false;
+
+    const visible = this.guards.some(guard => guard.machine.canSeePlayer);
+    if (visible) {
+      this.notify('LIVE VISUAL CONTACT — BREAK LINE OF SIGHT FIRST');
+      return false;
+    }
+
+    this.security.lockdown = false;
+    this.security.alert = 52;
+    this.highAlertWarned = false;
+    this.lockdownGraceActive = false;
+    this.lockdownGraceTimer = 0;
+    this.lockdownRescueUsed = true;
+
+    for (const guard of this.guards) {
+      if (guard.machine.state !== 'CHASE') continue;
+      const target = source === 'DECOY' && event
+        ? { x: event.x, y: event.y }
+        : { x: this.player.x, y: this.player.y };
+      guard.machine.lastKnown = target;
+      guard.machine.attention = source === 'DECOY' ? 'decoy' : 'noise';
+      guard.machine.attentionTimer = 3.2;
+      guard.suspicion = Math.min(guard.suspicion, 65);
+      guard.machine.set(source === 'DECOY' ? 'INVESTIGATE' : 'SEARCH');
+    }
+
+    this.notify(source === 'DECOY'
+      ? 'LOCKDOWN BROKEN — THEY BOUGHT THE FALSE ECHO. MOVE!'
+      : 'LOCKDOWN BROKEN — JAMMER MASKING ACTIVE. MOVE!');
+    return true;
   }
 
   update(dt, input) {
@@ -75,9 +149,31 @@ export class Game {
     this.updateInteractions(dt, input);
     this.updateNavigation(dt);
 
+    if (this.security.alert >= 78 && !this.security.lockdown && !this.highAlertWarned) {
+      this.highAlertWarned = true;
+      this.notify('SIGNAL CRITICAL — BREAK LINE OF SIGHT OR SET A FALSE ECHO');
+    } else if (this.security.alert < 55) {
+      this.highAlertWarned = false;
+    }
+
     if (this.security.lockdown) {
-      this.finish(false);
-      return;
+      if (!this.lockdownGraceActive && !this.lockdownRescueUsed) {
+        this.lockdownGraceActive = true;
+        this.lockdownGraceTimer = 3.2;
+        this.notify('LAST TRANSMISSION — BREAK LINE OF SIGHT, THEN USE E OR Q');
+      }
+
+      if (this.lockdownGraceActive) {
+        this.lockdownGraceTimer = Math.max(0, this.lockdownGraceTimer - dt);
+        this.interactionHint = 'LOCKDOWN WINDOW ' + this.lockdownGraceTimer.toFixed(1) + 's — BREAK CONTACT + E / Q';
+        if (this.lockdownGraceTimer <= 0) {
+          this.finish(false);
+          return;
+        }
+      } else {
+        this.finish(false);
+        return;
+      }
     }
     this.hud?.update(this);
   }
@@ -302,6 +398,7 @@ export class Game {
         this.noises.emit(this.player.x, this.player.y, 16, 'jam', 0.5);
         this.sound.play('jam');
         this.notify('SIGNAL JAMMER ACTIVE — CAMERAS BLIND');
+        this.breakLockdown('JAMMER');
       } else {
         this.notify('JAMMER CHARGES DEPLETED');
       }
