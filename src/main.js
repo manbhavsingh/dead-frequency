@@ -300,9 +300,10 @@ function refreshContractStatus() {
   status.textContent = quest.completed
     ? 'COMPLETED · BEST PAYOUT ' + String(quest.bestScore || 0).padStart(4, '0')
     : 'NEW CONTRACT · OPTIONAL · CAMPAIGN PROGRESS UNAFFECTED';
-  button.innerHTML = quest.completed
-    ? 'REPLAY CONTRACT // DUST AND STATIC <span>↗</span>'
-    : 'OPTIONAL CONTRACT // DUST AND STATIC <span>↗</span>';
+  const title = $('sidequest-title');
+  if (title) title.textContent = quest.completed ? 'REPLAY DUST AND STATIC' : 'DUST AND STATIC';
+  button.setAttribute('aria-label', quest.completed ? 'Replay the Dust and Static contract' : 'Open the Dust and Static contract');
+  button.classList.toggle('is-completed', Boolean(quest.completed));
 }
 
 $('start-button').addEventListener('click', () => {
