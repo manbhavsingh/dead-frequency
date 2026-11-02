@@ -92,7 +92,7 @@ export class Game {
     const key = guardIndex + ':' + eventId;
     if (this.rewardedEchoInvestigations.has(key)) return false;
     this.rewardedEchoInvestigations.add(key);
-    this.decoys.find(decoy => decoy.eventId === eventId)?.markResolved();
+    this.decoys?.find(decoy => decoy.eventId === eventId)?.markResolved();
 
     this.echoDiversions++;
     this.player.score += 85;
@@ -555,7 +555,6 @@ export class Game {
   }
 
   drawEffects(ctx) {
-    this.drawDecoyGuide(ctx);
     if (this.security.alert > 0) {
       ctx.fillStyle = 'rgba(255,45,65,' + (this.security.alert / 100 * 0.055) + ')';
       ctx.fillRect(0, 0, 640, 360);
@@ -575,6 +574,7 @@ export class Game {
       ctx.lineWidth = 2;
       ctx.strokeRect(2, 2, 636, 356);
     }
+    this.drawDecoyGuide(ctx);
   }
 
   drawDecoyGuide(ctx) {
