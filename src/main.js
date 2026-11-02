@@ -94,18 +94,25 @@ function loop(now) {
 function handleFinish(result) {
   cancelAnimationFrame(raf);
   releaseGamePointer();
+  hud.hideStoryChoice();
   if (result.won) {
-    $('debrief-kicker').textContent = result.hasNext
-      ? 'EXTRACTION CONFIRMED'
-      : 'FINAL TRANSMISSION // ALL FRAGMENTS SECURED';
-    $('debrief-title').innerHTML = !result.hasNext
-      ? 'THE CITY<br><span>HEARS YOU NOW.</span>'
-      : result.rank === 'GHOST'
-        ? 'GHOST<br><span>IN THE WIRES.</span>'
-        : 'OPERATION<br><span>COMPLETE.</span>';
-    $('debrief-copy').textContent = result.hasNext
-      ? 'The memory fragment is secure. The city is still listening.'
-      : 'You crossed three sectors, broke the relay chain and carried every memory beyond The Chorus. Quiet-Net is still online—but its secrets are no longer buried.';
+    $('debrief-kicker').textContent = result.ending
+      ? 'FINAL TRANSMISSION // JOURNEY RECORDED'
+      : 'EXTRACTION CONFIRMED';
+    const title = $('debrief-title');
+    title.classList.toggle('story-ending-title', Boolean(result.ending));
+    title.textContent = result.ending
+      ? result.ending.title
+      : result.rank === 'GHOST' ? 'GHOST IN THE WIRES.' : 'OPERATION COMPLETE.';
+    $('debrief-copy').textContent = result.ending
+      ? result.ending.copy
+      : 'The memory fragment is secure. The city is still listening.';
+    $('debrief-story').textContent = result.ending
+      ? 'Your ending reflects the people you helped, the signals you forged and the attention you drew.'
+      : result.storyReflection || '';
+    $('journey-ledger').textContent = result.ending
+      ? result.ending.journey + ' · Community trust ' + result.ending.communityTrust + ' · Quiet-Net heat ' + result.ending.heat
+      : '';
     $('score-value').textContent = String(result.score).padStart(4, '0');
     $('rank-value').textContent = result.rank;
     $('debrief-time').textContent = fmt(result.time);
@@ -114,6 +121,7 @@ function handleFinish(result) {
     $('next-button').onclick = () => result.hasNext ? start(result.levelIndex + 1) : show('screen-menu');
     show('screen-debrief');
   } else {
+    $('fail-story-reflection').textContent = result.storyReflection || '';
     show('screen-fail');
   }
 }
