@@ -1,11 +1,25 @@
 export const TILE = { FLOOR: 0, WALL: 1, CARPET: 2, METAL: 3, MACHINERY: 4 };
 
+const DEFAULT_PALETTE = {
+  background: '#071521',
+  wall: '#142b3a',
+  wallTop: '#2a4b5d',
+  wallShadow: '#0a1925',
+  floor: '#0c1d2a',
+  carpet: '#142b35',
+  metal: '#1a303c',
+  machinery: '#192d37',
+  neon: '#55e2dc',
+  detail: '#f2b65d'
+};
+
 export class TileMap {
-  constructor(grid, tileSize = 20) {
+  constructor(grid, tileSize = 20, palette = DEFAULT_PALETTE) {
     this.grid = grid;
     this.tileSize = tileSize;
     this.height = grid.length;
     this.width = grid[0].length;
+    this.palette = { ...DEFAULT_PALETTE, ...palette };
   }
 
   cellAtWorld(x, y) {
@@ -62,7 +76,8 @@ export class TileMap {
 
   draw(ctx, time = 0) {
     const size = this.tileSize;
-    ctx.fillStyle = '#050f19';
+    const p = this.palette;
+    ctx.fillStyle = p.background;
     ctx.fillRect(0, 0, this.width * size, this.height * size);
 
     for (let y = 0; y < this.height; y++) {
@@ -73,65 +88,77 @@ export class TileMap {
         const detail = (x * 17 + y * 31) % 11;
 
         if (tile === TILE.WALL) {
-          ctx.fillStyle = '#142b3a';
+          ctx.fillStyle = p.wall;
           ctx.fillRect(px, py, size, size);
-          ctx.fillStyle = '#2a4b5d';
+          ctx.fillStyle = p.wallTop;
           ctx.fillRect(px + 1, py + 1, size - 2, 2);
-          ctx.fillStyle = '#0a1925';
+          ctx.fillStyle = p.wallShadow;
           ctx.fillRect(px + 2, py + 5, size - 4, size - 7);
-          ctx.fillStyle = 'rgba(81,137,153,.12)';
+          ctx.fillStyle = 'rgba(255,255,255,.08)';
           ctx.fillRect(px + 3, py + 7, size - 6, 1);
           if (detail < 3) {
-            ctx.fillStyle = '#35576a';
+            ctx.fillStyle = p.detail;
+            ctx.globalAlpha = 0.45;
             ctx.fillRect(px + 4, py + 12, 2, 2);
             ctx.fillRect(px + 14, py + 12, 2, 2);
+            ctx.globalAlpha = 1;
           }
           if ((x + y) % 5 === 0) {
-            ctx.fillStyle = 'rgba(85,226,220,.12)';
+            ctx.fillStyle = p.neon;
+            ctx.globalAlpha = 0.19;
             ctx.fillRect(px + 4, py + 16, size - 8, 1);
+            ctx.globalAlpha = 1;
           }
           continue;
         }
 
-        const floorColor = tile === TILE.CARPET ? '#142b35'
-          : tile === TILE.METAL ? '#1a303c'
-            : tile === TILE.MACHINERY ? '#192d37' : '#0c1d2a';
+        const floorColor = tile === TILE.CARPET ? p.carpet
+          : tile === TILE.METAL ? p.metal
+            : tile === TILE.MACHINERY ? p.machinery : p.floor;
         ctx.fillStyle = floorColor;
         ctx.fillRect(px, py, size, size);
-        ctx.strokeStyle = 'rgba(62,105,122,.26)';
+        ctx.strokeStyle = 'rgba(255,255,255,.1)';
         ctx.lineWidth = 0.65;
         ctx.strokeRect(px + 0.5, py + 0.5, size - 1, size - 1);
 
         if (tile === TILE.METAL) {
-          ctx.fillStyle = 'rgba(105,160,177,.18)';
+          ctx.fillStyle = 'rgba(255,255,255,.16)';
           ctx.fillRect(px + 3, py + 3, size - 6, 1);
           ctx.fillRect(px + 3, py + size - 4, size - 6, 1);
-          ctx.fillStyle = '#486777';
+          ctx.fillStyle = p.neon;
+          ctx.globalAlpha = 0.7;
           ctx.fillRect(px + 3, py + 3, 2, 2);
           ctx.fillRect(px + size - 5, py + 3, 2, 2);
           ctx.fillRect(px + 3, py + size - 5, 2, 2);
           ctx.fillRect(px + size - 5, py + size - 5, 2, 2);
+          ctx.globalAlpha = 1;
         } else if (tile === TILE.MACHINERY) {
-          const glow = 0.2 + 0.1 * Math.sin(time / 210 + x * 0.7 + y);
-          ctx.fillStyle = 'rgba(242,182,93,' + glow + ')';
+          const glow = 0.3 + 0.18 * Math.sin(time / 210 + x * 0.7 + y);
+          ctx.fillStyle = p.detail;
+          ctx.globalAlpha = glow;
           ctx.fillRect(px + 5, py + 5, 10, 10);
-          ctx.fillStyle = 'rgba(255,219,157,.32)';
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = 'rgba(255,255,255,.48)';
           ctx.fillRect(px + 7, py + 7, 6, 1);
           ctx.fillRect(px + 7, py + 10, 4, 1);
         } else if (tile === TILE.CARPET) {
-          ctx.fillStyle = 'rgba(85,226,220,.13)';
+          ctx.fillStyle = p.neon;
+          ctx.globalAlpha = 0.22;
           for (let k = 4; k < size - 2; k += 5) ctx.fillRect(px + k, py + 4, 1, size - 8);
+          ctx.globalAlpha = 1;
         } else if (detail === 0 || detail === 6) {
-          ctx.fillStyle = 'rgba(85,226,220,.13)';
+          ctx.fillStyle = p.neon;
+          ctx.globalAlpha = 0.38;
           ctx.fillRect(px + 5, py + 5, 2, 2);
           ctx.fillRect(px + 13, py + 13, 2, 2);
+          ctx.globalAlpha = 1;
         }
       }
     }
 
-    // A restrained moving scan passes over the facility without obscuring navigation.
+    // A restrained moving scanline preserves the retro console look without obscuring play.
     const scanY = (time * 0.018) % (this.height * size);
-    ctx.fillStyle = 'rgba(85,226,220,.035)';
+    ctx.fillStyle = 'rgba(255,255,255,.05)';
     ctx.fillRect(0, scanY, this.width * size, 2);
   }
 }
