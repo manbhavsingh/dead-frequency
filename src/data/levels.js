@@ -38,7 +38,7 @@ export const LEVELS = [
     terminalHackTime: 3.2,
     extractionTime: 2.2,
     decoys: 3,
-    jammers: 1,
+    jammers: 0,
     pacing: {
       initialStage: 1,
       initialLabel: 'READ THE PATROL',
@@ -51,7 +51,8 @@ export const LEVELS = [
           label: 'FALSE ECHO',
           restSeconds: 3.5,
           restMessage: 'MAINTENANCE SILENCE — REPOSITION BEFORE THE NEXT SWEEP',
-          releaseMessage: 'LISTENER ONLINE — CAMERAS RESTORED. DIVERT THE SIGNAL.',
+          releaseMessage: 'JAMMER UNLOCKED — LISTENER ONLINE. Q BLINDS THE CAMERA GRID.',
+          grantJammers: 1,
           guards: [1],
           cameras: [0, 1]
         }
