@@ -92,10 +92,11 @@ export class Guard {
     }
 
     if (investigating || chasing) {
-      ctx.font = 'bold 10px monospace';
+      const followingEcho = !chasing && this.machine.attention === 'decoy';
+      ctx.font = followingEcho ? 'bold 7px monospace' : 'bold 10px monospace';
       ctx.textAlign = 'center';
-      ctx.fillStyle = chasing ? '#ff5f66' : '#f2b65d';
-      ctx.fillText(chasing ? '!' : state === 'SEARCH' ? '?' : '!', this.x, this.y - 21);
+      ctx.fillStyle = chasing ? '#ff5f66' : followingEcho ? '#55e2dc' : '#f2b65d';
+      ctx.fillText(chasing ? '!' : followingEcho ? 'ECHO' : state === 'SEARCH' ? '?' : '!', this.x, this.y - (followingEcho ? 25 : 21));
     }
 
     ctx.font = boss ? 'bold 8px monospace' : 'bold 6px monospace';
