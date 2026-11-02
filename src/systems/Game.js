@@ -706,7 +706,7 @@ export class Game {
           const event = this.noises.emit(landing.x, landing.y, 100, 'decoy', 1.2);
           this.decoys.push(new Decoy(landing.x, landing.y, event.id));
           this.sound.play('decoy');
-          this.notify('ECHO OUT · WATCH FOR CYAN TAG');
+          this.notify('ECHO OUT · WATCH FOR CYAN BEACON');
         } else {
           this.notify('NO CLEAR LANDING · TURN TO AIM');
         }
