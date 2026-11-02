@@ -240,6 +240,7 @@ export class StorySystem {
   getBriefing(levelId) {
     const lines = [];
     if (levelId === 1) {
+      lines.push('GHOST // Lucien left me in the Burning Archive. Three memory fragments lead to the Crown of Whispers.');
       lines.push('NIX // The network records movement. It cannot tell who you are trying to save.');
     } else if (levelId === 2) {
       if (this.state.flags.crewEvacuated) {
@@ -265,7 +266,7 @@ export class StorySystem {
   }
 
   getEnvironmentText(levelId) {
-    let line = 'MAINTENANCE LOG // SIX CREW UNACCOUNTED';
+    let line = 'ARCHIVE FIRE // KAEL VEYRIN / WANTED';
     if (levelId === 2) {
       line = this.state.flags.crewEvacuated
         ? 'MARKET WALL // SHELTER ROUTE OPEN'
