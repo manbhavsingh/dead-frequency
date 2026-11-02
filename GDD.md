@@ -9,6 +9,24 @@
 
 In 2094, an automated surveillance network called THE QUIET monitors movement, sound and communication across a sprawling city. Ghost, a signal infiltrator, must recover three encrypted memory fragments from restricted facilities and escape. The defining mechanic is sound manipulation: footsteps and interactions create noise, signal decoys create false points of interest, and the network gradually becomes skeptical of repeated distractions.
 
+## Protagonist — Kael Veyrin / Ghost
+
+Ghost's real name is **Kael Veyrin**, known in the lower districts as **the Ashen Fox**. He grew up in the Ash Quarter beneath Valthorne's corporate towers. His mother, Elira, maintained the city's air recyclers; a ration lockdown denied her treatment, and Kael learned to steal medicine and access codes to keep them alive.
+
+At sixteen, Kael was taken in by **Lucien Blackthorn**, a legendary thief and signal-runner known as the Black Fox. Lucien taught him lock bypass, false identities, silent movement and acoustic misdirection. Kael believed he had found a family.
+
+Seven years before the events of the game, Lucien sent Kael into Valthorne's Municipal Memory Archive to retrieve a sealed witness ledger. The operation was sold in advance. Security shutters trapped Kael inside as the archive purge ignited the lower stacks. Three officials were found dead; forged biometric traces and edited security footage framed Kael for murder and sabotage. Lucien escaped with the real ledger and traded Kael's identity to the authorities for immunity. Kael escaped through a flooded cooling shaft and became a wanted fugitive.
+
+Kael is now seeking the **Crown of Whispers**, a legendary pre-Quiet-Net mnemonic core that preserves raw sensory memories beyond the network's ability to edit or erase them. The three memory fragments recovered in the campaign contain the coordinates and authentication sequence needed to locate it. The Crown's witness record could prove what happened in the Burning Archive and clear Kael's name.
+
+### Motivations and fears
+
+Kael wants to clear his name, expose Lucien and discover who ordered the archive purge. He still sends stolen credits to Ash Quarter shelters under false identities. He fears betrayal, confinement and being powerless when someone needs him. His deepest fear is becoming Lucien: a man who can justify any sacrifice as the price of a perfect plan.
+
+His signature tells are practical rather than heroic: he reads exits before faces, sleeps facing the door, hides fear behind humour and keeps his mother's old maintenance tag. His central conflict is **justice versus revenge**—and whether he can trust anyone without repeating the mistake that destroyed his life.
+
+The in-game **Operative Dossier** makes this backstory available from the main menu and Field Manual. The first mission briefing connects the Burning Archive to the Crown; the final archive decision now determines how the Crown's evidence is released and what it costs.
+
 ## Design pillars
 
 1. **Sound is gameplay:** sound changes enemy decisions, not just the audio mix.
