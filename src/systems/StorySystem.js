@@ -138,6 +138,11 @@ export class StorySystem {
   recordAction(action, amount = 1) {
     if (!(action in this.state.stats)) return;
     this.state.stats[action] += amount;
+
+    // Factions react to the player's habits, not only explicit dialogue picks.
+    if (action === 'diversions') this.state.factions.switchboard += amount * 0.15;
+    if (action === 'detections') this.state.factions.quietNet += amount * 0.25;
+    if (action === 'jammersUsed') this.state.factions.quietNet += amount * 0.35;
     this.persist();
   }
 
@@ -151,7 +156,12 @@ export class StorySystem {
     if (result.won) {
       prior.clears++;
       this.state.stats.missionsCompleted++;
-      if (result.detections === 0) this.state.stats.cleanExtracts++;
+      if (result.detections === 0) {
+        this.state.stats.cleanExtracts++;
+        this.state.factions.residents += 0.25;
+      } else {
+        this.state.factions.quietNet += result.detections * 0.1;
+      }
     } else {
       this.state.stats.failures++;
     }
