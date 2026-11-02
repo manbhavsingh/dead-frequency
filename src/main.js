@@ -178,7 +178,7 @@ window.addEventListener('keydown', event => {
     // release on browsers with different event timing.
     game.paused = true;
     show('screen-pause');
-  } else if (event.key === 'Escape' && game?.paused) {
+  } else if (event.key === 'Escape' && game?.paused && !game.pendingStoryChoice) {
     game.paused = false;
     last = performance.now();
     show('screen-game');
