@@ -2,15 +2,17 @@ import { Input } from './core/Input.js';
 import { Game } from './systems/Game.js';
 import { HUD } from './ui/HUD.js';
 import { SaveManager } from './data/SaveManager.js';
+import { GHOST_DOSSIER } from './data/ghostDossier.js';
 
 const $ = id => document.getElementById(id);
-const screens = ['screen-menu', 'screen-manual', 'screen-game', 'screen-debrief', 'screen-fail', 'screen-pause'];
+const screens = ['screen-menu', 'screen-dossier', 'screen-manual', 'screen-game', 'screen-debrief', 'screen-fail', 'screen-pause'];
 const canvas = $('game-canvas');
 let game = null;
 let raf = 0;
 let last = 0;
 let muted = false;
 let newCampaignRequested = false;
+let dossierReturnScreen = 'screen-menu';
 
 function focusGame() {
   canvas?.focus({ preventScroll: true });
@@ -65,6 +67,61 @@ function show(id) {
 const input = new Input();
 const hud = new HUD();
 const save = new SaveManager();
+
+function addDossierText(parent, tag, className, value) {
+  const element = document.createElement(tag);
+  if (className) element.className = className;
+  element.textContent = value;
+  parent.append(element);
+  return element;
+}
+
+function renderDossier() {
+  const dossier = GHOST_DOSSIER;
+  $('dossier-name').textContent = dossier.name;
+  $('dossier-alias').textContent = dossier.alias;
+  $('dossier-callsign').textContent = dossier.callsign;
+  $('dossier-age').textContent = dossier.age;
+  $('dossier-origin').textContent = dossier.origin;
+  $('dossier-role').textContent = dossier.role;
+  $('dossier-summary').textContent = dossier.summary;
+  $('dossier-tagline').textContent = '"' + dossier.tagline + '"';
+  const status = document.querySelector('.dossier-status');
+  if (status) status.textContent = dossier.status;
+
+  const sections = $('dossier-sections');
+  sections.replaceChildren();
+  dossier.sections.forEach((entry, index) => {
+    const card = document.createElement('article');
+    card.className = 'dossier-card dossier-section' + (index === 2 ? ' dossier-event' : '');
+    addDossierText(card, 'p', 'eyebrow', entry.label);
+    addDossierText(card, 'h3', '', entry.title);
+    addDossierText(card, 'p', 'dossier-body', entry.body);
+    sections.append(card);
+  });
+
+  const traits = $('dossier-traits');
+  traits.replaceChildren();
+  dossier.traits.forEach(trait => addDossierText(traits, 'li', '', trait));
+
+  const relationships = $('dossier-relationships');
+  relationships.replaceChildren();
+  dossier.relationships.forEach(person => {
+    const item = document.createElement('div');
+    item.className = 'dossier-relationship';
+    addDossierText(item, 'strong', '', person.name);
+    addDossierText(item, 'span', '', person.role);
+    addDossierText(item, 'p', '', person.note);
+    relationships.append(item);
+  });
+}
+
+function openDossier(returnScreen) {
+  dossierReturnScreen = returnScreen;
+  show('screen-dossier');
+}
+
+renderDossier();
 
 function start(index = 0) {
   cancelAnimationFrame(raf);
@@ -133,8 +190,15 @@ function fmt(sec) {
 
 $('start-button').addEventListener('click', () => {
   newCampaignRequested = true;
-  show('screen-manual');
+  openDossier('screen-menu');
 });
+$('story-button').addEventListener('click', () => {
+  newCampaignRequested = false;
+  openDossier('screen-menu');
+});
+$('dossier-begin').addEventListener('click', () => show('screen-manual'));
+$('dossier-back').addEventListener('click', () => show(dossierReturnScreen));
+$('manual-dossier').addEventListener('click', () => openDossier('screen-manual'));
 $('controls-button').addEventListener('click', () => {
   newCampaignRequested = false;
   show('screen-manual');
