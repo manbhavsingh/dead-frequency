@@ -45,6 +45,7 @@ export class Game {
     this.actionProgress = 0;
     this.hackNoiseTimer = 0;
     this.disabledRelays = new Set();
+    this.bossAwakened = false;
     this.finished = false;
     this.navTimer = 0;
     this.navPath = [];
@@ -216,7 +217,10 @@ export class Game {
           this.actionProgress = 0;
           this.security.add(7);
           this.sound.play('success');
-          this.notify('MEMORY FRAGMENT SECURED — REACH EXTRACTION');
+          if (this.level.id === 3) this.wakeAntennaZeroBoss();
+          this.notify(this.bossAwakened
+            ? 'MEMORY SECURED — THE CHORUS IS HUNTING YOU. REACH EXTRACTION'
+            : 'MEMORY FRAGMENT SECURED — REACH EXTRACTION');
         }
       } else {
         this.interactProgress = 0;
@@ -250,6 +254,24 @@ export class Game {
     }
     this.interactProgress = 0;
     this.relayProgress = 0;
+  }
+
+  wakeAntennaZeroBoss() {
+    if (this.bossAwakened) return;
+    const warden = this.guards.find(guard => guard.type === 'warden');
+    if (!warden) return;
+
+    this.bossAwakened = true;
+    warden.isBoss = true;
+    warden.machine.lastKnown = { x: this.player.x, y: this.player.y };
+    warden.machine.attention = 'core';
+    warden.machine.attentionTimer = 10;
+    warden.machine.set('INVESTIGATE');
+    warden.suspicion = Math.max(warden.suspicion, 78);
+    this.security.add(14);
+    this.noises.emit(this.player.x, this.player.y, 110, 'core', 1.8);
+    this.sound.play('boss');
+    this.notify('CORE SENTINEL AWAKENED — THE CHORUS IS HUNTING YOUR SIGNAL');
   }
 
   handleActions(input) {
@@ -428,6 +450,11 @@ export class Game {
     if (this.security.alert > 0) {
       ctx.fillStyle = 'rgba(255,45,65,' + (this.security.alert / 100 * 0.055) + ')';
       ctx.fillRect(0, 0, 640, 360);
+    }
+    if (this.bossAwakened) {
+      ctx.fillStyle = '#ff5f66';
+      ctx.font = 'bold 9px monospace';
+      ctx.fillText('CORE SENTINEL // THE CHORUS ACTIVE', 12, 29);
     }
     if (this.player.memory) {
       ctx.fillStyle = '#55e2dc';
