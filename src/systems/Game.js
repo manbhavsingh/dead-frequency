@@ -526,7 +526,12 @@ export class Game {
 
     this.pendingStoryChoice = choice;
     this.paused = true;
-    this.hud.showStoryChoice(choice, optionId => {
+    if (typeof document !== 'undefined' &&
+        document.pointerLockElement &&
+        typeof document.exitPointerLock === 'function') {
+      document.exitPointerLock();
+    }
+    const shown = this.hud.showStoryChoice(choice, optionId => {
       const reaction = this.story.choose(this.level.id, optionId);
       if (!reaction) return;
       this.storyMessage = reaction;
@@ -535,6 +540,10 @@ export class Game {
       this.hud.hideStoryChoice?.();
       this.hud.update(this);
     });
+    if (shown === false) {
+      this.pendingStoryChoice = null;
+      this.paused = false;
+    }
   }
 
   finish(won) {
