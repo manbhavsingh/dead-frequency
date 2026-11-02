@@ -27,7 +27,7 @@ export class Game {
   loadLevel(index) {
     this.levelIndex = index;
     this.level = LEVELS[index];
-    this.map = new TileMap(this.level.makeMap());
+    this.map = new TileMap(this.level.makeMap(), 20, this.level.palette);
     this.player = new Player(this.level.start.x, this.level.start.y);
     this.player.decoys = this.level.decoys;
     this.player.jammers = this.level.jammers;
@@ -141,6 +141,7 @@ export class Game {
     this.hackNoiseTimer -= dt;
     if (this.hackNoiseTimer <= 0) {
       this.noises.emit(this.player.x, this.player.y, noiseIntensity, type, 0.8);
+      this.sound.play('hack');
       this.hackNoiseTimer = 0.88;
     }
   }
