@@ -119,7 +119,7 @@ export class Game {
     this.navDirection = '—';
     this.navDistance = 0;
     this.navLabel = 'SECURITY RELAY';
-    this.interactionHint = 'FOLLOW THE SIGNAL TO YOUR FIRST RELAY';
+    this.interactionHint = 'FOLLOW ROUTE · FIND RELAY';
     this.notify('OPERATION LIVE — SECURITY NETWORK ACTIVE');
   }
 
@@ -299,7 +299,7 @@ export class Game {
 
     if (this.security.alert >= 78 && !this.security.lockdown && !this.highAlertWarned) {
       this.highAlertWarned = true;
-      this.notify('SIGNAL CRITICAL — BREAK LINE OF SIGHT OR SET A FALSE ECHO');
+      this.notify('ALERT HIGH · BREAK SIGHT OR THROW E');
     } else if (this.security.alert < 55) {
       this.highAlertWarned = false;
     }
@@ -308,12 +308,12 @@ export class Game {
       if (!this.lockdownGraceActive && !this.lockdownRescueUsed) {
         this.lockdownGraceActive = true;
         this.lockdownGraceTimer = 3.2;
-        this.notify('LAST TRANSMISSION — BREAK LINE OF SIGHT, THEN USE E OR Q');
+        this.notify('LOCKDOWN · BREAK SIGHT, THEN E OR Q');
       }
 
       if (this.lockdownGraceActive) {
         this.lockdownGraceTimer = Math.max(0, this.lockdownGraceTimer - dt);
-        this.interactionHint = 'LOCKDOWN WINDOW ' + this.lockdownGraceTimer.toFixed(1) + 's — BREAK CONTACT + E / Q';
+        this.interactionHint = 'LAST CHANCE · BREAK SIGHT + E / Q';
         if (this.lockdownGraceTimer <= 0) {
           this.finish(false);
           return;
@@ -404,7 +404,7 @@ export class Game {
       if (distance < cameraRange && Math.abs(delta) < 0.52 &&
           this.map.lineOfSight(x, y, this.player.x, this.player.y)) {
         this.security.add(dt * 15);
-        this.status = 'CAMERA SWEEP — BREAK LINE OF SIGHT OR JAM IT';
+        this.status = 'CAMERA SWEEP · BREAK SIGHT OR JAM';
       }
     }
   }
@@ -442,11 +442,11 @@ export class Game {
 
       this.interactionHint = nearRelay
         ? player.moving
-          ? 'STOP MOVING — HOLD F TO DISABLE RELAY'
+          ? 'STOP MOVING · F TO HACK'
           : input.down('f')
-            ? 'BYPASSING RELAY ' + (nextRelayIndex + 1) + ' — KEEP HOLDING F'
-            : 'HOLD F — DISABLE SECURITY RELAY'
-        : 'DISABLE RELAY ' + (nextRelayIndex + 1) + ' / ' + relays.length + ' BEFORE THE TERMINAL';
+            ? 'HACKING RELAY ' + (nextRelayIndex + 1) + '…'
+            : 'F · DISABLE RELAY'
+        : 'RELAY ' + (nextRelayIndex + 1) + ' / ' + relays.length + ' · FOLLOW ROUTE';
 
       if (nearRelay && input.down('f') && !player.moving) {
         this.relayProgress += dt;
@@ -460,7 +460,7 @@ export class Game {
           player.score += 225;
           this.security.add(5);
           this.sound.play('success');
-          this.notify('SECURITY RELAY ' + this.disabledRelays.size + '/' + relays.length + ' DISABLED');
+          this.notify('RELAY OFFLINE · ' + this.disabledRelays.size + '/' + relays.length);
         }
       } else {
         this.relayProgress = 0;
@@ -477,11 +477,11 @@ export class Game {
       const duration = this.level.terminalHackTime || 3.5;
       this.interactionHint = nearTerminal
         ? player.moving
-          ? 'STOP MOVING — HOLD F TO DOWNLOAD'
+          ? 'STOP MOVING · F TO DOWNLOAD'
           : input.down('f')
-            ? 'DOWNLOADING MEMORY — STAY ON THE TERMINAL'
-            : 'HOLD F — DOWNLOAD MEMORY'
-        : 'ALL RELAYS OFFLINE — FOLLOW NAVIGATION TO THE TERMINAL';
+            ? 'DOWNLOADING MEMORY…'
+            : 'F · DOWNLOAD MEMORY'
+        : 'ALL RELAYS OFFLINE · FIND TERMINAL';
 
       if (input.down('f') && nearTerminal && !player.moving) {
         this.interactProgress += dt;
@@ -498,7 +498,7 @@ export class Game {
           if (this.level.id === 3) this.wakeAntennaZeroBoss();
           this.notify(this.bossAwakened
             ? 'MEMORY SECURED — THE CHORUS IS HUNTING YOU. REACH EXTRACTION'
-            : 'MEMORY FRAGMENT SECURED — REACH EXTRACTION');
+            : 'MEMORY SECURED · REACH EXTRACTION');
           if (this.level.id === 3) this.openStoryChoice('archive');
         }
       } else {
@@ -514,11 +514,11 @@ export class Game {
     const duration = this.level.extractionTime || 2.4;
     this.interactionHint = nearExtraction
       ? player.moving
-        ? 'STOP MOVING — HOLD F TO EXTRACT'
+        ? 'STOP MOVING · F TO EXTRACT'
         : input.down('f')
-          ? 'EXTRACTION IN PROGRESS — HOLD POSITION'
-          : 'HOLD F — COMPLETE EXTRACTION'
-      : 'MEMORY SECURED — REACH THE EXTRACTION ZONE';
+          ? 'EXTRACTING…'
+          : 'F · EXTRACT'
+      : 'MEMORY SECURED · FIND EXTRACTION';
 
     if (input.down('f') && nearExtraction && !player.moving) {
       this.extractProgress += dt;
@@ -549,8 +549,8 @@ export class Game {
       const nearMineral = Math.hypot(player.x - nextMineral.x * 20, player.y - nextMineral.y * 20) < 25;
       if (nearMineral) {
         this.interactionHint = player.moving
-          ? 'STOP MOVING — HOLD F TO HARVEST GLASSITE'
-          : input.down('f') ? 'CUTTING GLASSITE CORE — HOLD POSITION' : 'HOLD F — HARVEST ' + nextMineral.label;
+          ? 'STOP MOVING · F TO HARVEST'
+          : input.down('f') ? 'CUTTING CORE…' : 'F · HARVEST CORE';
         if (input.down('f') && !player.moving) {
           this.sideQuestState.mineralProgress += dt;
           this.actionProgress = Math.min(1, this.sideQuestState.mineralProgress / 1.7);
@@ -562,7 +562,7 @@ export class Game {
             player.score += 220;
             this.security.add(4);
             this.sound.play('success');
-            this.notify('GLASSITE CORE RECOVERED — ' + minerals.size + ' / 3');
+            this.notify('CORE RECOVERED · ' + minerals.size + ' / 3');
             if (minerals.size === 3 && !this.sideQuestState.choiceOpened) {
               this.sideQuestState.choiceOpened = true;
               this.openSideQuestChoice();
@@ -578,8 +578,8 @@ export class Game {
 
     if (nearCache) {
       this.interactionHint = player.moving
-        ? 'STOP MOVING — HOLD F TO COPY THE ROOK LEDGER'
-        : input.down('f') ? 'BYPASSING ROOK LOCKBOX — KEEP HOLDING F' : 'OPTIONAL — HOLD F TO STEAL THE ROOK SURVEY LEDGER';
+        ? 'STOP MOVING · F TO COPY'
+        : input.down('f') ? 'COPYING ROOK LEDGER…' : 'OPTIONAL · F TO COPY ROOK LEDGER';
       if (input.down('f') && !player.moving) {
         this.sideQuestState.cacheProgress += dt;
         this.actionProgress = Math.min(1, this.sideQuestState.cacheProgress / 2.8);
@@ -593,7 +593,7 @@ export class Game {
           player.score += 350;
           this.security.add(6);
           this.sound.play('success');
-          this.notify('ROOK SURVEY LEDGER STOLEN — FINAL LOADOUT PROFILE UNLOCKED');
+          this.notify('ROOK LEDGER COPIED · BONUS UNLOCKED');
         }
       } else {
         this.sideQuestState.cacheProgress = 0;
@@ -604,13 +604,13 @@ export class Game {
 
     if (nearExtraction) {
       if (minerals.size < this.level.minerals.length) {
-        this.interactionHint = 'EXTRACTION LOCKED — GLASSITE CORES ' + minerals.size + ' / 3';
+        this.interactionHint = 'EXTRACTION LOCKED · CORES ' + minerals.size + ' / 3';
         this.status = 'THREE GLASSITE CORES REQUIRED BEFORE EXTRACTION';
         return;
       }
       this.interactionHint = player.moving
         ? 'STOP MOVING — HOLD F TO EXTRACT'
-        : input.down('f') ? 'EXTRACTING GLASSITE — HOLD POSITION' : 'HOLD F — EXTRACT THE GLASSITE';
+        : input.down('f') ? 'EXTRACTING…' : 'F · EXTRACT';
       if (input.down('f') && !player.moving) {
         this.extractProgress += dt;
         this.actionProgress = Math.min(1, this.extractProgress / this.level.extractionTime);
@@ -627,9 +627,9 @@ export class Game {
     this.sideQuestState.mineralProgress = 0;
     this.sideQuestState.cacheProgress = 0;
     this.extractProgress = 0;
-    if (minerals.size < 3) this.interactionHint = 'HARVEST GLASSITE CORES ' + minerals.size + ' / 3 — FOLLOW THE SIGNAL';
-    else if (!this.sideQuestState.surveyRecovered) this.interactionHint = 'OPTIONAL: ROOK SURVEY LEDGER — OR HEAD TO EXTRACTION';
-    else this.interactionHint = 'GLASSITE SECURED — REACH THE EXTRACTION BEACON';
+    if (minerals.size < 3) this.interactionHint = 'GLASSITE ' + minerals.size + ' / 3 · FOLLOW ROUTE';
+    else if (!this.sideQuestState.surveyRecovered) this.interactionHint = 'OPTIONAL · ROOK LEDGER OR EXTRACT';
+    else this.interactionHint = 'CORES SECURED · FIND EXTRACTION';
   }
 
   openSideQuestChoice() {
@@ -637,7 +637,7 @@ export class Game {
       kicker: 'THE SHATTERBELT // GLASSITE CLAIM',
       title: 'WHO GETS THE LAST CORE?',
       speaker: 'NIX + MARA // OPEN CHANNEL',
-      context: 'The Glassite can be refined into better signal gear, turned into a decoy spool for the Ash Quarter, or sold for an immediate payout. The Rook survey ledger is optional, but it contains a second calibration profile for the final operation.',
+      context: 'Choose one Glassite reward. The Rook ledger is optional.',
       options: this.level.rewardOptions.map(({ id, title, detail }) => ({ id, title, detail }))
     };
     if (!this.hud?.showStoryChoice) return;
@@ -706,12 +706,12 @@ export class Game {
           const event = this.noises.emit(landing.x, landing.y, 100, 'decoy', 1.2);
           this.decoys.push(new Decoy(landing.x, landing.y, event.id));
           this.sound.play('decoy');
-          this.notify('ECHO DEPLOYED — WATCH FOR THE CYAN BEACON AND ECHO TAG');
+          this.notify('ECHO OUT · WATCH FOR CYAN TAG');
         } else {
-          this.notify('DECOY BLOCKED — ADJUST YOUR FACING');
+          this.notify('NO CLEAR LANDING · TURN TO AIM');
         }
       } else {
-        this.notify('NO DECOY CHARGES REMAINING');
+        this.notify('NO DECOYS LEFT');
       }
     }
 
@@ -724,10 +724,10 @@ export class Game {
         this.securityDirector.jam(4.5);
         this.noises.emit(this.player.x, this.player.y, 16, 'jam', 0.5);
         this.sound.play('jam');
-        this.notify('SIGNAL JAMMER ACTIVE — CAMERAS BLIND');
+        this.notify('JAMMER ACTIVE · CAMERAS BLIND');
         this.breakLockdown('JAMMER');
       } else {
-        this.notify('JAMMER CHARGES DEPLETED');
+        this.notify('NO JAMMER CHARGES');
       }
     }
   }

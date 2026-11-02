@@ -24,12 +24,12 @@ const CHOICES = {
     kicker: 'DEAD CHANNEL // EMERGENCY FREQUENCY',
     title: 'SIX NAMES ON THE ROSTER',
     speaker: 'MARA — MAINTENANCE LEAD',
-    context: 'The relay holds an evacuation channel. Broadcasting will get the trapped crew out, but the signal will expose your route. Scrubbing the roster hides their identities from Quiet-Net, but leaves them without a coordinated exit.',
+    context: 'Broadcast saves the crew but reveals your route. Scrubbing hides their names, but leaves them scattered.',
     options: [
       {
         id: 'evacuate',
         title: 'BROADCAST THE EVACUATION',
-        detail: 'Save the crew. The Market will be more alert to your arrival.',
+        detail: 'Crew escapes. Market alert rises.',
         factions: { residents: 2, switchboard: 1, quietNet: 1 },
         characters: { mara: 2, nix: 1 },
         flags: { crewEvacuated: true },
@@ -39,7 +39,7 @@ const CHOICES = {
       {
         id: 'scrub',
         title: 'SCRUB THE ROSTER',
-        detail: 'Erase the identities. Quiet-Net loses one camera feed in the Market, but Mara will remember the people left behind.',
+        detail: 'Erase identities. One Market camera is fooled.',
         factions: { residents: -1, switchboard: 2, quietNet: -2 },
         characters: { mara: -1, nix: 2 },
         flags: { rosterScrubbed: true },
@@ -53,12 +53,12 @@ const CHOICES = {
     kicker: 'SILENT MARKET // POWER ROUTING',
     title: 'WHO GETS THE LAST CURRENT?',
     speaker: 'NIX — SWITCHBOARD COURIER',
-    context: 'The second relay can feed the district clinic or the Switchboard uplink. The clinic helps people survive the blackout. The uplink gives Nix a service route into Antenna Zero, but the clinic stays dark.',
+    context: 'Power the clinic to save lives—or the Switchboard to gain a blind route and extra jammer.',
     options: [
       {
         id: 'clinic',
         title: 'POWER THE CLINIC',
-        detail: 'Mara and the residents remember the help. The tower detects the power surge and starts at higher alert.',
+        detail: 'Clinic saved. Antenna Zero starts at higher alert.',
         factions: { residents: 2, switchboard: 0, quietNet: 1 },
         characters: { mara: 2, nix: 0 },
         flags: { clinicPowered: true },
@@ -68,7 +68,7 @@ const CHOICES = {
       {
         id: 'uplink',
         title: 'FEED THE SWITCHBOARD',
-        detail: 'Nix maps a blind service route and gives you another jammer charge. The clinic loses power.',
+        detail: 'Gain a blind route and +1 jammer. Clinic stays dark.',
         factions: { residents: -1, switchboard: 2, quietNet: -1 },
         characters: { mara: -1, nix: 2 },
         flags: { towerUplink: true },
@@ -82,12 +82,12 @@ const CHOICES = {
     kicker: 'ANTENNA ZERO // THE LAST TRANSMISSION',
     title: 'WHO OWNS THE TRUTH?',
     speaker: 'MARA + NIX // OPEN CHANNEL',
-    context: 'The final memory fragment unlocks the Crown of Whispers: an unaltered witness record of the Burning Archive and Lucien Blackthorn’s betrayal. Its archive also contains the identities and locations of people who resisted Quiet-Net. Publish the complete record and clear Kael’s name at the cost of exposing them, or redact civilian coordinates and protect those people while leaving part of the proof sealed.',
+    context: 'Publish the proof and expose every name—or protect civilians and leave part of the truth sealed.',
     options: [
       {
         id: 'publish',
         title: 'PUBLISH THE FULL ARCHIVE',
-        detail: 'Expose Quiet-Net without redaction. The city gets the truth, and the network gets a record of everyone who helped you.',
+        detail: 'Full truth goes public. Every ally is exposed.',
         factions: { residents: 2, switchboard: 2, quietNet: 2 },
         characters: { mara: 1, nix: 1 },
         flags: { archivePublished: true },
@@ -97,7 +97,7 @@ const CHOICES = {
       {
         id: 'redact',
         title: 'REDACT CIVILIAN COORDINATES',
-        detail: 'Protect the people in the archive. The public receives an incomplete account, but Quiet-Net loses the location index.',
+        detail: 'Protect civilians. Public proof remains incomplete.',
         factions: { residents: 1, switchboard: 1, quietNet: -2 },
         characters: { mara: 2, nix: 1 },
         flags: { archiveRedacted: true },

@@ -414,3 +414,48 @@ body.game-active .hud-row,body.game-active .navigation-strip{flex:0 0 auto}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
 }
+
+
+/* Progressive disclosure: essential play info first, deeper lore when requested. */
+.screen-details{
+  margin:12px 0;
+  border:1px solid rgba(133,217,193,.24);
+  background:rgba(9,18,17,.78);
+}
+.screen-details>summary{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  min-height:44px;padding:12px 15px;cursor:pointer;list-style:none;
+  color:var(--cyan);font:600 9px var(--mono);letter-spacing:.12em;
+}
+.screen-details>summary::-webkit-details-marker{display:none}
+.screen-details>summary::after{content:"+";color:var(--amber);font:16px var(--mono)}
+.screen-details[open]>summary::after{content:"−"}
+.screen-details[open]>summary{border-bottom:1px solid rgba(133,217,193,.16)}
+.dossier-highlights{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:10px}
+.dossier-highlight{min-height:145px}
+.dossier-full-sections{padding:12px}
+.dossier-more{margin-top:12px}
+.dossier-more .dossier-bottom-grid{padding:0 12px 12px;margin-top:0}
+.dossier-more .dossier-section{min-height:0}
+.manual-more{margin-top:3px}
+.manual-extra{display:grid;gap:8px;padding:14px 16px}
+.manual-extra p{margin:0;color:#b0bdb1;font:11px/1.6 var(--sans)}
+.manual-extra strong{color:var(--amber);font:600 9px var(--mono)}
+.manual-extra kbd{color:var(--cyan);font:10px var(--mono)}
+.field-comms{margin-top:4px}
+.field-comms summary{
+  width:max-content;cursor:pointer;color:#91b8a6;
+  font:8px var(--mono);letter-spacing:.08em;
+}
+.field-comms[open] summary{color:var(--cyan)}
+.field-comms .story-feed{max-width:100%;margin-top:5px}
+.political-faction-more{margin-top:8px}
+.political-faction-more summary{cursor:pointer;color:#94b6a8;font:8px var(--mono)}
+.political-faction-more p{margin:6px 0 0;color:#aab8ad;font:9px/1.5 var(--sans)}
+.contract-card p:last-child{max-width:42ch}
+@media(max-width:760px){
+  .dossier-highlights{grid-template-columns:1fr}
+  .dossier-highlight{min-height:0}
+  .dossier-full-sections{padding:8px}
+  .dossier-more .dossier-bottom-grid{grid-template-columns:1fr;padding:0 8px 8px}
+}

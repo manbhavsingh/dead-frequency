@@ -84,21 +84,37 @@ function renderDossier() {
   $('dossier-callsign').textContent = dossier.callsign;
   $('dossier-age').textContent = dossier.age;
   $('dossier-origin').textContent = dossier.origin;
-  $('dossier-role').textContent = dossier.role;
-  $('dossier-summary').textContent = dossier.summary;
-  $('dossier-tagline').textContent = '"' + dossier.tagline + '"';
+  $('dossier-role').textContent = 'SIGNAL INFILTRATOR';
+  $('dossier-summary').textContent = 'Framed by his mentor, Ghost is stealing the memories that can clear his name.';
+  $('dossier-tagline').textContent = '"I ran from a lie. Now I’ll steal the truth."';
   const status = document.querySelector('.dossier-status');
-  if (status) status.textContent = dossier.status;
+  if (status) status.textContent = 'WANTED // 5,000 CR';
 
-  const sections = $('dossier-sections');
-  sections.replaceChildren();
-  dossier.sections.forEach((entry, index) => {
+  const highlights = [
+    { label: 'ORIGIN', title: 'ASH QUARTER', body: 'Raised beneath Valthorne’s towers, Kael learned to survive unseen.' },
+    { label: 'THE BETRAYAL', title: 'LUCIEN BLACKTHORN', body: 'His mentor framed him during the Burning Archive purge—and kept the real ledger.' },
+    { label: 'THE TARGET', title: 'CROWN OF WHISPERS', body: 'Three memory fragments could expose the truth and clear Ghost’s name.' }
+  ];
+  const shortGrid = $('dossier-sections');
+  shortGrid.replaceChildren();
+  highlights.forEach(entry => {
     const card = document.createElement('article');
-    card.className = 'dossier-card dossier-section' + (index === 2 ? ' dossier-event' : '');
+    card.className = 'dossier-card dossier-highlight';
     addDossierText(card, 'p', 'eyebrow', entry.label);
     addDossierText(card, 'h3', '', entry.title);
     addDossierText(card, 'p', 'dossier-body', entry.body);
-    sections.append(card);
+    shortGrid.append(card);
+  });
+
+  const fullSections = $('dossier-full-sections');
+  fullSections.replaceChildren();
+  dossier.sections.forEach(entry => {
+    const card = document.createElement('article');
+    card.className = 'dossier-card dossier-section';
+    addDossierText(card, 'p', 'eyebrow', entry.label);
+    addDossierText(card, 'h3', '', entry.title);
+    addDossierText(card, 'p', 'dossier-body', entry.body);
+    fullSections.append(card);
   });
 
   const traits = $('dossier-traits');
@@ -219,8 +235,12 @@ function handleFinish(result) {
 
 function renderPoliticalNetwork() {
   const network = new PoliticalSystem(save).snapshot();
-  $('politics-summary').textContent = network.leader.name + ' currently holds the greatest share of civic influence (' +
-    network.leader.influence + '/100). Political power is contested through alliances, rivalries, trade and public support.';
+  const allianceCount = network.alliances.length;
+  const rivalryCount = network.rivalries.length;
+  $('politics-summary').textContent =
+    network.leader.name + ' leads with ' + network.leader.influence + ' / 100 influence.';
+  $('politics-summary-detail').textContent =
+    allianceCount + ' alliances · ' + rivalryCount + ' rivalries';
 
   const factionGrid = $('political-factions');
   factionGrid.replaceChildren();
@@ -232,15 +252,15 @@ function renderPoliticalNetwork() {
     const heading = document.createElement('div');
     addDossierText(heading, 'p', 'eyebrow', faction.region);
     addDossierText(heading, 'h3', '', faction.name);
-    addDossierText(heading, 'small', '', faction.government);
     top.append(heading);
     const score = document.createElement('strong');
     score.className = 'political-score';
     score.textContent = String(faction.influence).padStart(2, '0');
     top.append(score);
     card.append(top);
-    addDossierText(card, 'p', 'political-leader', 'REPRESENTATION // ' + faction.leadership);
-    addDossierText(card, 'p', 'political-agenda', faction.agenda);
+
+    const agenda = String(faction.agenda || '').split(/[.;]/)[0].trim();
+    addDossierText(card, 'p', 'political-agenda', agenda);
     const meter = document.createElement('div');
     meter.className = 'political-meter';
     const fill = document.createElement('div');
@@ -248,6 +268,15 @@ function renderPoliticalNetwork() {
     meter.append(fill);
     card.append(meter);
     addDossierText(card, 'p', 'political-meter-label', 'INFLUENCE ' + faction.influence + ' / 100');
+
+    const more = document.createElement('details');
+    more.className = 'political-faction-more';
+    const summary = document.createElement('summary');
+    summary.textContent = 'STRUCTURE';
+    const structure = document.createElement('p');
+    structure.textContent = faction.government + ' · ' + faction.leadership;
+    more.append(summary, structure);
+    card.append(more);
     factionGrid.append(card);
   }
 
@@ -272,7 +301,7 @@ function renderPoliticalNetwork() {
   const eventList = $('political-events');
   eventList.replaceChildren();
   if (!network.recentEvents.length) {
-    addDossierText(eventList, 'p', 'political-empty', 'No major accord, rupture or public crisis has been recorded yet.');
+    addDossierText(eventList, 'p', 'political-empty', 'No major changes yet.');
   } else {
     for (const event of network.recentEvents) {
       const item = document.createElement('article');
@@ -282,12 +311,7 @@ function renderPoliticalNetwork() {
       eventList.append(item);
     }
   }
-
-  const alliances = network.alliances.length ? network.alliances.join(' · ') : 'NONE';
-  const rivalries = network.rivalries.length ? network.rivalries.join(' · ') : 'NONE';
-  $('politics-summary-detail').textContent = 'ACTIVE ALLIANCES // ' + alliances + '    |    DECLARED RIVALRIES // ' + rivalries;
 }
-
 function fmt(sec) {
   return String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(Math.floor(sec % 60)).padStart(2, '0');
 }

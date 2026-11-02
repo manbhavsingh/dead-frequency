@@ -67,33 +67,37 @@
 
     <section id="screen-dossier" class="screen dossier-screen hidden" aria-labelledby="dossier-heading">
       <div class="dossier-header">
-        <p class="eyebrow"><span class="eyebrow-line"></span> DECLASSIFIED OPERATIVE FILE // QUIET-NET EYES ONLY</p>
-        <p class="dossier-status">WANTED // FIVE-THOUSAND-CREDIT BOUNTY</p>
+        <p class="eyebrow"><span class="eyebrow-line"></span> OPERATIVE FILE // GHOST</p>
+        <p class="dossier-status">WANTED // 5,000 CR</p>
         <h2 id="dossier-heading"><span id="dossier-name">KAEL VEYRIN</span><br><em id="dossier-alias">THE ASHEN FOX</em></h2>
-        <p id="dossier-summary" class="intro"></p>
+        <p id="dossier-summary" class="intro">Framed by his mentor, Ghost is stealing the memories that can clear his name.</p>
       </div>
       <div class="dossier-meta">
         <div><span>CALLSIGN</span><strong id="dossier-callsign">GHOST</strong></div>
         <div><span>AGE</span><strong id="dossier-age">27</strong></div>
         <div><span>ORIGIN</span><strong id="dossier-origin">ASH QUARTER // VALTHORNE</strong></div>
-        <div><span>ROLE</span><strong id="dossier-role">ROGUE SIGNAL INFILTRATOR</strong></div>
+        <div><span>ROLE</span><strong id="dossier-role">SIGNAL INFILTRATOR</strong></div>
       </div>
-      <div id="dossier-sections" class="dossier-sections"></div>
-      <div class="dossier-bottom-grid">
-        <article class="dossier-card">
-          <p class="eyebrow">FIELD NOTES // PERSONAL HABITS</p>
-          <h3>THE MAN BEHIND THE SIGNAL</h3>
-          <ul id="dossier-traits" class="dossier-traits"></ul>
-        </article>
-        <article class="dossier-card">
-          <p class="eyebrow">KNOWN CONNECTIONS</p>
-          <h3>PEOPLE IN HIS WAKE</h3>
-          <div id="dossier-relationships" class="dossier-relationships"></div>
-        </article>
-      </div>
+      <div id="dossier-sections" class="dossier-sections dossier-highlights"></div>
+      <details class="screen-details dossier-more">
+        <summary>FULL DOSSIER // BACKGROUND & CONNECTIONS</summary>
+        <div id="dossier-full-sections" class="dossier-sections dossier-full-sections"></div>
+        <div class="dossier-bottom-grid">
+          <article class="dossier-card">
+            <p class="eyebrow">FIELD NOTES</p>
+            <h3>THE MAN BEHIND THE SIGNAL</h3>
+            <ul id="dossier-traits" class="dossier-traits"></ul>
+          </article>
+          <article class="dossier-card">
+            <p class="eyebrow">KNOWN CONNECTIONS</p>
+            <h3>PEOPLE IN HIS WAKE</h3>
+            <div id="dossier-relationships" class="dossier-relationships"></div>
+          </article>
+        </div>
+      </details>
       <blockquote id="dossier-tagline" class="dossier-tagline"></blockquote>
       <div class="dossier-actions">
-        <button class="primary-button" id="dossier-begin">CONTINUE TO FIELD MANUAL <span>↗</span></button>
+        <button class="primary-button" id="dossier-begin">CONTINUE <span>↗</span></button>
         <button class="text-button" id="dossier-back">RETURN <span>↩</span></button>
       </div>
     </section>
@@ -103,32 +107,32 @@
         <p class="eyebrow"><span class="eyebrow-line"></span> OPTIONAL CONTRACT // VALTHORNE FRINGE</p>
         <p class="contract-warning">UNREGISTERED SALVAGE ZONE · ROOK TERRITORY</p>
         <h2 id="contract-heading">DUST <span>&</span><br>STATIC.</h2>
-        <p class="intro">A signal storm has exposed a Glassite seam in the Shatterbelt. The rare mineral can bend Quiet-Net signal reflections, but the Rook Scavengers have claimed the site—and Dune Stalkers hunt anything that disturbs the sand.</p>
+        <p class="intro">Three Glassite cores. Two hostile groups. Get in, get out.</p>
       </div>
       <div class="contract-grid">
         <article class="contract-card contract-primary">
           <p class="eyebrow">PRIMARY OBJECTIVE // REQUIRED</p>
           <h3>HARVEST THE GLASSITE</h3>
-          <p>Locate three exposed seams and hold <kbd>F</kbd> to cut each core. The cutter's vibration attracts nearby wildlife and scavengers.</p>
+          <p>Hold <kbd>F</kbd> at three seams. Stay still while cutting.</p>
         </article>
         <article class="contract-card">
           <p class="eyebrow">OPTIONAL OBJECTIVE // BONUS</p>
           <h3>STEAL THE ROOK SURVEY LEDGER</h3>
-          <p>Break into the rival camp lockbox. The ledger contains a calibration profile and proof of a Quiet-Net protection deal. Taking it can break their arrangement. You can still extract without it.</p>
+          <p>Optional: hold <kbd>F</kbd> at the Rook cache for bonus intel.</p>
         </article>
         <article class="contract-card">
           <p class="eyebrow">THREATS // ADAPT</p>
           <h3>DUNE STALKERS + ROOK SCAVENGERS</h3>
-          <p>Stalkers follow sound and movement. Rook lookouts patrol the cache. Use <kbd>E</kbd> to pull them toward false echoes, then cross the opening.</p>
+          <p>Stalkers hear vibration. Rooks guard the cache. <kbd>E</kbd> draws them away.</p>
         </article>
       </div>
       <div class="contract-rewards">
         <p class="eyebrow">EXTRACTION REWARDS // CHOOSE IN THE FIELD</p>
-        <div><strong>SIGNAL LENS</strong><span>+1 jammer charge per campaign operation.</span></div>
-        <div><strong>ECHO SPOOL</strong><span>+1 decoy charge per campaign operation.</span></div>
-        <div><strong>PRIVATE PAYOUT</strong><span>+650 contract points instead of a gear upgrade.</span></div>
-        <div><strong>ROOK TRUCE</strong><span>Broker safe passage and improve relations with the scavenger combine.</span></div>
-        <p class="contract-note">Recovering the optional Rook ledger adds a bonus calibration charge to the final campaign mission and +350 contract points. This contract is separate from the main campaign.</p>
+        <div><strong>SIGNAL LENS</strong><span>+1 jammer each mission.</span></div>
+        <div><strong>ECHO SPOOL</strong><span>+1 decoy each mission.</span></div>
+        <div><strong>PRIVATE PAYOUT</strong><span>+650 points.</span></div>
+        <div><strong>ROOK TRUCE</strong><span>Allied Rooks on a replay.</span></div>
+        <p class="contract-note">Rook ledger: +350 points and a final-mission charge.</p>
       </div>
       <div class="contract-actions">
         <button class="primary-button" id="contract-begin">ENTER THE SHATTERBELT <span>↗</span></button>
@@ -164,16 +168,25 @@
     </section>
 
     <section id="screen-manual" class="screen manual-screen hidden">
-      <div class="section-head"><p class="eyebrow">FIELD MANUAL // 001</p><h2>KNOW YOUR<br><span>FREQUENCIES.</span></h2></div>
+      <div class="section-head"><p class="eyebrow">FIELD MANUAL // QUICK START</p><h2>FIVE KEYS.<br><span>ONE GHOST.</span></h2></div>
       <div class="manual-grid">
-        <article><span class="manual-key">W A S D</span><h3>MOVE</h3><p>Move through the facility. Sprint with <kbd>SHIFT</kbd>; crouch with <kbd>C</kbd> to reduce your sound signature.</p></article>
-        <article><span class="manual-key">E</span><h3>DECOY</h3><p>Throw a false signal 112 pixels in the direction Ghost is facing. The cyan guide previews the landing point: tap a movement direction to aim, then press E. The beacon stays visible while guards travel; a cyan ECHO tag means a guard is following it. Reach 100% Echo Resonance to recover one decoy charge. Vary throw locations—guards remember repeated echoes.</p></article>
-        <article><span class="manual-key">Q</span><h3>JAMMER</h3><p>Unlocks after the first relay in Mission 01. Press Q to blind cameras and mask movement noise for a short time.</p></article>
-        <article><span class="manual-key">F</span><h3>INTERACT</h3><p>Disable every amber SECURITY RELAY in sequence before the DATA terminal unlocks. Hold F while standing still to bypass a relay, download the memory, and complete extraction. Every hack broadcasts your location. Crouch to reduce visibility and noise; use decoys and the jammer to create openings.</p></article>
-        <article><span class="manual-key">ESC</span><h3>PAUSE</h3><p>Pause the operation and release the captured mouse. At lockdown, you get one 3.2-second last-transmission window: break line of sight, then use E or Q. A second lockdown ends the mission.</p></article>
-        <article><span class="manual-key">◉</span><h3>LISTEN</h3><p>Cyan is safe tech. Amber is suspicion. Red means detection. Ripple rings show sound moving through the map. A completed diversion fills Echo Resonance and can refund a decoy.</p></article><article><span class="manual-key">COMMS</span><h3>THE CITY REMEMBERS</h3><p>Relay and archive choices change later equipment and surveillance. Mara, Nix and the factions remember your decisions. Your decoys, detections and clean extractions shape the final transmission. INITIALIZE INFILTRATION begins a fresh story; saved scores and unlocks remain.</p></article><article><span class="manual-key">SIDE OPS</span><h3>DUST AND STATIC</h3><p>Launch the optional Shatterbelt contract from the main menu. Harvest three Glassite cores, evade Dune Stalkers and Rook Scavengers, and decide how the mineral should upgrade your next operations.</p></article><article><span class="manual-key">POLITICS</span><h3>POWER & TREATIES</h3><p>Open POLITICAL NETWORK from the main menu. Mission choices and stealth performance change faction influence and diplomacy. Alliances can break, rivalries can ease, and the balance changes later patrol pressure and equipment support.</p></article>
+        <article><span class="manual-key">W A S D</span><h3>MOVE</h3><p><kbd>SHIFT</kbd> sprint · <kbd>C</kbd> crouch</p></article>
+        <article><span class="manual-key">E</span><h3>FALSE ECHO</h3><p>Throw a signal where Ghost faces.</p></article>
+        <article><span class="manual-key">Q</span><h3>JAM</h3><p>Blind cameras for a short time.</p></article>
+        <article><span class="manual-key">F</span><h3>INTERACT</h3><p>Hold still to hack, harvest or extract.</p></article>
+        <article><span class="manual-key">ESC</span><h3>PAUSE</h3><p>Pause and release the mouse.</p></article>
+        <article><span class="manual-key">◉</span><h3>READ THE SIGNAL</h3><p>Cyan safe · amber suspicion · red detected.</p></article>
       </div>
-      <button class="text-button manual-dossier-link" id="manual-dossier">READ GHOST'S OPERATIVE DOSSIER ↗</button>
+      <details class="screen-details manual-more">
+        <summary>ADVANCED TIPS // OPTIONAL</summary>
+        <div class="manual-extra">
+          <p><strong>Decoys:</strong> Watch for the cyan ECHO tag. Guards remember repeated throw locations. Successful diversions build resonance and can refund a charge.</p>
+          <p><strong>Hacking:</strong> Disable every relay before the memory terminal. Hacks broadcast your position—use cover, decoys and the jammer.</p>
+          <p><strong>Lockdown:</strong> Break line of sight, then use <kbd>E</kbd> or <kbd>Q</kbd> during the final 3.2-second window.</p>
+          <p><strong>Your choices matter:</strong> Mission decisions and stealth habits shift faction influence, patrol pressure and later equipment.</p>
+        </div>
+      </details>
+      <button class="text-button manual-dossier-link" id="manual-dossier">GHOST'S FULL DOSSIER ↗</button>
       <button class="primary-button" id="manual-back">UNDERSTOOD — BEGIN <span>↗</span></button>
     </section>
 
@@ -193,9 +206,9 @@
         <div class="nav-target"><span class="hud-label">OBJECTIVE ROUTE</span><strong id="nav-target">MEMORY TERMINAL</strong></div>
         <div class="nav-direction"><span class="hud-label">NEXT TURN</span><strong id="nav-direction">—</strong></div>
         <div class="nav-distance"><span class="hud-label">STEPS</span><strong id="nav-distance">—</strong></div>
-        <div class="nav-action"><span class="hud-label">FIELD GUIDANCE</span><strong id="interaction-hint">FOLLOW THE SIGNAL TO YOUR OBJECTIVE</strong><small id="story-feed" class="story-feed" aria-live="polite">NIX // The network records movement. It cannot tell who you are trying to save.</small><div class="action-meter"><div id="action-progress-fill"></div></div></div>
+        <div class="nav-action"><span class="hud-label">NEXT ACTION</span><strong id="interaction-hint">FOLLOW ROUTE</strong><details class="field-comms"><summary>COMMS // OPTIONAL</summary><small id="story-feed" class="story-feed" aria-live="polite">NIX // Move quietly. Trust the false echo.</small></details><div class="action-meter"><div id="action-progress-fill"></div></div></div>
       </div>
-      <div class="game-bottomline"><span>WASD MOVE · SHIFT SPRINT · C CROUCH · E DECOY · Q JAMMER · F INTERACT</span><span id="pointer-hint" class="pointer-hint" aria-live="polite">CLICK GAME TO CAPTURE MOUSE · ESC TO RELEASE</span><span id="status-line">NO HOSTILES IN RANGE</span></div>
+      <div class="game-bottomline"><span>WASD MOVE · SHIFT SPRINT · C CROUCH · E ECHO · Q JAM · F USE</span><span id="pointer-hint" class="pointer-hint" aria-live="polite">CLICK GAME TO CAPTURE MOUSE · ESC TO RELEASE</span><span id="status-line">NO HOSTILES IN RANGE</span></div>
       <section id="story-choice" class="story-choice hidden" role="dialog" aria-modal="true" aria-labelledby="story-choice-title">
         <div class="story-choice-card">
           <p class="eyebrow" id="story-choice-kicker">EMERGENCY FREQUENCY</p>
@@ -214,7 +227,7 @@
 
     <section id="screen-debrief" class="screen debrief-screen hidden">
       <p class="eyebrow" id="debrief-kicker">EXTRACTION CONFIRMED</p><h2 id="debrief-title">GHOST<br><span>IN THE WIRES.</span></h2>
-      <p id="debrief-copy" class="intro">The memory fragment is secure. The city is still listening.</p>
+      <p id="debrief-copy" class="intro">Memory secured. The city is listening.</p>
       <p id="debrief-story" class="story-reflection"></p>
       <p id="journey-ledger" class="story-journey"></p>
       <div class="debrief-stats"><div><span>MISSION SCORE</span><strong id="score-value">0000</strong></div><div><span>STEALTH RANK</span><strong id="rank-value">GHOST</strong></div><div><span>TIME</span><strong id="debrief-time">00:00</strong></div><div><span>DETECTIONS</span><strong id="detection-value">0</strong></div></div>
@@ -222,7 +235,7 @@
     </section>
 
     <section id="screen-fail" class="screen debrief-screen hidden">
-      <p class="eyebrow danger-text">QUIET-NET LOCKDOWN</p><h2>SIGNAL<br><span>LOST.</span></h2><p class="intro">QUIET-NET has triangulated your signal. You get one last transmission window to break contact with a decoy or jammer. Vary your decoy locations, watch the guards' reactions, and try a different route.</p><p id="fail-story-reflection" class="story-reflection"></p>
+      <p class="eyebrow danger-text">QUIET-NET LOCKDOWN</p><h2>SIGNAL<br><span>LOST.</span></h2><p class="intro">Break line of sight, then use <kbd>E</kbd> or <kbd>Q</kbd> in your last window. Change your route.</p><p id="fail-story-reflection" class="story-reflection"></p>
       <button class="primary-button" id="retry-button">RETRY OPERATION <span>↻</span></button><button class="text-button" id="fail-menu">RETURN TO MENU</button>
     </section>
 

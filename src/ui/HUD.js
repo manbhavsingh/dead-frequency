@@ -14,7 +14,7 @@ export class HUD {
     const pacingStage = $('pacing-stage');
     if (pacingStage) {
       const stageText = game.isSideQuest
-        ? 'SHATTERBELT · WILDLIFE + ROOK SCAVENGERS'
+        ? 'SHATTERBELT · STALKERS + ROOKS'
         : game.pacingRestActive
           ? 'MAINTENANCE SILENCE · ' + game.pacingRestTimer.toFixed(1) + 's'
           : 'STAGE ' + game.pacingStage + ' / 6 · ' + (game.pacingStageLabel || 'INFILTRATE');
@@ -52,9 +52,9 @@ export class HUD {
     $('nav-direction').textContent = game.navDirection || '—';
     $('nav-distance').textContent = game.navDistance ? String(Math.round(game.navDistance)) : '—';
     $('interaction-hint').textContent = game.isSideQuest
-      ? game.interactionHint || 'FOLLOW THE SIGNAL TO YOUR OBJECTIVE'
+      ? game.interactionHint || 'FOLLOW ROUTE'
       : game.pacingRestActive
-        ? 'SAFE WINDOW — REPOSITION / PLAN · ' + game.pacingRestTimer.toFixed(1) + 's'
+        ? 'SAFE WINDOW · REPOSITION · ' + game.pacingRestTimer.toFixed(1) + 's'
         : game.interactionHint || 'FOLLOW THE SIGNAL TO YOUR OBJECTIVE';
     const storyFeed = $('story-feed');
     if (storyFeed) storyFeed.textContent = game.storyMessage || 'QUIET-NET // NO NEW TRANSMISSION';
