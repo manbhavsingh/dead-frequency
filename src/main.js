@@ -10,6 +10,7 @@ let game = null;
 let raf = 0;
 let last = 0;
 let muted = false;
+let newCampaignRequested = false;
 
 function focusGame() {
   canvas?.focus({ preventScroll: true });
@@ -130,9 +131,19 @@ function fmt(sec) {
   return String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(Math.floor(sec % 60)).padStart(2, '0');
 }
 
-$('start-button').addEventListener('click', () => show('screen-manual'));
-$('controls-button').addEventListener('click', () => show('screen-manual'));
-$('manual-back').addEventListener('click', () => start(0));
+$('start-button').addEventListener('click', () => {
+  newCampaignRequested = true;
+  show('screen-manual');
+});
+$('controls-button').addEventListener('click', () => {
+  newCampaignRequested = false;
+  show('screen-manual');
+});
+$('manual-back').addEventListener('click', () => {
+  if (newCampaignRequested) save.resetStory();
+  newCampaignRequested = false;
+  start(0);
+});
 $('pause-button').addEventListener('click', () => {
   if (!game) return;
   game.paused = true;
