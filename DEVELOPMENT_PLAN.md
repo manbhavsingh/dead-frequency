@@ -17,6 +17,11 @@
 - [x] Build a six-stage difficulty curve with staggered guard/camera waves and short maintenance-silence rest beats.
 - [x] Introduce the jammer after the first relay instead of exposing the full kit at the start.
 - [x] Add a distinct final campaign epilogue after the third extraction.
+- [x] Add persistent player choices, faction standing and character memories across missions.
+- [x] Make choices affect later equipment, alert pressure and camera coverage.
+- [x] Add behavior-reactive comms and environmental inscriptions.
+- [x] Derive the campaign ending from accumulated choices and stealth history.
+- [ ] Playtest branches and endings with separate save states.
 - [ ] Refine level layout and difficulty after playtesting.
 - [ ] Add more readable visual feedback for suspicion and acoustic propagation.
 - [ ] Add optional data caches and more meaningful score breakdown.
