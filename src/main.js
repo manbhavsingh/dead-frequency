@@ -5,31 +5,75 @@ import { SaveManager } from './data/SaveManager.js';
 
 const $ = id => document.getElementById(id);
 const screens = ['screen-menu', 'screen-manual', 'screen-game', 'screen-debrief', 'screen-fail', 'screen-pause'];
-
-function show(id) {
-  screens.forEach(screen => $(screen).classList.toggle('hidden', screen !== id));
-}
-
-const input = new Input();
-const hud = new HUD();
-const save = new SaveManager();
+const canvas = $('game-canvas');
 let game = null;
 let raf = 0;
 let last = 0;
 let muted = false;
 
 function focusGame() {
-  const canvas = $('game-canvas');
   canvas?.focus({ preventScroll: true });
 }
 
+function setPointerHint(locked) {
+  const hint = $('pointer-hint');
+  if (hint) {
+    hint.textContent = locked
+      ? 'MOUSE CAPTURED · ESC TO RELEASE'
+      : 'CLICK GAME TO CAPTURE MOUSE · ESC TO RELEASE';
+  }
+  canvas?.classList.toggle('pointer-locked', locked);
+}
+
+function releaseGamePointer() {
+  if (document.pointerLockElement === canvas && typeof document.exitPointerLock === 'function') {
+    document.exitPointerLock();
+  }
+}
+
+function captureGamePointer() {
+  if (!canvas || !game || game.paused || game.finished) return;
+  focusGame();
+  if (document.pointerLockElement === canvas) return;
+  if (typeof canvas.requestPointerLock !== 'function') {
+    setPointerHint(false);
+    return;
+  }
+
+  try {
+    const request = canvas.requestPointerLock();
+    if (request && typeof request.catch === 'function') {
+      request.catch(() => setPointerHint(false));
+    }
+  } catch {
+    setPointerHint(false);
+  }
+}
+
+document.addEventListener('pointerlockchange', () => {
+  setPointerHint(document.pointerLockElement === canvas);
+});
+document.addEventListener('pointerlockerror', () => setPointerHint(false));
+
+function show(id) {
+  if (id !== 'screen-game') releaseGamePointer();
+  screens.forEach(screen => $(screen).classList.toggle('hidden', screen !== id));
+  document.body.classList.toggle('game-active', id === 'screen-game');
+}
+
+const input = new Input();
+const hud = new HUD();
+const save = new SaveManager();
+
 function start(index = 0) {
   cancelAnimationFrame(raf);
-  game = new Game($('game-canvas'), hud, handleFinish, save);
+  releaseGamePointer();
+  game = new Game(canvas, hud, handleFinish, save);
   game.loadLevel(index);
   game.sound.muted = muted;
   show('screen-game');
   focusGame();
+  setPointerHint(false);
   last = performance.now();
   raf = requestAnimationFrame(loop);
 }
@@ -49,6 +93,7 @@ function loop(now) {
 
 function handleFinish(result) {
   cancelAnimationFrame(raf);
+  releaseGamePointer();
   if (result.won) {
     $('debrief-kicker').textContent = 'EXTRACTION CONFIRMED';
     $('debrief-title').innerHTML = result.rank === 'GHOST'
@@ -70,7 +115,7 @@ function handleFinish(result) {
 }
 
 function fmt(sec) {
-  return `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(Math.floor(sec % 60)).padStart(2, '0')}`;
+  return String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(Math.floor(sec % 60)).padStart(2, '0');
 }
 
 $('start-button').addEventListener('click', () => show('screen-manual'));
@@ -91,6 +136,7 @@ $('resume-button').addEventListener('click', () => {
 $('restart-button').addEventListener('click', () => start(game?.levelIndex || 0));
 $('quit-button').addEventListener('click', () => {
   cancelAnimationFrame(raf);
+  releaseGamePointer();
   game = null;
   show('screen-menu');
 });
@@ -105,19 +151,26 @@ $('sound-toggle').addEventListener('click', () => {
 
 window.addEventListener('keydown', event => {
   if (event.key === 'Escape' && game && !game.finished && !game.paused) {
+    // Escape releases pointer lock in the browser; pausing also guarantees
+    // release on browsers with different event timing.
     game.paused = true;
     show('screen-pause');
   } else if (event.key === 'Escape' && game?.paused) {
     game.paused = false;
-    show('screen-game');
     last = performance.now();
+    show('screen-game');
     focusGame();
   }
 });
 
-$('game-canvas').addEventListener('pointerdown', focusGame);
+canvas?.addEventListener('pointerdown', focusGame);
+canvas?.addEventListener('click', captureGamePointer);
+
+$('game-frame')?.addEventListener('wheel', event => {
+  if (document.pointerLockElement === canvas) event.preventDefault();
+}, { passive: false });
+
 window.addEventListener('resize', () => {
-  const canvas = $('game-canvas');
   if (canvas) canvas.style.imageRendering = 'pixelated';
 });
 
