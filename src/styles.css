@@ -338,3 +338,175 @@ body.game-active .game-topline>div:first-child{gap:4px}
   text-shadow:0 0 18px rgba(85,226,220,.24);
   text-align:center;
 }
+
+
+/* Ghost's biography is presented as a recovered Quiet-Net operative file. */
+.dossier-screen{
+  width:min(1120px,100%);
+  margin-inline:auto;
+  padding:clamp(20px,4vw,48px) 0 34px;
+}
+.dossier-header{
+  position:relative;
+  padding:clamp(20px,4vw,38px);
+  border:1px solid rgba(85,226,220,.3);
+  background:linear-gradient(130deg,rgba(16,44,59,.92),rgba(5,17,29,.96) 72%);
+  overflow:hidden;
+}
+.dossier-header::after{
+  content:"G";
+  position:absolute;
+  right:4%;
+  top:-45px;
+  color:rgba(85,226,220,.055);
+  font:clamp(160px,28vw,300px)/1 var(--pixel),var(--mono);
+  pointer-events:none;
+}
+.dossier-status{
+  position:relative;
+  z-index:1;
+  color:#ff777d;
+  font:9px var(--mono);
+  letter-spacing:.12em;
+}
+.dossier-header h2{
+  position:relative;
+  z-index:1;
+  margin:15px 0 12px;
+  color:#f2f5ee;
+  font:clamp(25px,5vw,48px)/1.28 var(--pixel),var(--mono);
+  letter-spacing:-.04em;
+}
+.dossier-header h2 em{
+  color:#55e2dc;
+  font-style:normal;
+  font-size:.62em;
+}
+.dossier-header .intro{
+  position:relative;
+  z-index:1;
+  max-width:760px;
+  margin:0;
+  color:#bacbd5;
+  font:13px/1.75 var(--mono);
+}
+.dossier-meta{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  margin:12px 0 22px;
+}
+.dossier-meta>div{
+  display:grid;
+  gap:7px;
+  min-width:0;
+  padding:13px;
+  border:1px solid rgba(89,123,155,.36);
+  background:rgba(9,24,39,.88);
+}
+.dossier-meta span{
+  color:#7795a6;
+  font:8px var(--mono);
+  letter-spacing:.1em;
+}
+.dossier-meta strong{
+  color:#f2b65d;
+  font:9px/1.5 var(--mono);
+  overflow-wrap:anywhere;
+}
+.dossier-sections{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.dossier-card{
+  min-width:0;
+  padding:18px;
+  border:1px solid rgba(89,123,155,.34);
+  background:linear-gradient(145deg,rgba(24,44,65,.88),rgba(7,20,33,.95));
+}
+.dossier-card .eyebrow{
+  margin:0 0 10px;
+  color:#55e2dc;
+  font:8px var(--mono);
+  letter-spacing:.12em;
+}
+.dossier-card h3{
+  margin:0 0 10px;
+  color:#f2b65d;
+  font:12px/1.5 var(--pixel),var(--mono);
+}
+.dossier-body{
+  margin:0;
+  color:#bdcbd5;
+  font:11px/1.8 var(--mono);
+}
+.dossier-event{
+  border-color:rgba(255,95,102,.42);
+  background:linear-gradient(145deg,rgba(67,29,42,.66),rgba(7,20,33,.96));
+}
+.dossier-event .eyebrow{color:#ff777d}
+.dossier-event h3{color:#ffb1a4}
+.dossier-bottom-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:10px;
+}
+.dossier-traits{
+  display:grid;
+  gap:8px;
+  margin:0;
+  padding-left:18px;
+  color:#bdcbd5;
+  font:10px/1.6 var(--mono);
+}
+.dossier-traits li::marker{color:#55e2dc}
+.dossier-relationships{display:grid;gap:12px}
+.dossier-relationship{
+  display:grid;
+  gap:3px;
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(89,123,155,.22);
+}
+.dossier-relationship:last-child{padding-bottom:0;border:0}
+.dossier-relationship strong{
+  color:#f2b65d;
+  font:9px var(--pixel),var(--mono);
+}
+.dossier-relationship span{
+  color:#55e2dc;
+  font:8px var(--mono);
+}
+.dossier-relationship p{
+  margin:2px 0 0;
+  color:#aabdc9;
+  font:10px/1.6 var(--mono);
+}
+.dossier-tagline{
+  margin:18px 0;
+  padding:18px 22px;
+  border-left:3px solid #55e2dc;
+  background:rgba(85,226,220,.055);
+  color:#eaf7f3;
+  font:clamp(12px,2vw,16px)/1.7 var(--mono);
+  text-align:center;
+}
+.dossier-actions{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:24px;
+  justify-content:center;
+}
+.manual-dossier-link{
+  display:block;
+  margin:10px 0 16px;
+  color:#55e2dc;
+}
+@media(max-width:760px){
+  .dossier-screen{padding:16px 0 26px}
+  .dossier-meta{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dossier-sections,.dossier-bottom-grid{grid-template-columns:1fr}
+  .dossier-header .intro{font-size:11px}
+}
