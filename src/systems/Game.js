@@ -180,6 +180,7 @@ export class Game {
     this.pacingPendingWave = wave;
     this.pacingStageLabel = 'MAINTENANCE SILENCE';
     this.pacingRestTimer = wave.restSeconds || 0;
+    this.pacingRestDuration = this.pacingRestTimer;
     this.pacingRestActive = this.pacingRestTimer > 0;
 
     // A relay outage briefly blinds the camera network and lets guards reset.
@@ -210,6 +211,7 @@ export class Game {
     for (const index of wave.cameras || []) {
       if (this.cameras[index]) this.cameras[index].enabled = true;
     }
+    if (wave.grantJammers) this.player.jammers += wave.grantJammers;
 
     this.pacingStage = wave.stage;
     this.pacingStageLabel = wave.label || 'SECURITY ESCALATION';
