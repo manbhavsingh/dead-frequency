@@ -216,7 +216,9 @@ export class Game {
       if (this.guards[index]) this.guards[index].enabled = true;
     }
     for (const index of wave.cameras || []) {
-      if (this.cameras[index]) this.cameras[index].enabled = true;
+      if (this.cameras[index] && !this.story?.isCameraDisabledForMission(this.level.id, index)) {
+        this.cameras[index].enabled = true;
+      }
     }
     if (wave.grantJammers) this.player.jammers += wave.grantJammers;
 
