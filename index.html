@@ -47,7 +47,7 @@
         <article><span class="manual-key">E</span><h3>DECOY</h3><p>Throw a signal decoy. Guards investigate the sound's origin, not your current position.</p></article>
         <article><span class="manual-key">Q</span><h3>JAMMER</h3><p>Temporarily disrupt nearby cameras and mask your movement noise.</p></article>
         <article><span class="manual-key">F</span><h3>INTERACT</h3><p>Disable every amber SECURITY RELAY in sequence before the DATA terminal unlocks. Hold F while standing still to bypass a relay, download the memory, and complete extraction. Every hack broadcasts your location. Crouch to reduce visibility and noise; use decoys and the jammer to create openings.</p></article>
-        <article><span class="manual-key">ESC</span><h3>PAUSE</h3><p>Pause the operation. Watch the alert meter: a full lockdown ends the mission.</p></article>
+        <article><span class="manual-key">ESC</span><h3>PAUSE</h3><p>Pause the operation and release the captured mouse. Click the game again to recapture it. A full lockdown ends the mission.</p></article>
         <article><span class="manual-key">◉</span><h3>LISTEN</h3><p>Cyan is safe tech. Amber is suspicion. Red means detection. Ripple rings show sound moving through the map.</p></article>
       </div>
       <button class="primary-button" id="manual-back">UNDERSTOOD — BEGIN <span>↗</span></button>
@@ -55,7 +55,7 @@
 
     <section id="screen-game" class="screen game-screen hidden">
       <div class="game-topline"><div><span class="eyebrow" id="mission-number">MISSION 01</span><strong id="mission-name">DEAD CHANNEL</strong></div><div class="mission-objective" id="objective-text">RECOVER THE MEMORY FRAGMENT</div><button class="pause-button" id="pause-button">Ⅱ PAUSE</button></div>
-      <div class="game-frame"><canvas id="game-canvas" width="640" height="360" tabindex="0" role="application" aria-label="Dead Frequency game area. Focus this area and use WASD or arrow keys to move."></canvas><div class="canvas-vignette"></div><div id="toast" class="toast hidden"></div></div>
+      <div id="game-frame" class="game-frame"><canvas id="game-canvas" width="640" height="360" tabindex="0" role="application" aria-label="Dead Frequency game area. Focus this area and use WASD or arrow keys to move."></canvas><div class="canvas-vignette"></div><div id="toast" class="toast hidden"></div></div>
       <div class="hud-row">
         <div class="hud-block"><span class="hud-label">SIGNAL / ALERT</span><div class="meter"><div id="alert-fill" class="meter-fill"></div></div><span id="alert-label" class="hud-value">QUIET</span></div>
         <div class="hud-block"><span class="hud-label">DECOY CHARGES</span><span id="decoy-count" class="hud-value accent-cyan">03</span></div>
@@ -70,7 +70,7 @@
         <div class="nav-distance"><span class="hud-label">STEPS</span><strong id="nav-distance">—</strong></div>
         <div class="nav-action"><span class="hud-label">FIELD GUIDANCE</span><strong id="interaction-hint">FOLLOW THE SIGNAL TO YOUR OBJECTIVE</strong><div class="action-meter"><div id="action-progress-fill"></div></div></div>
       </div>
-      <div class="game-bottomline"><span>WASD MOVE · SHIFT SPRINT · C CROUCH · E DECOY · Q JAMMER · F INTERACT</span><span id="status-line">NO HOSTILES IN RANGE</span></div>
+      <div class="game-bottomline"><span>WASD MOVE · SHIFT SPRINT · C CROUCH · E DECOY · Q JAMMER · F INTERACT</span><span id="pointer-hint" class="pointer-hint" aria-live="polite">CLICK GAME TO CAPTURE MOUSE · ESC TO RELEASE</span><span id="status-line">NO HOSTILES IN RANGE</span></div>
     </section>
 
     <section id="screen-pause" class="overlay-screen hidden">
