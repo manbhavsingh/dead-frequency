@@ -91,6 +91,31 @@ export class GuardStateMachine {
       return;
     }
 
+    // A disabled relay creates a short maintenance lull: hunters return to
+    // their routes while the camera network is offline.
+    if (game.pacingRestActive) {
+      this.canSeePlayer = false;
+      this.attention = 'none';
+      this.attentionTimer = 0;
+      g.suspicion = Math.max(0, g.suspicion - dt * 24);
+      if (this.state !== STATES.PATROL && this.state !== STATES.RETURN) this.set(STATES.RETURN);
+
+      const routeTarget = g.route[g.routeIndex];
+      if (this.state === STATES.RETURN) {
+        this.moveToward(routeTarget, dt, game);
+        if (routeTarget && Math.hypot(g.x - routeTarget.x * 20, g.y - routeTarget.y * 20) < 10) {
+          this.set(STATES.PATROL);
+        }
+      } else if (routeTarget) {
+        this.moveToward(routeTarget, dt, game);
+        if (Math.hypot(g.x - routeTarget.x * 20, g.y - routeTarget.y * 20) < 8) {
+          g.routeIndex = (g.routeIndex + 1) % g.route.length;
+          this.path = [];
+        }
+      }
+      return;
+    }
+
     const distance = Math.hypot(p.x - g.x, p.y - g.y);
     const angle = Math.atan2(p.y - g.y, p.x - g.x);
     const delta = Math.atan2(Math.sin(angle - g.facing), Math.cos(angle - g.facing));
