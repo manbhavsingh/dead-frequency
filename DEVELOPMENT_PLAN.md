@@ -20,6 +20,9 @@
 - [ ] Refine Warden behaviour and Echo Memory fairness.
 - [ ] Improve pixel-art detail and animation consistency.
 - [ ] Add generated or hand-produced original sound cues.
+- [x] Add a repeatable decoy-diversion → Echo Resonance → decoy-refund progression loop.
+- [x] Add a readable 78% alert warning and one 3.2-second lockdown recovery window per mission.
+- [ ] Playtest the new reward cadence, decoy skepticism and recovery window across all three missions.
 - [ ] Test with a clean browser profile and deploy publicly.
 
 ### P2 — only if time allows
