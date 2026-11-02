@@ -146,7 +146,7 @@ export class Game {
     this.lockdownRescueUsed = true;
 
     for (const guard of this.guards) {
-      if (!guard.enabled || guard.machine.state !== 'CHASE') continue;
+      if (guard.enabled === false || guard.machine.state !== 'CHASE') continue;
       const target = source === 'DECOY' && event
         ? { x: event.x, y: event.y }
         : { x: this.player.x, y: this.player.y };
