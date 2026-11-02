@@ -8,6 +8,7 @@ import { SecurityDirector } from './SecurityDirector.js';
 import { LEVELS } from '../data/levels.js';
 import { SoundSynth } from '../audio/SoundSynth.js';
 import { findPath } from '../ai/Pathfinding.js';
+import { StorySystem } from './StorySystem.js';
 
 const DIRECTIONS = ['E', 'SE', 'S', 'SW', 'W', 'NW', 'N', 'NE'];
 const DECOY_RANGE = 112;
@@ -34,11 +35,15 @@ export class Game {
   loadLevel(index) {
     this.levelIndex = index;
     this.level = LEVELS[index];
+    this.story = new StorySystem(this.saveManager);
+    this.storyMessage = this.story.getBriefing(this.level.id);
+    this.storyModifiers = this.story.missionModifiers(this.level.id);
+    this.storyDetectionCount = 0;
     this.map = new TileMap(this.level.makeMap(), 20, this.level.palette);
     this.player = new Player(this.level.start.x, this.level.start.y);
-    this.player.decoys = this.level.decoys;
-    this.player.maxDecoys = this.level.decoys;
-    this.player.jammers = this.level.jammers;
+    this.player.decoys = this.level.decoys + this.storyModifiers.extraDecoys;
+    this.player.maxDecoys = this.player.decoys;
+    this.player.jammers = this.level.jammers + this.storyModifiers.extraJammers;
     this.pacing = this.level.pacing || {};
     const initialGuards = this.pacing.initialGuards ?? this.level.guards.length;
     const initialCameras = this.pacing.initialCameras ?? (this.level.cameras || []).length;
@@ -49,11 +54,12 @@ export class Game {
     });
     this.cameras = (this.level.cameras || []).map((camera, index) => ({
       ...camera,
-      enabled: index < initialCameras
+      enabled: index < initialCameras && !this.storyModifiers.disabledCameras.includes(index)
     }));
     this.decoys = [];
     this.noises = new NoiseSystem(this.map);
     this.security = new DetectionSystem();
+    this.security.alert = this.storyModifiers.startAlert;
     this.securityDirector = new SecurityDirector();
     this.elapsed = 0;
     this.status = 'NO HOSTILES IN RANGE';
@@ -110,6 +116,7 @@ export class Game {
     if (this.rewardedEchoInvestigations.has(key)) return false;
     this.rewardedEchoInvestigations.add(key);
     this.decoys?.find(decoy => decoy.eventId === eventId)?.markResolved();
+    this.story?.recordAction('diversions');
 
     this.echoDiversions++;
     this.player.score += 85;
@@ -219,6 +226,7 @@ export class Game {
     this.pacingRestTimer = 0;
     this.pacingPendingWave = null;
     this.notify(wave.releaseMessage || 'SECURITY WAVE ACTIVE — ADAPT YOUR ROUTE');
+    this.openStoryChoice('relay');
   }
 
   update(dt, input) {
@@ -231,11 +239,24 @@ export class Game {
       if (guard.enabled) guard.update(dt, this);
     });
     this.security.update(dt, this.guards.filter(guard => guard.enabled));
+    if (this.player.detections > this.storyDetectionCount) {
+      this.story.recordAction('detections', this.player.detections - this.storyDetectionCount);
+      this.storyDetectionCount = this.player.detections;
+    }
+    this.story.recordAlert(this.security.alert);
     this.decoys.forEach(decoy => decoy.update(dt));
     this.decoys = this.decoys.filter(decoy => decoy.age < decoy.life);
     this.updateCameras(dt);
     this.updateInteractions(dt, input);
+    if (this.paused) {
+      this.hud?.update(this);
+      return;
+    }
     this.updatePacing(dt);
+    if (this.paused) {
+      this.hud?.update(this);
+      return;
+    }
     this.updateNavigation(dt);
 
     if (this.security.alert >= 78 && !this.security.lockdown && !this.highAlertWarned) {
@@ -408,6 +429,7 @@ export class Game {
           this.notify(this.bossAwakened
             ? 'MEMORY SECURED — THE CHORUS IS HUNTING YOU. REACH EXTRACTION'
             : 'MEMORY FRAGMENT SECURED — REACH EXTRACTION');
+          if (this.level.id === 3) this.openStoryChoice('archive');
         }
       } else {
         this.interactProgress = 0;
@@ -467,6 +489,7 @@ export class Game {
         const landing = getDecoyLanding(this.player, this.map);
         if (landing.valid) {
           this.player.decoys--;
+          this.story?.recordAction('decoysThrown');
           const event = this.noises.emit(landing.x, landing.y, 100, 'decoy', 1.2);
           this.decoys.push(new Decoy(landing.x, landing.y, event.id));
           this.sound.play('decoy');
@@ -482,6 +505,7 @@ export class Game {
     if (input.pressed('q')) {
       if (this.player.jammers > 0) {
         this.player.jammers--;
+        this.story?.recordAction('jammersUsed');
         this.player.jammerTime = 4.5;
         this.securityDirector.jam(4.5);
         this.noises.emit(this.player.x, this.player.y, 16, 'jam', 0.5);
@@ -494,9 +518,32 @@ export class Game {
     }
   }
 
+  openStoryChoice(trigger) {
+    const choice = this.story?.getChoice(this.level.id, trigger);
+    if (!choice || !this.hud?.showStoryChoice) return;
+
+    this.pendingStoryChoice = choice;
+    this.paused = true;
+    this.hud.showStoryChoice(choice, optionId => {
+      const reaction = this.story.choose(this.level.id, optionId);
+      if (!reaction) return;
+      this.storyMessage = reaction;
+      this.pendingStoryChoice = null;
+      this.paused = false;
+      this.hud.hideStoryChoice?.();
+      this.hud.update(this);
+    });
+  }
+
   finish(won) {
     if (this.finished) return;
     this.finished = true;
+    this.story?.recordMission(this.level.id, {
+      won,
+      detections: this.player.detections,
+      alert: this.security.alert,
+      diversions: this.echoDiversions
+    });
     if (won) {
       const player = this.player;
       const rank = player.detections === 0 && this.security.alert < 35
@@ -507,19 +554,42 @@ export class Game {
         (this.security.alert < 100 ? 250 : 0) +
         Math.max(0, Math.round(300 - this.elapsed * 4));
       this.saveManager?.record(this.level.id, score);
+      const hasNext = this.levelIndex < LEVELS.length - 1;
       this.onFinish({
         won: true,
         score,
         rank,
         time: this.elapsed,
         detections: player.detections,
-        hasNext: this.levelIndex < LEVELS.length - 1,
-        levelIndex: this.levelIndex
+        hasNext,
+        levelIndex: this.levelIndex,
+        storyReflection: this.story?.getMissionReflection(this.level.id),
+        ending: hasNext ? null : this.story?.getEnding()
       });
     } else {
       this.sound.play('fail');
-      this.onFinish({ won: false, levelIndex: this.levelIndex });
+      this.onFinish({
+        won: false,
+        levelIndex: this.levelIndex,
+        storyReflection: this.story?.getMissionReflection(this.level.id)
+      });
     }
+  }
+
+  drawStoryEnvironment(ctx) {
+    const line = this.story?.getEnvironmentText(this.level.id);
+    if (!line) return;
+    ctx.save();
+    ctx.fillStyle = 'rgba(5,15,25,.88)';
+    ctx.fillRect(8, 338, 624, 15);
+    ctx.strokeStyle = 'rgba(85,226,220,.42)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(8.5, 338.5, 623, 14);
+    ctx.font = '7px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#8ddbd7';
+    ctx.fillText(line, 14, 348, 610);
+    ctx.restore();
   }
 
   draw() {
@@ -534,6 +604,7 @@ export class Game {
     });
     this.player.draw(ctx);
     this.drawEffects(ctx);
+    this.drawStoryEnvironment(ctx);
   }
 
   drawObjects(ctx) {
