@@ -95,18 +95,22 @@ function handleFinish(result) {
   cancelAnimationFrame(raf);
   releaseGamePointer();
   if (result.won) {
-    $('debrief-kicker').textContent = 'EXTRACTION CONFIRMED';
-    $('debrief-title').innerHTML = result.rank === 'GHOST'
-      ? 'GHOST<br><span>IN THE WIRES.</span>'
-      : 'OPERATION<br><span>COMPLETE.</span>';
+    $('debrief-kicker').textContent = result.hasNext
+      ? 'EXTRACTION CONFIRMED'
+      : 'FINAL TRANSMISSION // ALL FRAGMENTS SECURED';
+    $('debrief-title').innerHTML = !result.hasNext
+      ? 'THE CITY<br><span>HEARS YOU NOW.</span>'
+      : result.rank === 'GHOST'
+        ? 'GHOST<br><span>IN THE WIRES.</span>'
+        : 'OPERATION<br><span>COMPLETE.</span>';
     $('debrief-copy').textContent = result.hasNext
       ? 'The memory fragment is secure. The city is still listening.'
-      : 'All memory fragments recovered. The truth is no longer buried.';
+      : 'You crossed three sectors, broke the relay chain and carried every memory beyond The Chorus. Quiet-Net is still online—but its secrets are no longer buried.';
     $('score-value').textContent = String(result.score).padStart(4, '0');
     $('rank-value').textContent = result.rank;
     $('debrief-time').textContent = fmt(result.time);
     $('detection-value').textContent = result.detections;
-    $('next-button').textContent = result.hasNext ? 'NEXT OPERATION ↗' : 'VIEW FINAL DEBRIEF ↗';
+    $('next-button').textContent = result.hasNext ? 'NEXT OPERATION ↗' : 'RETURN TO MENU ↗';
     $('next-button').onclick = () => result.hasNext ? start(result.levelIndex + 1) : show('screen-menu');
     show('screen-debrief');
   } else {
