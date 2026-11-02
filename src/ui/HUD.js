@@ -58,7 +58,7 @@ export class HUD {
   showStoryChoice(choice, onChoose) {
     const panel = $('story-choice');
     const options = $('story-choice-options');
-    if (!panel || !options) return;
+    if (!panel || !options) return false;
 
     $('story-choice-kicker').textContent = choice.kicker;
     $('story-choice-title').textContent = choice.title;
@@ -81,6 +81,7 @@ export class HUD {
 
     panel.classList.remove('hidden');
     options.querySelector('button')?.focus();
+    return true;
   }
 
   hideStoryChoice() {
