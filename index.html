@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Silkscreen:wght@400;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="src/styles.css" />
+  <link rel="stylesheet" href="src/ui/redesign.css" />
 </head>
 <body>
   <main class="shell">
@@ -20,30 +21,48 @@
     </header>
 
     <section id="screen-menu" class="screen menu-screen">
-      <div class="menu-copy">
-        <p class="eyebrow"><span class="eyebrow-line"></span> AN UNAUTHORIZED SIGNAL HAS BEEN DETECTED</p>
-        <h1>DEAD<br><span>FREQUENCY</span></h1>
-        <p class="tagline">THE CITY HEARS EVERYTHING.<br><em>MAKE IT HEAR THE WRONG THING.</em></p>
-        <p class="intro">A stealth extraction game about weaponizing sound. Pull guards toward false signals, slip through the opening, sabotage the network, and disappear with its memories.</p>
-        <div class="menu-actions">
-          <button class="primary-button" id="start-button">INITIALIZE NEW STORY <span>↗</span></button>
-          <button class="text-button" id="controls-button">FIELD MANUAL <span>+</span></button>
-          <button class="text-button" id="story-button">GHOST // OPERATIVE DOSSIER <span>↗</span></button>
-          <div class="contract-launch">
-            <button class="text-button" id="sidequest-button">OPTIONAL CONTRACT // DUST AND STATIC <span>↗</span></button>
-            <small id="sidequest-status" class="contract-status">NEW CONTRACT · OPTIONAL · CAMPAIGN PROGRESS UNAFFECTED</small>
+      <div class="menu-hero">
+        <div class="menu-copy">
+          <p class="eyebrow"><span class="eyebrow-line"></span> VALTHORNE CITY AUTHORITY // ARCHIVE 2094</p>
+          <div class="menu-location"><span class="location-pulse"></span> ZONE 07 <span class="location-divider">/</span> UPLINK COMPROMISED</div>
+          <h1>DEAD<br><span>FREQUENCY</span></h1>
+          <p class="tagline">THE CITY HEARS EVERYTHING.<br><em>MAKE IT HEAR THE WRONG THING.</em></p>
+          <p class="intro">In a city ruled by its own surveillance network, sound is your weapon. Forge a false trail, turn the patrol, and steal back the memories they buried.</p>
+          <div class="primary-actions">
+            <button class="primary-button" id="start-button">INITIALIZE NEW STORY <span>↗</span></button>
+            <span class="action-caption">03 OPERATIONS <i></i> 05 POSSIBLE ENDINGS</span>
           </div>
-          <button class="text-button politics-menu-link" id="politics-button">POLITICAL NETWORK // POWER & TREATIES <span>↗</span></button>
+          <div class="menu-signature"><span>OPERATIVE // GHOST</span><span>NO SIGNAL IS SAFE</span></div>
         </div>
-        <div class="menu-foot"><span>BUILD 0.2.0 // SECURITY NETWORK OVERHAUL</span><span>NO SIGNAL IS SAFE</span></div>
+
+        <div class="menu-art" role="img" aria-label="A lone operative watches the surveillance-lit skyline of Valthorne at night.">
+          <img src="assets/ui/valthorne-city.svg" alt="" />
+          <div class="art-topline"><span>QUIET-NET // PUBLIC SURVEILLANCE FEED</span><b><i></i> LIVE</b></div>
+          <div class="art-reticle"><span></span></div>
+          <div class="art-coordinate">CAM 07-B <span>·</span> 31.04.88</div>
+          <div class="art-caption"><strong>VALTHORNE</strong><span>THE CITY NEVER LOOKS AWAY.</span></div>
+          <div class="art-scanline"></div>
+        </div>
       </div>
-      <div class="menu-art" aria-hidden="true">
-        <div class="art-grid"></div><div class="scanline"></div>
-        <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
-        <div class="art-core">◈</div><div class="art-crosshair">+</div>
-        <div class="art-label label-top">QUIET-NET / NODE 07</div><div class="art-label label-bottom">UNREGISTERED MOVEMENT</div>
-        <div class="signal-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-      </div>
+
+      <nav class="menu-actions" aria-label="Operations and intelligence">
+        <button class="text-button menu-tile" id="controls-button" type="button">
+          <span class="tile-index">01</span><span class="tile-copy"><strong>FIELD MANUAL</strong><small>Controls, signals & survival</small></span><span class="tile-arrow">↗</span>
+        </button>
+        <button class="text-button menu-tile" id="story-button" type="button">
+          <span class="tile-index">02</span><span class="tile-copy"><strong>GHOST // DOSSIER</strong><small>Identity, history & contacts</small></span><span class="tile-arrow">↗</span>
+        </button>
+        <div class="contract-launch">
+          <button class="text-button menu-tile" id="sidequest-button" type="button">
+            <span class="tile-index">03</span><span class="tile-copy"><strong> DUST AND STATIC</strong><small>Optional Shatterbelt contract</small></span><span class="tile-arrow">↗</span>
+          </button>
+          <small id="sidequest-status" class="contract-status">NEW CONTRACT · OPTIONAL · CAMPAIGN PROGRESS UNAFFECTED</small>
+        </div>
+        <button class="text-button menu-tile" id="politics-button" type="button">
+          <span class="tile-index">04</span><span class="tile-copy"><strong>POWER & TREATIES</strong><small>Faction influence & diplomacy</small></span><span class="tile-arrow">↗</span>
+        </button>
+      </nav>
+      <div class="menu-foot"><span>BUILD 0.2.0 // SECURITY NETWORK OVERHAUL</span><span>VALTHORNE METROPOLITAN ZONE · 2094</span><span>DESIGNED TO BE HEARD, NOT SEEN</span></div>
     </section>
 
     <section id="screen-dossier" class="screen dossier-screen hidden" aria-labelledby="dossier-heading">

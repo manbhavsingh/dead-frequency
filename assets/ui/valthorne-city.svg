@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" fill="none">
+<defs>
+  <linearGradient id="sky" x1="600" y1="0" x2="600" y2="760" gradientUnits="userSpaceOnUse"><stop stop-color="#1c302d"/><stop offset=".45" stop-color="#172321"/><stop offset="1" stop-color="#080f10"/></linearGradient>
+  <radialGradient id="haze" cx="0" cy="0" r="1" gradientTransform="matrix(470 0 0 360 790 330)" gradientUnits="userSpaceOnUse"><stop stop-color="#a57d53" stop-opacity=".43"/><stop offset="1" stop-color="#a57d53" stop-opacity="0"/></radialGradient>
+  <radialGradient id="tealglow" cx="0" cy="0" r="1" gradientTransform="matrix(360 0 0 280 870 300)" gradientUnits="userSpaceOnUse"><stop stop-color="#82d7bd" stop-opacity=".19"/><stop offset="1" stop-color="#82d7bd" stop-opacity="0"/></radialGradient>
+  <linearGradient id="beam" x1="835" y1="0" x2="835" y2="540" gradientUnits="userSpaceOnUse"><stop stop-color="#e5b174" stop-opacity=".22"/><stop offset="1" stop-color="#e5b174" stop-opacity="0"/></linearGradient>
+  <linearGradient id="building" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#2b4039"/><stop offset="1" stop-color="#101918"/></linearGradient>
+  <pattern id="windows" width="26" height="32" patternUnits="userSpaceOnUse"><rect x="7" y="9" width="3" height="8" fill="#d7b17d" opacity=".58"/><rect x="17" y="9" width="3" height="8" fill="#8cc8b4" opacity=".3"/></pattern>
+  <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M50 0H0V50" stroke="#a9c0b0" stroke-opacity=".11" stroke-width="1"/></pattern>
+  <filter id="glow"><feGaussianBlur stdDeviation="10"/></filter>
+  <filter id="soft"><feGaussianBlur stdDeviation="36"/></filter>
+</defs>
+<rect width="1200" height="760" fill="url(#sky)"/>
+<rect width="1200" height="760" fill="url(#haze)"/>
+<rect width="1200" height="760" fill="url(#tealglow)"/>
+<circle cx="870" cy="210" r="165" fill="#d8a66e" opacity=".055" filter="url(#soft)"/>
+<path d="M0 455 1200 392V760H0V455Z" fill="#0a1111"/>
+<path d="M0 0H1200V760H0Z" fill="url(#grid)" opacity=".48"/>
+<!-- distant spires -->
+<g fill="#172522" stroke="#53665b" stroke-opacity=".28">
+  <path d="M42 507V302l38-42 36 42v205H42Z"/><path d="M123 511V354l31-30 32 30v157h-63Z"/>
+  <path d="M223 496V256l24-47 29 47v240h-53Z"/><path d="M285 505V320l44-55 41 55v185H285Z"/>
+  <path d="M390 492V222l42-36 39 36v270H390Z"/><path d="M491 500V324l31-30 30 30v176H491Z"/>
+  <path d="M600 509V250l57-61 56 61v259H600Z"/><path d="M742 489V294l37-49 35 49v195H742Z"/>
+  <path d="M860 503V184l52-75 52 75v319H860Z"/><path d="M1005 505V312l37-36 38 36v193h-75Z"/>
+  <path d="M1100 510V348l35-40 37 40v162h-72Z"/>
+</g>
+<g fill="url(#windows)" opacity=".6">
+  <path d="M42 302h74v205H42z"/><path d="M123 354h63v157h-63z"/><path d="M223 256h53v240h-53z"/>
+  <path d="M285 320h85v185h-85z"/><path d="M390 222h81v270h-81z"/><path d="M491 324h61v176h-61z"/>
+  <path d="M600 250h113v259H600z"/><path d="M742 294h72v195h-72z"/><path d="M860 184h104v319H860z"/>
+  <path d="M1005 312h75v193h-75z"/><path d="M1100 348h72v162h-72z"/>
+</g>
+<!-- central tower and signal mast -->
+<path d="M770 515V130l38-64 38 64v385H770Z" fill="#253832" stroke="#708779" stroke-opacity=".55"/>
+<path d="M798 66V20M791 31h14M798 44l-15 18M798 44l15 18" stroke="#deb17a" stroke-width="2" stroke-opacity=".65"/>
+<path d="M798 64V478" stroke="#dbb17a" stroke-opacity=".08" stroke-width="22" filter="url(#glow)"/>
+<path d="M798 64 660 538h276L798 64Z" fill="url(#beam)" opacity=".38"/>
+<circle cx="798" cy="65" r="7" fill="#e2b276"/><circle cx="798" cy="65" r="20" stroke="#e2b276" stroke-opacity=".3"/>
+<!-- transit bridge -->
+<path d="M0 570c170-37 308-47 472-34 182 14 374 24 728-32v60c-295 57-541 59-746 45C270 596 132 610 0 649v-79Z" fill="#1b2823" stroke="#728579" stroke-opacity=".24"/>
+<path d="M0 579c202-49 370-40 527-26 236 21 438 10 673-35" stroke="#e2b276" stroke-opacity=".32" stroke-width="2"/>
+<path d="M0 612c220-50 356-44 526-30 250 20 452 8 674-29" stroke="#8ed2b9" stroke-opacity=".18" stroke-width="1"/>
+<!-- rooftop foreground -->
+<path d="M0 654 170 600l138 33 130-28 125 39 104-15 180 42 121-44 232 53v80H0v-106Z" fill="#0a1110"/>
+<path d="m0 654 170-54 138 33 130-28 125 39 104-15 180 42 121-44 232 53" stroke="#53685b" stroke-opacity=".35" stroke-width="2"/>
+<!-- radar arcs -->
+<g stroke="#89d9c0" stroke-opacity=".32">
+  <circle cx="780" cy="343" r="78"/><circle cx="780" cy="343" r="140" stroke-opacity=".18"/><circle cx="780" cy="343" r="204" stroke-opacity=".12"/>
+  <path d="M780 139v408M576 343h408M636 199l288 288M636 487l288-288" stroke-opacity=".11"/>
+  <path d="M780 343 940 236" stroke="#e2b276" stroke-opacity=".64" stroke-dasharray="4 7"/>
+</g>
+<circle cx="780" cy="343" r="5" fill="#e2b276"/>
+<!-- lone operative silhouette -->
+<g transform="translate(530 360)">
+  <ellipse cx="84" cy="298" rx="100" ry="20" fill="#020606" opacity=".65"/>
+  <path d="M47 294 56 183c-4-31 4-69 28-87l29 1c23 24 35 54 32 87l15 110h-40l-14-88-15 88H47Z" fill="#070d0c" stroke="#66796c" stroke-opacity=".62" stroke-width="2"/>
+  <path d="M67 96c0-28 17-48 40-48 27 0 45 19 44 49l-10 35-65 2-9-38Z" fill="#0b1211" stroke="#819486" stroke-opacity=".55" stroke-width="2"/>
+  <path d="M73 91c6-38 61-50 81-3l-7 5c-18-16-45-17-67 2l-7-4Z" fill="#23312b"/>
+  <path d="M61 121 26 165l-11 76 27 7 27-75 13-33M143 122l29 40 29 70-24 10-39-66-10-29" fill="#0a1110" stroke="#65796c" stroke-opacity=".48" stroke-width="2"/>
+  <path d="m26 165-17 37 12 4 17-29M172 162l20 41-9 6-22-34" fill="#131e19"/>
+  <path d="M89 81c10 6 24 6 35-1" stroke="#d4a66d" stroke-opacity=".28" stroke-width="2"/>
+  <path d="M57 190h93" stroke="#89d9c0" stroke-opacity=".18"/>
+</g>
+<!-- analog noise and labels -->
+<g fill="#d5e2d3" font-family="monospace" font-size="10" letter-spacing="2" opacity=".62">
+  <text x="52" y="86">VTH / SURVEILLANCE GRID</text><text x="52" y="102" opacity=".6">AUTOMATED WATCH // NODE 07</text>
+  <text x="1010" y="86">31°04'88"</text><text x="1010" y="102" opacity=".6">VALTHORNE / SECTOR 7</text>
+</g>
+<path d="M50 122h90M50 128h34M1050 122h100M1120 128h30" stroke="#9bc3ad" stroke-opacity=".45"/>
+<rect width="1200" height="760" fill="#07100e" opacity=".12"/>
+<rect x="8" y="8" width="1184" height="744" stroke="#c5d9c9" stroke-opacity=".1"/>
+</svg>
