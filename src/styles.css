@@ -230,3 +230,102 @@ body.game-active .game-frame{
 .pacing-stage-label{color:var(--amber);font:8px var(--pixel),var(--mono);letter-spacing:0;opacity:.9}
 body.game-active .game-topline>div:first-child{gap:4px}
 @media(max-width:760px){.pacing-stage-label{font-size:7px}.game-topline>div:first-child{min-width:0}}
+
+
+/* Player-authored story: memory, choices and world-state inscriptions. */
+.story-feed{
+  display:block;
+  margin-top:3px;
+  color:#83c4c5;
+  font:7px/1.35 var(--mono);
+  opacity:.88;
+  white-space:normal;
+}
+.story-reflection{
+  max-width:680px;
+  margin:8px auto 0;
+  color:#7fe0d7;
+  font:10px/1.6 var(--mono);
+  text-align:center;
+}
+.story-journey{
+  max-width:800px;
+  margin:6px auto 14px;
+  color:#f2b65d;
+  font:8px/1.6 var(--mono);
+  text-align:center;
+}
+.story-choice{
+  position:fixed;
+  z-index:50;
+  inset:0;
+  display:grid;
+  place-items:center;
+  padding:20px;
+  background:rgba(3,9,18,.88);
+  backdrop-filter:blur(5px);
+}
+.story-choice.hidden{display:none}
+.story-choice-card{
+  width:min(620px,100%);
+  max-height:min(90vh,700px);
+  overflow:auto;
+  padding:clamp(20px,4vw,34px);
+  border:2px solid #597b9b;
+  background:linear-gradient(145deg,#14253c,#081522 76%);
+  box-shadow:9px 9px 0 rgba(0,0,0,.5),0 0 38px rgba(85,226,220,.12);
+}
+.story-choice-card h2{
+  margin:8px 0 10px;
+  color:#f3f6ed;
+  font:clamp(17px,3.6vw,25px)/1.35 var(--pixel),var(--mono);
+}
+.story-choice-speaker{
+  margin:0 0 10px;
+  color:#55e2dc;
+  font:9px var(--pixel),var(--mono);
+}
+.story-choice-context{
+  margin:0 0 18px;
+  color:#c1d0dc;
+  font:12px/1.7 var(--mono);
+}
+.story-choice-options{display:grid;gap:10px}
+.story-choice-option{
+  display:grid;
+  gap:7px;
+  width:100%;
+  padding:14px 15px;
+  border:1px solid #536b91;
+  background:rgba(33,53,79,.8);
+  color:#f3f6ed;
+  text-align:left;
+  cursor:pointer;
+  transition:background .15s ease,border-color .15s ease,transform .15s ease;
+}
+.story-choice-option:hover,.story-choice-option:focus-visible{
+  border-color:#55e2dc;
+  background:rgba(37,83,93,.72);
+  outline:none;
+  transform:translateY(-1px);
+}
+.story-choice-option strong{
+  color:#f2b65d;
+  font:10px var(--pixel),var(--mono);
+}
+.story-choice-option span{
+  color:#c1d0dc;
+  font:11px/1.5 var(--mono);
+}
+.story-choice-foot{
+  margin:18px 0 0;
+  color:#8ca3b8;
+  font:8px var(--mono);
+  letter-spacing:.1em;
+}
+@media(max-width:600px){
+  .story-choice{padding:10px}
+  .story-choice-card{padding:17px}
+  .story-choice-option{padding:12px}
+  .story-feed{font-size:6px}
+}
