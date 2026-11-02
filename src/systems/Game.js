@@ -39,8 +39,18 @@ export class Game {
     this.player.decoys = this.level.decoys;
     this.player.maxDecoys = this.level.decoys;
     this.player.jammers = this.level.jammers;
-    this.guards = this.level.guards.map(config => new Guard(config));
-    this.cameras = (this.level.cameras || []).map(camera => ({ ...camera }));
+    this.pacing = this.level.pacing || {};
+    const initialGuards = this.pacing.initialGuards ?? this.level.guards.length;
+    const initialCameras = this.pacing.initialCameras ?? (this.level.cameras || []).length;
+    this.guards = this.level.guards.map((config, index) => {
+      const guard = new Guard(config);
+      guard.enabled = index < initialGuards;
+      return guard;
+    });
+    this.cameras = (this.level.cameras || []).map((camera, index) => ({
+      ...camera,
+      enabled: index < initialCameras
+    }));
     this.decoys = [];
     this.noises = new NoiseSystem(this.map);
     this.security = new DetectionSystem();
@@ -61,6 +71,12 @@ export class Game {
     this.lockdownGraceTimer = 0;
     this.lockdownRescueUsed = false;
     this.highAlertWarned = false;
+    this.pacingStage = this.pacing.initialStage || this.level.id * 2 - 1;
+    this.pacingStageLabel = this.pacing.initialLabel || 'INFILTRATE';
+    this.pacingRestActive = false;
+    this.pacingRestTimer = 0;
+    this.pacingPendingWave = null;
+    this.pacingActivatedWaves = new Set();
     this.finished = false;
     this.navTimer = 0;
     this.navPath = [];
@@ -129,7 +145,7 @@ export class Game {
     this.lockdownRescueUsed = true;
 
     for (const guard of this.guards) {
-      if (guard.machine.state !== 'CHASE') continue;
+      if (!guard.enabled || guard.machine.state !== 'CHASE') continue;
       const target = source === 'DECOY' && event
         ? { x: event.x, y: event.y }
         : { x: this.player.x, y: this.player.y };
@@ -146,18 +162,77 @@ export class Game {
     return true;
   }
 
+  updatePacing(dt) {
+    if (this.pacingRestActive) {
+      this.pacingRestTimer = Math.max(0, this.pacingRestTimer - dt);
+      if (this.pacingRestTimer <= 0) this.releasePacingWave();
+      return;
+    }
+
+    const wave = (this.pacing.waves || []).find(candidate =>
+      !this.pacingActivatedWaves.has(candidate.stage) &&
+      this.disabledRelays.size >= candidate.afterRelays
+    );
+    if (!wave) return;
+
+    this.pacingActivatedWaves.add(wave.stage);
+    this.pacingPendingWave = wave;
+    this.pacingStageLabel = 'MAINTENANCE SILENCE';
+    this.pacingRestTimer = wave.restSeconds || 0;
+    this.pacingRestActive = this.pacingRestTimer > 0;
+
+    // A relay outage briefly blinds the camera network and lets guards reset.
+    if (this.pacingRestActive) {
+      this.securityDirector.jam(this.pacingRestTimer);
+      this.security.alert = Math.max(0, this.security.alert - 12);
+      for (const guard of this.guards) {
+        if (!guard.enabled || guard.machine.state === 'DISABLED') continue;
+        guard.suspicion = Math.min(guard.suspicion, 35);
+        guard.machine.canSeePlayer = false;
+        guard.machine.attention = 'none';
+        guard.machine.attentionTimer = 0;
+        if (guard.machine.state !== 'PATROL') guard.machine.set('RETURN');
+      }
+      this.notify(wave.restMessage || 'MAINTENANCE SILENCE — REPOSITION');
+    } else {
+      this.releasePacingWave();
+    }
+  }
+
+  releasePacingWave() {
+    const wave = this.pacingPendingWave;
+    if (!wave) return;
+
+    for (const index of wave.guards || []) {
+      if (this.guards[index]) this.guards[index].enabled = true;
+    }
+    for (const index of wave.cameras || []) {
+      if (this.cameras[index]) this.cameras[index].enabled = true;
+    }
+
+    this.pacingStage = wave.stage;
+    this.pacingStageLabel = wave.label || 'SECURITY ESCALATION';
+    this.pacingRestActive = false;
+    this.pacingRestTimer = 0;
+    this.pacingPendingWave = null;
+    this.notify(wave.releaseMessage || 'SECURITY WAVE ACTIVE — ADAPT YOUR ROUTE');
+  }
+
   update(dt, input) {
     if (this.paused || this.finished) return;
     this.elapsed += dt;
     this.player.update(dt, input, this.map, this);
     this.noises.update(dt);
     this.securityDirector.update(dt);
-    this.guards.forEach(guard => guard.update(dt, this));
-    this.security.update(dt, this.guards);
+    this.guards.forEach(guard => {
+      if (guard.enabled) guard.update(dt, this);
+    });
+    this.security.update(dt, this.guards.filter(guard => guard.enabled));
     this.decoys.forEach(decoy => decoy.update(dt));
     this.decoys = this.decoys.filter(decoy => decoy.age < decoy.life);
     this.updateCameras(dt);
     this.updateInteractions(dt, input);
+    this.updatePacing(dt);
     this.updateNavigation(dt);
 
     if (this.security.alert >= 78 && !this.security.lockdown && !this.highAlertWarned) {
@@ -228,6 +303,7 @@ export class Game {
   updateCameras(dt) {
     if (this.securityDirector.isJammed()) return;
     for (const camera of this.cameras) {
+      if (!camera.enabled) continue;
       const x = camera.x * 20;
       const y = camera.y * 20;
       const distance = Math.hypot(this.player.x - x, this.player.y - y);
@@ -450,7 +526,9 @@ export class Game {
     this.drawObjects(ctx);
     this.noises.draw(ctx);
     this.decoys.forEach(decoy => decoy.draw(ctx));
-    this.guards.forEach(guard => guard.draw(ctx));
+    this.guards.forEach(guard => {
+      if (guard.enabled) guard.draw(ctx);
+    });
     this.player.draw(ctx);
     this.drawEffects(ctx);
   }
@@ -525,6 +603,7 @@ export class Game {
     ctx.restore();
 
     for (const camera of this.cameras) {
+      if (!camera.enabled) continue;
       const x = camera.x * 20;
       const y = camera.y * 20;
       const direction = this.cameraDirection(camera);
