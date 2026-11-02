@@ -59,8 +59,8 @@ export class GuardStateMachine {
         g.suspicion = Math.max(g.suspicion, 28);
         this.attention = 'decoy';
         if (this.state !== STATES.CHASE || !this.canSeePlayer) this.set(STATES.INVESTIGATE);
-        game.onDecoyAccepted?.(g, event);
         game.notify('DECOY HEARD — GUARD INVESTIGATING');
+        game.onDecoyAccepted?.(g, event);
       } else {
         this.attention = 'skeptical';
         g.suspicion = Math.max(g.suspicion, 18);
