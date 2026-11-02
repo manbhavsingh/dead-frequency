@@ -11,6 +11,13 @@ export class HUD {
 
     $('mission-number').textContent = 'MISSION ' + pad(level.id);
     $('mission-name').textContent = level.name;
+    const pacingStage = $('pacing-stage');
+    if (pacingStage) {
+      const stageText = game.pacingRestActive
+        ? 'MAINTENANCE SILENCE · ' + game.pacingRestTimer.toFixed(1) + 's'
+        : 'STAGE ' + game.pacingStage + ' / 6 · ' + (game.pacingStageLabel || 'INFILTRATE');
+      pacingStage.textContent = stageText;
+    }
     $('objective-text').textContent = player.memory
       ? 'REACH EXTRACTION'
       : relayCount < relayTotal
@@ -34,10 +41,16 @@ export class HUD {
     $('nav-target').textContent = game.navLabel || 'OBJECTIVE';
     $('nav-direction').textContent = game.navDirection || '—';
     $('nav-distance').textContent = game.navDistance ? String(Math.round(game.navDistance)) : '—';
-    $('interaction-hint').textContent = game.interactionHint || 'FOLLOW THE SIGNAL TO YOUR OBJECTIVE';
+    $('interaction-hint').textContent = game.pacingRestActive
+      ? 'SAFE WINDOW — REPOSITION / PLAN · ' + game.pacingRestTimer.toFixed(1) + 's'
+      : game.interactionHint || 'FOLLOW THE SIGNAL TO YOUR OBJECTIVE';
     const progress = $('action-progress-fill');
-    progress.style.width = Math.round((game.actionProgress || 0) * 100) + '%';
-    progress.style.opacity = game.actionProgress > 0 ? '1' : '0.22';
+    const restProgress = game.pacingRestActive && game.pacingRestDuration
+      ? game.pacingRestTimer / game.pacingRestDuration
+      : null;
+    const progressValue = restProgress == null ? (game.actionProgress || 0) : restProgress;
+    progress.style.width = Math.round(progressValue * 100) + '%';
+    progress.style.opacity = progressValue > 0 ? '1' : '0.22';
   }
 
   toast(text) {
