@@ -67,6 +67,34 @@ Each guard records recent decoy locations for a short time window. Repeated use 
 
 States: PATROL, SUSPICIOUS, INVESTIGATE, SEARCH, CHASE, RETURN and DISABLED. Enemies use line-of-sight, hearing fields and grid pathfinding. They should pursue the last known player position after losing sight rather than tracking the player's live coordinates through walls.
 
+## Player-driven story memory
+
+The campaign treats misinformation as both the player's survival tool and the city's shared memory. Ghost does not select a morality score at the end: the player makes operational choices under pressure, factions remember those choices, and observed play style becomes part of the story.
+
+### Meaningful decisions
+
+| Moment | Choice A | Choice B | Ripple into the next mission |
+|---|---|---|---|
+| Dead Channel relay | Broadcast an evacuation pulse | Scrub the maintenance roster | Evacuation earns one extra Market decoy but raises its starting alert; scrubbing hides a Market camera and costs resident trust |
+| Silent Market relay | Power the district clinic | Feed the Switchboard uplink | Clinic power raises Antenna Zero's starting alert; the uplink grants one extra jammer and keeps a tower camera blind |
+| Antenna Zero archive | Publish the full archive | Redact civilian coordinates | Changes faction trust, named-character memories and the criteria for the campaign epilogue |
+
+The choices are deliberately operational rather than abstract dialogue. Each option explains the immediate human cost and the later mechanical consequence before the player commits.
+
+### Factions and remembered characters
+
+Three persistent factions track standing: **Residents**, **Switchboard** and **Quiet-Net**. Two named characters carry personal memory: **Mara**, the maintenance lead, and **Nix**, the Switchboard courier. They react to saved choices when a later mission begins. Quiet-Net also adapts its comms to the player's recorded detections and successful decoy diversions.
+
+The story state survives the transition between missions in the existing local save. It records choices, faction values, character trust, diversions, decoys thrown, jammer use, visual detections, clean extractions, mission failures and peak alert. Replaying a mission does not silently erase a prior decision.
+
+### Consequences and environmental storytelling
+
+Past choices can alter starting equipment, starting alert and camera coverage in later missions. The game also draws a changing diegetic inscription into the environment: shelter route open, camera loop, clinic grid online, Switchboard route mapped, the echo walked here, or Quiet-Net knows your shape. These messages respond both to branch choices and to the player's accumulated behavior.
+
+### Journey-based endings
+
+The final archive choice is only one input into the ending. The ending resolver also evaluates faction standing, Mara and Nix's trust, completed diversions, visual detections and peak alert. Outcomes include **The Open Frequency**, **The Ghost Protocol**, **Quiet-Net Remembers**, **The Choir of Echoes** and **A City in Static**. The debrief shows a compact journey ledger so the player can see which behaviors and relationships shaped the outcome.
+
 ## Missions
 
 ### 01 — Dead Channel
