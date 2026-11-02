@@ -43,7 +43,7 @@ Alert is readable as a rising signal-integrity meter. At 78%, the game warns the
 - Shift: sprint; movement is faster but louder.
 - C: crouch; movement is slower and suppresses movement noise.
 - E: deploy a limited signal decoy ahead of the player.
-- Q: activate a limited jammer charge; temporarily disrupt cameras and mask player movement noise.
+- Q: activate a limited jammer charge; temporarily disrupt cameras and mask player movement noise. Q is unlocked after the first relay in Dead Channel; later missions start with jammer charges.
 - F: hold to hack a terminal or complete extraction.
 - Escape: pause / resume.
 
@@ -81,15 +81,32 @@ An underground commercial district introduces multiple guards, a Listener, camer
 
 The central surveillance tower combines patrol guards, a Listener, a Warden, cameras, limited jammer resources and the final extraction. After the memory download, the Warden awakens as The Chorus. Expected playtime: 4–5 minutes.
 
-## Full-session progression
+## Six-stage difficulty progression
 
-The complete three-mission run is designed for roughly **9–12 minutes**:
+The complete campaign targets **9–12 minutes** across three short missions. The difficulty curve is built around new decisions, not simply faster enemies or bigger detection numbers.
 
-1. **Learn (2–3 min):** Dead Channel teaches the player to read a patrol, place one false echo, exploit a completed diversion, bypass a relay and extract.
-2. **Combine (3–4 min):** The Silent Market adds a second relay, more guards, cameras and mixed acoustic surfaces. Multiple guards responding to one well-placed decoy can build Resonance faster, so placement and timing matter more.
-3. **Master (4–5 min):** Antenna Zero layers three relays, a Warden and The Chorus encounter on top of the established loop. The player must manage limited tools during the longer escape after downloading the memory.
+| Stage | Mission / beat | What changes | Intended lesson |
+|---|---|---|---|
+| **1 — Read the patrol** | Dead Channel opening | One patrol guard, no cameras, three decoys, no jammer yet | Learn movement noise, crouch, sprint, line of sight and a first diversion without overlapping threats |
+| **2 — False echo** | Dead Channel after relay 01 | A 3.5-second maintenance lull; then the Listener and camera grid activate and the player earns the first jammer charge | Use the diversion to create a route, then learn that Q can counter surveillance |
+| **3 — Read the crowd** | Silent Market opening | Two active guards, one camera, two relays and mixed acoustic surfaces | Carry the basic skill into a busier space; use walls, carpet and metal to shape sound |
+| **4 — Crossing signals** | Silent Market after relay 01 | A 5-second maintenance lull; then the third guard and remaining cameras join the encounter | Plan a decoy that can pull multiple guards and time a jammer around a camera lane |
+| **5 — Final approach** | Antenna Zero opening | Two guards and two cameras active while the player works through the first two of three relays | Combine decoys, crouching, route choice and resource management under sustained pressure |
+| **6 — The Chorus** | Antenna Zero after relay 02 | A 6-second maintenance lull; then the Warden, final patrol and full camera grid activate. Downloading the memory wakes The Chorus for the extraction run | Prove mastery of the whole sound-stealth system during the final relay, terminal and escape |
 
-Each mission starts with its own loadout and Resonance meter; the player's learning carries forward, while mission resources reset. Best scores and mission unlocks persist between runs.
+### Starting and ending abilities
+
+The player begins with movement, crouch, sprint and **three decoys**. The jammer is deliberately withheld until the first relay is bypassed in Dead Channel. Later missions provide the fuller loadout (four decoys and two jammer charges), while Echo Resonance can refund decoys when a guard completes an investigation. The ending therefore tests a larger tactical vocabulary: preview a throw, choose a distinct sound origin, earn a diversion, jam a camera lane, manage alert and escape.
+
+### Rest beats
+
+Each relay milestone that opens a new threat wave also triggers a brief **maintenance silence**. The disabled relay interrupts the camera network, active guards abandon an immediate hunt and return to their routes, and alert drops slightly. The rest window lasts 3.5 seconds in Dead Channel, 5 seconds in the Market and 6 seconds in Antenna Zero. It is a short systems outage rather than a permanent safe room: it gives the player time to reposition and read the next threat, then the next wave activates.
+
+### Spike and ending
+
+The difficulty spike is the final Antenna Zero sequence: all relays are disabled, the memory terminal is used, and The Chorus wakes while the player still has to reach extraction. It combines patrol routing, the Listener's hearing, camera sweeps, limited tools, decoy skepticism and the alert meter. The final debrief is distinct from the earlier mission cards: it acknowledges that Ghost crossed all three sectors and escaped The Chorus with every memory, without falsely claiming that the entire Quiet-Net has been destroyed.
+
+Mission resources reset between operations; player knowledge, saved best scores and mission unlocks persist.
 
 ## Scoring
 
