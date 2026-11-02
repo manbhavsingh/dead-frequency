@@ -539,3 +539,53 @@ body.game-active .game-topline>div:first-child{gap:4px}
 .contract-note{margin:2px 0 0;color:#9db0ae;font:9px/1.65 var(--mono)}
 .contract-actions{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:24px;margin-top:20px}
 @media(max-width:760px){.contract-grid{grid-template-columns:1fr}.contract-screen{padding:20px 0}.contract-header .intro{font-size:11px}.contract-header h2{font-size:42px}.contract-actions{gap:12px}}
+
+
+/* Living political network: influence and diplomatic status are persisted game state. */
+.politics-screen{width:min(1120px,100%);margin-inline:auto;padding:clamp(22px,4vw,48px) 0 38px}
+.politics-header{padding:clamp(20px,4vw,36px);border:1px solid rgba(85,226,220,.3);background:linear-gradient(135deg,rgba(16,44,59,.94),rgba(5,17,29,.97) 78%)}
+.politics-header h2{margin:16px 0 12px;color:#f2f5ee;font:clamp(28px,5vw,48px)/1.15 var(--pixel),var(--mono)}
+.politics-header h2 span{color:var(--cyan)}
+.politics-header .intro{max-width:800px;margin:0;color:#bdcbd5;font:12px/1.8 var(--mono)}
+.politics-summary-detail{margin:13px 0 0;color:#f2b65d;font:8px/1.7 var(--mono);overflow-wrap:anywhere}
+.politics-section-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:22px 0 9px}
+.politics-section-head .eyebrow{margin:0;font:9px var(--pixel),var(--mono)}
+.politics-section-head>span{color:#78909b;font:8px var(--mono);text-align:right}
+.political-factions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.political-faction{min-width:0;padding:17px;border:1px solid rgba(89,123,155,.35);background:linear-gradient(145deg,rgba(20,42,60,.94),rgba(7,20,33,.98))}
+.political-faction-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.political-faction-top .eyebrow{margin:0 0 9px;color:#8eb3c0;font:8px var(--mono)}
+.political-faction h3{margin:0 0 6px;color:#f0f4eb;font:11px/1.5 var(--pixel),var(--mono)}
+.political-faction-top small{display:block;color:#849ba9;font:9px/1.5 var(--mono)}
+.political-score{color:var(--cyan);font:24px var(--pixel),var(--mono)}
+.political-leader{margin:12px 0 5px;color:#f2b65d;font:8px/1.5 var(--mono)}
+.political-agenda{min-height:34px;margin:0;color:#aebfc8;font:10px/1.65 var(--mono)}
+.political-meter{height:6px;margin-top:13px;background:#182e3a;overflow:hidden}
+.political-meter>div{height:100%;background:linear-gradient(90deg,#55e2dc,#f2b65d);box-shadow:0 0 10px rgba(85,226,220,.28)}
+.political-meter-label{margin:5px 0 0;color:#8299a5;font:7px var(--mono);text-align:right}
+.faction-amber .political-score{color:#f2b65d}
+.faction-red .political-score{color:#ff777d}
+.faction-orange .political-score{color:#e9a071}
+.political-relations{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.political-relation{display:flex;justify-content:space-between;align-items:center;gap:10px;min-width:0;padding:12px;border:1px solid rgba(89,123,155,.3);background:rgba(9,24,37,.88)}
+.political-relation-names{display:flex;align-items:center;flex-wrap:wrap;gap:5px;min-width:0}
+.political-relation-names strong{color:#dbe7e8;font:8px/1.4 var(--mono)}
+.political-relation-names span{color:#8299a5;font:9px var(--mono)}
+.political-relation-status{flex:0 0 auto;font:8px var(--pixel),var(--mono);text-align:right}
+.relation-alliance{border-color:rgba(85,226,220,.42)}
+.relation-alliance .political-relation-status{color:#55e2dc}
+.relation-rivalry{border-color:rgba(255,95,102,.4)}
+.relation-rivalry .political-relation-status{color:#ff777d}
+.relation-friction .political-relation-status{color:#f2b65d}
+.relation-pragmatic .political-relation-status{color:#aebfc8}
+.political-events{display:grid;gap:7px}
+.political-event{padding:13px 15px;border-left:2px solid #597b9b;background:rgba(9,24,37,.88)}
+.political-event strong{color:#f2b65d;font:8px/1.5 var(--pixel),var(--mono)}
+.political-event p{margin:6px 0 0;color:#aebfc8;font:10px/1.65 var(--mono)}
+.political-empty{margin:0;padding:14px;color:#8299a5;font:10px var(--mono)}
+.politics-actions{display:flex;justify-content:center;margin-top:22px}
+.politics-menu-link{color:#55e2dc}
+@media(max-width:760px){.political-factions,.political-relations{grid-template-columns:1fr}.politics-section-head{align-items:flex-start;flex-direction:column}.politics-section-head>span{text-align:left}.political-agenda{min-height:0}}
+
+.political-legend{display:flex;gap:8px 18px;flex-wrap:wrap;margin-top:9px;color:#8da2ad;font:7px/1.5 var(--mono)}
+.political-legend span{padding:5px 8px;border:1px solid rgba(89,123,155,.25);background:rgba(9,24,37,.65)}

@@ -10,6 +10,7 @@ import { SoundSynth } from '../audio/SoundSynth.js';
 import { findPath } from '../ai/Pathfinding.js';
 import { StorySystem } from './StorySystem.js';
 import { SIDE_QUEST, getSideQuestLoadoutBonus } from '../data/sideQuest.js';
+import { PoliticalSystem } from './PoliticalSystem.js';
 
 const DIRECTIONS = ['E', 'SE', 'S', 'SW', 'W', 'NW', 'N', 'NE'];
 const DECOY_RANGE = 112;
@@ -38,16 +39,22 @@ export class Game {
     this.level = levelOverride || LEVELS[index];
     this.isSideQuest = Boolean(this.level.isSideQuest);
     this.story = new StorySystem(this.saveManager);
+    this.politics = new PoliticalSystem(this.saveManager);
+    this.politicalModifiers = this.politics.missionModifiers(this.level.id, this.isSideQuest);
     this.storyModifiers = this.isSideQuest
       ? { extraDecoys: 0, extraJammers: 0, startAlert: 0, disabledCameras: [] }
       : this.story.missionModifiers(this.level.id);
+    this.storyModifiers.extraDecoys += this.politicalModifiers.extraDecoys;
+    this.storyModifiers.extraJammers += this.politicalModifiers.extraJammers;
+    this.storyModifiers.startAlert += this.politicalModifiers.startAlert;
     const savedQuest = this.saveManager?.load?.()?.sideQuest || {};
     if (!this.isSideQuest) {
       const gearBonus = getSideQuestLoadoutBonus(savedQuest, this.level.id);
       this.storyModifiers.extraDecoys += gearBonus.extraDecoys;
       this.storyModifiers.extraJammers += gearBonus.extraJammers;
     }
-    this.storyMessage = this.isSideQuest ? this.level.briefing : this.story.getBriefing(this.level.id);
+    this.storyMessage = (this.isSideQuest ? this.level.briefing : this.story.getBriefing(this.level.id)) + '  |  ' +
+      this.politics.getFieldBriefing(this.level.id, this.isSideQuest);
     this.sideQuestState = this.isSideQuest ? {
       minerals: new Set(),
       mineralProgress: 0,
@@ -67,6 +74,10 @@ export class Game {
     const initialCameras = this.pacing.initialCameras ?? (this.level.cameras || []).length;
     this.guards = this.level.guards.map((config, index) => {
       const guard = new Guard(config);
+      if (this.isSideQuest && config.type === 'scavenger') {
+        guard.visionRange *= this.politicalModifiers.scavengerAwareness;
+        guard.speed *= this.politicalModifiers.scavengerAwareness;
+      }
       guard.enabled = index < initialGuards;
       return guard;
     });
@@ -139,6 +150,7 @@ export class Game {
     this.rewardedEchoInvestigations.add(key);
     this.decoys?.find(decoy => decoy.eventId === eventId)?.markResolved();
     this.story?.recordAction('diversions');
+    this.politics?.recordAction('diversions');
 
     this.echoDiversions++;
     this.player.score += 85;
@@ -264,7 +276,9 @@ export class Game {
     });
     this.security.update(dt, this.guards.filter(guard => guard.enabled));
     if (this.player.detections > this.storyDetectionCount) {
-      this.story.recordAction('detections', this.player.detections - this.storyDetectionCount);
+      const newDetections = this.player.detections - this.storyDetectionCount;
+      this.story.recordAction('detections', newDetections);
+      this.politics?.recordAction('detections', newDetections);
       this.storyDetectionCount = this.player.detections;
     }
     this.story.recordAlert(this.security.alert);
@@ -573,6 +587,8 @@ export class Game {
         this.status = 'ROOK LOCKBOX OPENING — SCAVENGERS MAY HEAR THIS';
         if (this.sideQuestState.cacheProgress >= 2.8) {
           this.sideQuestState.surveyRecovered = true;
+          this.politics?.applyEvent('rookLedgerStolen');
+          this.storyMessage = this.politics.getFieldBriefing(this.level.id, true);
           this.sideQuestState.cacheProgress = 0;
           player.score += 350;
           this.security.add(6);
@@ -634,7 +650,10 @@ export class Game {
         ? 'NIX // Glassite signal lens calibrated. I have a jammer upgrade waiting.'
         : this.sideQuestState.rewardChoice === 'echo-spool'
           ? 'MARA // The Glassite spool is ready. The Ash Quarter will put it to use.'
-          : 'GHOST // The last core stays with me. No more debts.';
+          : this.sideQuestState.rewardChoice === 'rook-truce'
+            ? 'GHOST // Glassite buys us passage. Keep your hands off the Rook ledger.'
+            : 'GHOST // The last core stays with me. No more debts.';
+      this.storyMessage += '  |  ' + this.politics.getFieldBriefing(this.level.id, true);
       this.pendingStoryChoice = null;
       this.paused = false;
       this.hud.hideStoryChoice?.();
@@ -653,6 +672,7 @@ export class Game {
     if (rewardId === 'signal-lens') this.story.state.factions.switchboard += 2;
     if (rewardId === 'echo-spool') this.story.state.factions.residents += 2;
     if (rewardId === 'keep-core') this.player.score += 650;
+    this.politics?.recordSideQuestReward(rewardId);
     this.sound.play('success');
     this.notify('CONTRACT CHOICE LOCKED — REACH EXTRACTION');
     return true;
@@ -699,6 +719,7 @@ export class Game {
       if (this.player.jammers > 0) {
         this.player.jammers--;
         this.story?.recordAction('jammersUsed');
+        this.politics?.recordAction('jammers');
         this.player.jammerTime = 4.5;
         this.securityDirector.jam(4.5);
         this.noises.emit(this.player.x, this.player.y, 16, 'jam', 0.5);
@@ -725,7 +746,8 @@ export class Game {
     const shown = this.hud.showStoryChoice(choice, optionId => {
       const reaction = this.story.choose(this.level.id, optionId);
       if (!reaction) return;
-      this.storyMessage = reaction;
+      this.politics?.recordChoice(this.level.id, optionId);
+      this.storyMessage = reaction + '  |  ' + this.politics.getFieldBriefing(this.level.id);
       this.pendingStoryChoice = null;
       this.paused = false;
       this.hud.hideStoryChoice?.();
@@ -748,6 +770,7 @@ export class Game {
     });
     if (won) {
       const player = this.player;
+      if (player.detections === 0) this.politics?.recordAction('cleanExtractions');
       const rank = player.detections === 0 && this.security.alert < 35
         ? 'GHOST'
         : player.detections <= 1 ? 'OPERATOR' : 'EXPOSED';
@@ -777,7 +800,8 @@ export class Game {
           won: true, sideQuest: true, score, rank, time: this.elapsed,
           detections: player.detections, glassite: this.sideQuestState.minerals.size,
           surveyRecovered: this.sideQuestState.surveyRecovered,
-          rewardTitle: reward?.title || 'PRIVATE PAYOUT', rewardId
+          rewardTitle: reward?.title || 'PRIVATE PAYOUT', rewardId,
+          politicalLegacy: this.politics?.getPoliticalLegacy()
         });
         return;
       }
@@ -793,7 +817,8 @@ export class Game {
         hasNext,
         levelIndex: this.levelIndex,
         storyReflection: this.story?.getMissionReflection(this.level.id),
-        ending: hasNext ? null : this.story?.getEnding()
+        ending: hasNext ? null : this.story?.getEnding(),
+        politicalLegacy: this.politics?.getPoliticalLegacy()
       });
     } else {
       this.sound.play('fail');
@@ -801,7 +826,8 @@ export class Game {
         won: false,
         sideQuest: this.isSideQuest,
         levelIndex: this.levelIndex,
-        storyReflection: this.story?.getMissionReflection(this.level.id)
+        storyReflection: this.story?.getMissionReflection(this.level.id),
+        politicalLegacy: this.politics?.getPoliticalLegacy()
       });
     }
   }

@@ -3,9 +3,10 @@ import { Game } from './systems/Game.js';
 import { HUD } from './ui/HUD.js';
 import { SaveManager } from './data/SaveManager.js';
 import { GHOST_DOSSIER } from './data/ghostDossier.js';
+import { PoliticalSystem } from './systems/PoliticalSystem.js';
 
 const $ = id => document.getElementById(id);
-const screens = ['screen-menu', 'screen-dossier', 'screen-contract', 'screen-manual', 'screen-game', 'screen-debrief', 'screen-fail', 'screen-pause'];
+const screens = ['screen-menu', 'screen-dossier', 'screen-contract', 'screen-politics', 'screen-manual', 'screen-game', 'screen-debrief', 'screen-fail', 'screen-pause'];
 const canvas = $('game-canvas');
 let game = null;
 let raf = 0;
@@ -167,7 +168,7 @@ function handleFinish(result) {
       (result.surveyRecovered ? ' · ROOK CALIBRATION PROFILE RECOVERED' : ' · OPTIONAL SURVEY LEDGER NOT RECOVERED');
     $('journey-ledger').textContent = 'GLASSITE ' + result.glassite + ' / 3 · ' +
       (result.surveyRecovered ? 'ROOK DATA SECURED' : 'ROOK DATA SKIPPED') +
-      ' · CONTRACT PAYOUT ' + result.score;
+      ' · CONTRACT PAYOUT ' + result.score + (result.politicalLegacy ? ' · ' + result.politicalLegacy : '');
     $('score-value').textContent = String(result.score).padStart(4, '0');
     $('rank-value').textContent = result.rank;
     $('debrief-time').textContent = fmt(result.time);
@@ -196,9 +197,10 @@ function handleFinish(result) {
     $('debrief-story').textContent = result.ending
       ? 'Your ending reflects the people you helped, the signals you forged and the attention you drew.'
       : result.storyReflection || '';
-    $('journey-ledger').textContent = result.ending
+    const journeyText = result.ending
       ? result.ending.journey + ' · Community trust ' + result.ending.communityTrust + ' · Quiet-Net heat ' + result.ending.heat
       : '';
+    $('journey-ledger').textContent = [journeyText, result.politicalLegacy].filter(Boolean).join(' · ');
     $('score-value').textContent = String(result.score).padStart(4, '0');
     $('rank-value').textContent = result.rank;
     $('debrief-time').textContent = fmt(result.time);
@@ -212,6 +214,78 @@ function handleFinish(result) {
       : result.storyReflection || '';
     show('screen-fail');
   }
+}
+
+
+function renderPoliticalNetwork() {
+  const network = new PoliticalSystem(save).snapshot();
+  $('politics-summary').textContent = network.leader.name + ' currently holds the greatest share of civic influence (' +
+    network.leader.influence + '/100). Political power is contested through alliances, rivalries, trade and public support.';
+
+  const factionGrid = $('political-factions');
+  factionGrid.replaceChildren();
+  for (const faction of network.factions) {
+    const card = document.createElement('article');
+    card.className = 'political-faction faction-' + faction.color;
+    const top = document.createElement('div');
+    top.className = 'political-faction-top';
+    const heading = document.createElement('div');
+    addDossierText(heading, 'p', 'eyebrow', faction.region);
+    addDossierText(heading, 'h3', '', faction.name);
+    addDossierText(heading, 'small', '', faction.government);
+    top.append(heading);
+    const score = document.createElement('strong');
+    score.className = 'political-score';
+    score.textContent = String(faction.influence).padStart(2, '0');
+    top.append(score);
+    card.append(top);
+    addDossierText(card, 'p', 'political-leader', 'REPRESENTATION // ' + faction.leadership);
+    addDossierText(card, 'p', 'political-agenda', faction.agenda);
+    const meter = document.createElement('div');
+    meter.className = 'political-meter';
+    const fill = document.createElement('div');
+    fill.style.width = faction.influence + '%';
+    meter.append(fill);
+    card.append(meter);
+    addDossierText(card, 'p', 'political-meter-label', 'INFLUENCE ' + faction.influence + ' / 100');
+    factionGrid.append(card);
+  }
+
+  const relationGrid = $('political-relations');
+  relationGrid.replaceChildren();
+  for (const relation of network.relationships) {
+    const row = document.createElement('article');
+    row.className = 'political-relation relation-' + relation.status.toLowerCase();
+    const names = document.createElement('div');
+    names.className = 'political-relation-names';
+    addDossierText(names, 'strong', '', network.factions.find(f => f.id === relation.a)?.name || relation.a);
+    addDossierText(names, 'span', '', '↔');
+    addDossierText(names, 'strong', '', network.factions.find(f => f.id === relation.b)?.name || relation.b);
+    row.append(names);
+    const state = document.createElement('span');
+    state.className = 'political-relation-status';
+    state.textContent = relation.status + ' · ' + (relation.score > 0 ? '+' : '') + relation.score;
+    row.append(state);
+    relationGrid.append(row);
+  }
+
+  const eventList = $('political-events');
+  eventList.replaceChildren();
+  if (!network.recentEvents.length) {
+    addDossierText(eventList, 'p', 'political-empty', 'No major accord, rupture or public crisis has been recorded yet.');
+  } else {
+    for (const event of network.recentEvents) {
+      const item = document.createElement('article');
+      item.className = 'political-event';
+      addDossierText(item, 'strong', '', event.title);
+      addDossierText(item, 'p', '', event.text);
+      eventList.append(item);
+    }
+  }
+
+  const alliances = network.alliances.length ? network.alliances.join(' · ') : 'NONE';
+  const rivalries = network.rivalries.length ? network.rivalries.join(' · ') : 'NONE';
+  $('politics-summary-detail').textContent = 'ACTIVE ALLIANCES // ' + alliances + '    |    DECLARED RIVALRIES // ' + rivalries;
 }
 
 function fmt(sec) {
@@ -247,6 +321,11 @@ $('sidequest-button').addEventListener('click', () => {
   show('screen-contract');
 });
 $('contract-back').addEventListener('click', () => show('screen-menu'));
+$('politics-button').addEventListener('click', () => {
+  renderPoliticalNetwork();
+  show('screen-politics');
+});
+$('politics-back').addEventListener('click', () => show('screen-menu'));
 $('contract-begin').addEventListener('click', () => start(-1, true));
 $('controls-button').addEventListener('click', () => {
   newCampaignRequested = false;

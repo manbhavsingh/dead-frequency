@@ -33,6 +33,7 @@
             <button class="text-button" id="sidequest-button">OPTIONAL CONTRACT // DUST AND STATIC <span>↗</span></button>
             <small id="sidequest-status" class="contract-status">NEW CONTRACT · OPTIONAL · CAMPAIGN PROGRESS UNAFFECTED</small>
           </div>
+          <button class="text-button politics-menu-link" id="politics-button">POLITICAL NETWORK // POWER & TREATIES <span>↗</span></button>
         </div>
         <div class="menu-foot"><span>BUILD 0.2.0 // SECURITY NETWORK OVERHAUL</span><span>NO SIGNAL IS SAFE</span></div>
       </div>
@@ -94,7 +95,7 @@
         <article class="contract-card">
           <p class="eyebrow">OPTIONAL OBJECTIVE // BONUS</p>
           <h3>STEAL THE ROOK SURVEY LEDGER</h3>
-          <p>Break into the rival camp lockbox. The ledger contains a second gear calibration profile and a score bonus. You can still extract without it.</p>
+          <p>Break into the rival camp lockbox. The ledger contains a calibration profile and proof of a Quiet-Net protection deal. Taking it can break their arrangement. You can still extract without it.</p>
         </article>
         <article class="contract-card">
           <p class="eyebrow">THREATS // ADAPT</p>
@@ -107,11 +108,39 @@
         <div><strong>SIGNAL LENS</strong><span>+1 jammer charge per campaign operation.</span></div>
         <div><strong>ECHO SPOOL</strong><span>+1 decoy charge per campaign operation.</span></div>
         <div><strong>PRIVATE PAYOUT</strong><span>+650 contract points instead of a gear upgrade.</span></div>
+        <div><strong>ROOK TRUCE</strong><span>Broker safe passage and improve relations with the scavenger combine.</span></div>
         <p class="contract-note">Recovering the optional Rook ledger adds a bonus calibration charge to the final campaign mission and +350 contract points. This contract is separate from the main campaign.</p>
       </div>
       <div class="contract-actions">
         <button class="primary-button" id="contract-begin">ENTER THE SHATTERBELT <span>↗</span></button>
         <button class="text-button" id="contract-back">RETURN TO MENU <span>↩</span></button>
+      </div>
+    </section>
+
+    <section id="screen-politics" class="screen politics-screen hidden" aria-labelledby="politics-heading">
+      <div class="politics-header">
+        <p class="eyebrow"><span class="eyebrow-line"></span> VALTHORNE // CIVIC POWER REGISTER</p>
+        <h2 id="politics-heading">WHO HOLDS<br><span>THE LINES?</span></h2>
+        <p id="politics-summary" class="intro">The city’s political balance is still being calculated.</p>
+        <p id="politics-summary-detail" class="politics-summary-detail"></p>
+      </div>
+      <div class="politics-section-head">
+        <p class="eyebrow">POWER BLOCS // INFLUENCE</p>
+        <span>INFLUENCE IS NOT THE SAME AS LEGITIMACY.</span>
+      </div>
+      <div id="political-factions" class="political-factions"></div>
+      <div class="politics-section-head">
+        <p class="eyebrow">DIPLOMACY // TREATIES & RIVALRIES</p>
+        <span>RELATIONSHIPS SHIFT WITH YOUR DECISIONS.</span>
+      </div>
+      <div id="political-relations" class="political-relations"></div>
+      <div class="political-legend"><span>ALLIANCE ≥ +45</span><span>PRAGMATIC −11 TO +44</span><span>FRICTION −12 TO −34</span><span>RIVALRY ≤ −35</span></div>
+      <div class="politics-section-head">
+        <p class="eyebrow">RECENT DEVELOPMENTS // POLITICAL MEMORY</p>
+      </div>
+      <div id="political-events" class="political-events"></div>
+      <div class="politics-actions">
+        <button class="text-button" id="politics-back">RETURN TO MENU <span>↩</span></button>
       </div>
     </section>
 
@@ -123,7 +152,7 @@
         <article><span class="manual-key">Q</span><h3>JAMMER</h3><p>Unlocks after the first relay in Mission 01. Press Q to blind cameras and mask movement noise for a short time.</p></article>
         <article><span class="manual-key">F</span><h3>INTERACT</h3><p>Disable every amber SECURITY RELAY in sequence before the DATA terminal unlocks. Hold F while standing still to bypass a relay, download the memory, and complete extraction. Every hack broadcasts your location. Crouch to reduce visibility and noise; use decoys and the jammer to create openings.</p></article>
         <article><span class="manual-key">ESC</span><h3>PAUSE</h3><p>Pause the operation and release the captured mouse. At lockdown, you get one 3.2-second last-transmission window: break line of sight, then use E or Q. A second lockdown ends the mission.</p></article>
-        <article><span class="manual-key">◉</span><h3>LISTEN</h3><p>Cyan is safe tech. Amber is suspicion. Red means detection. Ripple rings show sound moving through the map. A completed diversion fills Echo Resonance and can refund a decoy.</p></article><article><span class="manual-key">COMMS</span><h3>THE CITY REMEMBERS</h3><p>Relay and archive choices change later equipment and surveillance. Mara, Nix and the factions remember your decisions. Your decoys, detections and clean extractions shape the final transmission. INITIALIZE INFILTRATION begins a fresh story; saved scores and unlocks remain.</p></article><article><span class="manual-key">SIDE OPS</span><h3>DUST AND STATIC</h3><p>Launch the optional Shatterbelt contract from the main menu. Harvest three Glassite cores, evade Dune Stalkers and Rook Scavengers, and decide how the mineral should upgrade your next operations.</p></article>
+        <article><span class="manual-key">◉</span><h3>LISTEN</h3><p>Cyan is safe tech. Amber is suspicion. Red means detection. Ripple rings show sound moving through the map. A completed diversion fills Echo Resonance and can refund a decoy.</p></article><article><span class="manual-key">COMMS</span><h3>THE CITY REMEMBERS</h3><p>Relay and archive choices change later equipment and surveillance. Mara, Nix and the factions remember your decisions. Your decoys, detections and clean extractions shape the final transmission. INITIALIZE INFILTRATION begins a fresh story; saved scores and unlocks remain.</p></article><article><span class="manual-key">SIDE OPS</span><h3>DUST AND STATIC</h3><p>Launch the optional Shatterbelt contract from the main menu. Harvest three Glassite cores, evade Dune Stalkers and Rook Scavengers, and decide how the mineral should upgrade your next operations.</p></article><article><span class="manual-key">POLITICS</span><h3>POWER & TREATIES</h3><p>Open POLITICAL NETWORK from the main menu. Mission choices and stealth performance change faction influence and diplomacy. Alliances can break, rivalries can ease, and the balance changes later patrol pressure and equipment support.</p></article>
       </div>
       <button class="text-button manual-dossier-link" id="manual-dossier">READ GHOST'S OPERATIVE DOSSIER ↗</button>
       <button class="primary-button" id="manual-back">UNDERSTOOD — BEGIN <span>↗</span></button>

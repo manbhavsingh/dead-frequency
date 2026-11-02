@@ -47,7 +47,8 @@ export const SIDE_QUEST = {
   rewardOptions: [
     { id: 'signal-lens', title: 'TRADE TO NIX // SIGNAL LENS', detail: 'Nix refines the Glassite into a jammer lens. Gain +1 jammer charge on every campaign operation.' },
     { id: 'echo-spool', title: 'GIVE IT TO MARA // ECHO SPOOL', detail: 'Mara turns it into a resonance spool. Gain +1 decoy charge on every campaign operation.' },
-    { id: 'keep-core', title: 'KEEP THE LAST CORE // PRIVATE PAYOUT', detail: 'Fence the sample through the Ash Quarter. Gain 650 contract points, but no campaign gear upgrade.' }
+    { id: 'keep-core', title: 'KEEP THE LAST CORE // PRIVATE PAYOUT', detail: 'Fence the sample through the Ash Quarter. Gain 650 contract points, but no campaign gear upgrade.' },
+    { id: 'rook-truce', title: 'BROKER THE ROOK TRUCE // SAFE PASSAGE', detail: 'Pay the claim captains in Glassite. The Rooks may become allies of the Ash Compact and Switchboard, reducing their patrol awareness on a replay.' }
   ],
   makeMap() {
     const grid = base();
