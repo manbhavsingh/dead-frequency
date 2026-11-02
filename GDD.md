@@ -79,7 +79,17 @@ An underground commercial district introduces multiple guards, a Listener, camer
 
 ### 03 — Antenna Zero
 
-The central surveillance tower combines patrol guards, a Listener, a Warden, cameras, limited jammer resources and the final extraction. Expected playtime: 4–5 minutes.
+The central surveillance tower combines patrol guards, a Listener, a Warden, cameras, limited jammer resources and the final extraction. After the memory download, the Warden awakens as The Chorus. Expected playtime: 4–5 minutes.
+
+## Full-session progression
+
+The complete three-mission run is designed for roughly **9–12 minutes**:
+
+1. **Learn (2–3 min):** Dead Channel teaches the player to read a patrol, place one false echo, exploit a completed diversion, bypass a relay and extract.
+2. **Combine (3–4 min):** The Silent Market adds a second relay, more guards, cameras and mixed acoustic surfaces. Multiple guards responding to one well-placed decoy can build Resonance faster, so placement and timing matter more.
+3. **Master (4–5 min):** Antenna Zero layers three relays, a Warden and The Chorus encounter on top of the established loop. The player must manage limited tools during the longer escape after downloading the memory.
+
+Each mission starts with its own loadout and Resonance meter; the player's learning carries forward, while mission resources reset. Best scores and mission unlocks persist between runs.
 
 ## Scoring
 
