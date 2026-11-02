@@ -121,3 +121,29 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   .navigation-strip{grid-template-columns:1fr .7fr}
   .nav-distance{display:none!important}
 }
+
+
+/* Original 16-bit arcade treatment: chunky panels, crisp type and brighter mission identity. */
+:root{--pixel:'Silkscreen',monospace}
+.eyebrow,.hud-label,.hud-value,.primary-button,.text-button,.pause-button,.manual-key,.brand,.site-footer,.game-bottomline,.navigation-strip strong,.top-meta{font-family:var(--pixel),var(--mono)}
+.eyebrow{font-size:9px;letter-spacing:0}
+.hud-label{font-size:8px;letter-spacing:0}
+.hud-value{letter-spacing:0}
+.primary-button{border:2px solid #b6fff2;box-shadow:4px 4px 0 #24515b,0 0 20px rgba(85,226,220,.12);image-rendering:pixelated}
+.primary-button:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 #24515b,0 0 25px rgba(85,226,220,.2)}
+.brand-mark{border:2px solid var(--cyan);box-shadow:3px 3px 0 rgba(85,226,220,.2)}
+.menu-art{background:linear-gradient(135deg,#17294a,#101b38 54%,#291c46);border:2px solid #516d9d;box-shadow:inset 0 0 0 4px rgba(255,255,255,.035),8px 8px 0 rgba(0,0,0,.2)}
+.art-grid{background-image:linear-gradient(rgba(121,180,255,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(121,180,255,.12) 1px,transparent 1px)}
+.art-core{color:#70f5d8;text-shadow:3px 3px 0 #267c8d,0 0 24px rgba(112,245,216,.55)}
+.manual-grid{border:2px solid #385674;box-shadow:5px 5px 0 rgba(0,0,0,.22)}
+.manual-grid article{background:linear-gradient(145deg,#142945,#102235)}
+.manual-key{font-size:11px;border:2px solid #5aa6aa;box-shadow:2px 2px 0 rgba(85,226,220,.14)}
+.game-frame{border:3px solid #526b91;box-shadow:5px 5px 0 rgba(0,0,0,.35),0 0 30px rgba(85,226,220,.08)}
+.hud-row,.navigation-strip,.debrief-stats{border:2px solid #3b5975}
+.hud-block,.navigation-strip>div,.debrief-stats div{background-image:linear-gradient(145deg,rgba(41,65,103,.38),rgba(8,23,38,.95))}
+.mission-objective{font-family:var(--pixel),var(--mono);font-size:9px}
+.toast{border:2px solid var(--amber);box-shadow:3px 3px 0 rgba(0,0,0,.35)}
+.overlay-card{border:2px solid #526b91;box-shadow:7px 7px 0 rgba(0,0,0,.4)}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+}
