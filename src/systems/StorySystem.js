@@ -82,7 +82,7 @@ const CHOICES = {
     kicker: 'ANTENNA ZERO // THE LAST TRANSMISSION',
     title: 'WHO OWNS THE TRUTH?',
     speaker: 'MARA + NIX // OPEN CHANNEL',
-    context: 'The archive contains proof of Quiet-Net’s manipulation—and the identities and locations of everyone who resisted it. Publishing everything may expose the system and expose those people. Redacting coordinates protects them, but lets part of the truth stay hidden.',
+    context: 'The final memory fragment unlocks the Crown of Whispers: an unaltered witness record of the Burning Archive and Lucien Blackthorn’s betrayal. Its archive also contains the identities and locations of people who resisted Quiet-Net. Publish the complete record and clear Kael’s name at the cost of exposing them, or redact civilian coordinates and protect those people while leaving part of the proof sealed.',
     options: [
       {
         id: 'publish',
@@ -308,31 +308,31 @@ export class StorySystem {
       ending = {
         id: 'open-frequency',
         title: 'THE OPEN FREQUENCY',
-        copy: 'The archive travels faster than Quiet-Net can erase it. The people you helped relay it through kitchens, clinics and abandoned maintenance lines. Every name is exposed, but no one can pretend the signal was never sent.'
+        copy: 'The Crown of Whispers releases its unaltered witness record. The proof clears Kael Veyrin of the Burning Archive murders and exposes Lucien Blackthorn’s betrayal. The people you helped relay it through kitchens, clinics and abandoned maintenance lines. Every name is exposed, but no one can pretend the signal was never sent.'
       };
     } else if (flags.archiveRedacted && stats.detections <= 1 && stats.diversions >= 2 && factions.switchboard >= 1) {
       ending = {
         id: 'ghost-protocol',
         title: 'THE GHOST PROTOCOL',
-        copy: 'The truth survives without its coordinates. Nix turns your false echoes into a moving network of safe routes. Quiet-Net keeps searching for one Ghost; the city learns to move as many.'
+        copy: 'The Crown’s witness record survives with civilian coordinates removed. Kael has enough proof to challenge the frame-up, but some evidence remains sealed. Nix turns your false echoes into a moving network of safe routes. Quiet-Net keeps searching for one Ghost; the city learns to move as many.'
       };
     } else if (stats.detections >= 5 || heat >= 8) {
       ending = {
         id: 'quiet-remembers',
         title: 'QUIET-NET REMEMBERS',
-        copy: 'Your signal reaches the city, but so does the trail behind it. Quiet-Net learns the people, routes and habits that carried you. The archive survives in fragments—and the next resistance inherits your unfinished war.'
+        copy: 'The Crown’s witness record escapes in fragments, but Quiet-Net has learned the people, routes and habits that carried you. Kael’s name is still hunted, and the next resistance inherits your unfinished war.'
       };
     } else if (stats.diversions >= 5 && factions.switchboard >= 2) {
       ending = {
         id: 'choir-of-echoes',
         title: 'THE CHOIR OF ECHOES',
-        copy: 'The Switchboard turns every false signal into a message. Guards keep arriving at empty rooms while the city quietly changes hands. No single Ghost owns the story anymore.'
+        copy: 'The Switchboard turns the Crown’s raw memory signatures and every false signal into a message. Guards keep arriving at empty rooms while the city quietly changes hands. No single Ghost owns the story anymore.'
       };
     } else {
       ending = {
         id: 'city-in-static',
         title: 'A CITY IN STATIC',
-        copy: 'The archive gets out, but the city cannot agree on what it means. Some remember the crew, others remember the blackout, and Quiet-Net keeps a copy of every contradiction. Your choices leave a signal—but not a single answer.'
+        copy: 'The Crown’s testimony leaks into the city in fragments. Some believe Kael was framed; others still remember the wanted posters. Quiet-Net keeps a copy of every contradiction. Your choices leave a signal—but not a single answer.'
       };
     }
 
