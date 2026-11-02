@@ -29,6 +29,10 @@
           <button class="primary-button" id="start-button">INITIALIZE NEW STORY <span>↗</span></button>
           <button class="text-button" id="controls-button">FIELD MANUAL <span>+</span></button>
           <button class="text-button" id="story-button">GHOST // OPERATIVE DOSSIER <span>↗</span></button>
+          <div class="contract-launch">
+            <button class="text-button" id="sidequest-button">OPTIONAL CONTRACT // DUST AND STATIC <span>↗</span></button>
+            <small id="sidequest-status" class="contract-status">NEW CONTRACT · OPTIONAL · CAMPAIGN PROGRESS UNAFFECTED</small>
+          </div>
         </div>
         <div class="menu-foot"><span>BUILD 0.2.0 // SECURITY NETWORK OVERHAUL</span><span>NO SIGNAL IS SAFE</span></div>
       </div>
@@ -74,6 +78,43 @@
       </div>
     </section>
 
+    <section id="screen-contract" class="screen contract-screen hidden" aria-labelledby="contract-heading">
+      <div class="contract-header">
+        <p class="eyebrow"><span class="eyebrow-line"></span> OPTIONAL CONTRACT // VALTHORNE FRINGE</p>
+        <p class="contract-warning">UNREGISTERED SALVAGE ZONE · ROOK TERRITORY</p>
+        <h2 id="contract-heading">DUST <span>&</span><br>STATIC.</h2>
+        <p class="intro">A signal storm has exposed a Glassite seam in the Shatterbelt. The rare mineral can bend Quiet-Net signal reflections, but the Rook Scavengers have claimed the site—and Dune Stalkers hunt anything that disturbs the sand.</p>
+      </div>
+      <div class="contract-grid">
+        <article class="contract-card contract-primary">
+          <p class="eyebrow">PRIMARY OBJECTIVE // REQUIRED</p>
+          <h3>HARVEST THE GLASSITE</h3>
+          <p>Locate three exposed seams and hold <kbd>F</kbd> to cut each core. The cutter's vibration attracts nearby wildlife and scavengers.</p>
+        </article>
+        <article class="contract-card">
+          <p class="eyebrow">OPTIONAL OBJECTIVE // BONUS</p>
+          <h3>STEAL THE ROOK SURVEY LEDGER</h3>
+          <p>Break into the rival camp lockbox. The ledger contains a second gear calibration profile and a score bonus. You can still extract without it.</p>
+        </article>
+        <article class="contract-card">
+          <p class="eyebrow">THREATS // ADAPT</p>
+          <h3>DUNE STALKERS + ROOK SCAVENGERS</h3>
+          <p>Stalkers follow sound and movement. Rook lookouts patrol the cache. Use <kbd>E</kbd> to pull them toward false echoes, then cross the opening.</p>
+        </article>
+      </div>
+      <div class="contract-rewards">
+        <p class="eyebrow">EXTRACTION REWARDS // CHOOSE IN THE FIELD</p>
+        <div><strong>SIGNAL LENS</strong><span>+1 jammer charge per campaign operation.</span></div>
+        <div><strong>ECHO SPOOL</strong><span>+1 decoy charge per campaign operation.</span></div>
+        <div><strong>PRIVATE PAYOUT</strong><span>+650 contract points instead of a gear upgrade.</span></div>
+        <p class="contract-note">Recovering the optional Rook ledger adds a bonus calibration charge to the final campaign mission and +350 contract points. This contract is separate from the main campaign.</p>
+      </div>
+      <div class="contract-actions">
+        <button class="primary-button" id="contract-begin">ENTER THE SHATTERBELT <span>↗</span></button>
+        <button class="text-button" id="contract-back">RETURN TO MENU <span>↩</span></button>
+      </div>
+    </section>
+
     <section id="screen-manual" class="screen manual-screen hidden">
       <div class="section-head"><p class="eyebrow">FIELD MANUAL // 001</p><h2>KNOW YOUR<br><span>FREQUENCIES.</span></h2></div>
       <div class="manual-grid">
@@ -82,7 +123,7 @@
         <article><span class="manual-key">Q</span><h3>JAMMER</h3><p>Unlocks after the first relay in Mission 01. Press Q to blind cameras and mask movement noise for a short time.</p></article>
         <article><span class="manual-key">F</span><h3>INTERACT</h3><p>Disable every amber SECURITY RELAY in sequence before the DATA terminal unlocks. Hold F while standing still to bypass a relay, download the memory, and complete extraction. Every hack broadcasts your location. Crouch to reduce visibility and noise; use decoys and the jammer to create openings.</p></article>
         <article><span class="manual-key">ESC</span><h3>PAUSE</h3><p>Pause the operation and release the captured mouse. At lockdown, you get one 3.2-second last-transmission window: break line of sight, then use E or Q. A second lockdown ends the mission.</p></article>
-        <article><span class="manual-key">◉</span><h3>LISTEN</h3><p>Cyan is safe tech. Amber is suspicion. Red means detection. Ripple rings show sound moving through the map. A completed diversion fills Echo Resonance and can refund a decoy.</p></article><article><span class="manual-key">COMMS</span><h3>THE CITY REMEMBERS</h3><p>Relay and archive choices change later equipment and surveillance. Mara, Nix and the factions remember your decisions. Your decoys, detections and clean extractions shape the final transmission. INITIALIZE INFILTRATION begins a fresh story; saved scores and unlocks remain.</p></article>
+        <article><span class="manual-key">◉</span><h3>LISTEN</h3><p>Cyan is safe tech. Amber is suspicion. Red means detection. Ripple rings show sound moving through the map. A completed diversion fills Echo Resonance and can refund a decoy.</p></article><article><span class="manual-key">COMMS</span><h3>THE CITY REMEMBERS</h3><p>Relay and archive choices change later equipment and surveillance. Mara, Nix and the factions remember your decisions. Your decoys, detections and clean extractions shape the final transmission. INITIALIZE INFILTRATION begins a fresh story; saved scores and unlocks remain.</p></article><article><span class="manual-key">SIDE OPS</span><h3>DUST AND STATIC</h3><p>Launch the optional Shatterbelt contract from the main menu. Harvest three Glassite cores, evade Dune Stalkers and Rook Scavengers, and decide how the mineral should upgrade your next operations.</p></article>
       </div>
       <button class="text-button manual-dossier-link" id="manual-dossier">READ GHOST'S OPERATIVE DOSSIER ↗</button>
       <button class="primary-button" id="manual-back">UNDERSTOOD — BEGIN <span>↗</span></button>
@@ -96,8 +137,8 @@
         <div class="hud-block"><span class="hud-label">DECOY CHARGES</span><span id="decoy-count" class="hud-value accent-cyan">03</span></div>
         <div class="hud-block echo-block"><span class="hud-label">ECHO RESONANCE</span><div class="meter"><div id="echo-fill" class="meter-fill"></div></div><span id="echo-value" class="hud-value accent-cyan">00%</span></div>
         <div class="hud-block"><span class="hud-label">JAMMER</span><span id="jammer-count" class="hud-value accent-cyan">02</span></div>
-        <div class="hud-block"><span class="hud-label">RELAYS</span><span id="relay-count" class="hud-value accent-cyan">0 / 1</span></div>
-        <div class="hud-block"><span class="hud-label">MEMORY</span><span id="memory-count" class="hud-value">0 / 1</span></div>
+        <div class="hud-block"><span class="hud-label" id="relay-label">RELAYS</span><span id="relay-count" class="hud-value accent-cyan">0 / 1</span></div>
+        <div class="hud-block"><span class="hud-label" id="memory-label">MEMORY</span><span id="memory-count" class="hud-value">0 / 1</span></div>
         <div class="hud-block"><span class="hud-label">TIME</span><span id="timer" class="hud-value">00:00</span></div>
       </div>
       <div class="navigation-strip" aria-live="polite">

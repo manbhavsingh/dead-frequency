@@ -9,6 +9,7 @@ import { LEVELS } from '../data/levels.js';
 import { SoundSynth } from '../audio/SoundSynth.js';
 import { findPath } from '../ai/Pathfinding.js';
 import { StorySystem } from './StorySystem.js';
+import { SIDE_QUEST, getSideQuestLoadoutBonus } from '../data/sideQuest.js';
 
 const DIRECTIONS = ['E', 'SE', 'S', 'SW', 'W', 'NW', 'N', 'NE'];
 const DECOY_RANGE = 112;
@@ -32,12 +33,29 @@ export class Game {
     this.loadLevel(0);
   }
 
-  loadLevel(index) {
+  loadLevel(index, levelOverride = null) {
     this.levelIndex = index;
-    this.level = LEVELS[index];
+    this.level = levelOverride || LEVELS[index];
+    this.isSideQuest = Boolean(this.level.isSideQuest);
     this.story = new StorySystem(this.saveManager);
-    this.storyMessage = this.story.getBriefing(this.level.id);
-    this.storyModifiers = this.story.missionModifiers(this.level.id);
+    this.storyModifiers = this.isSideQuest
+      ? { extraDecoys: 0, extraJammers: 0, startAlert: 0, disabledCameras: [] }
+      : this.story.missionModifiers(this.level.id);
+    const savedQuest = this.saveManager?.load?.()?.sideQuest || {};
+    if (!this.isSideQuest) {
+      const gearBonus = getSideQuestLoadoutBonus(savedQuest, this.level.id);
+      this.storyModifiers.extraDecoys += gearBonus.extraDecoys;
+      this.storyModifiers.extraJammers += gearBonus.extraJammers;
+    }
+    this.storyMessage = this.isSideQuest ? this.level.briefing : this.story.getBriefing(this.level.id);
+    this.sideQuestState = this.isSideQuest ? {
+      minerals: new Set(),
+      mineralProgress: 0,
+      cacheProgress: 0,
+      surveyRecovered: false,
+      choiceOpened: false,
+      rewardChoice: null
+    } : null;
     this.storyDetectionCount = 0;
     this.map = new TileMap(this.level.makeMap(), 20, this.level.palette);
     this.player = new Player(this.level.start.x, this.level.start.y);
@@ -92,6 +110,10 @@ export class Game {
     this.navLabel = 'SECURITY RELAY';
     this.interactionHint = 'FOLLOW THE SIGNAL TO YOUR FIRST RELAY';
     this.notify('OPERATION LIVE — SECURITY NETWORK ACTIVE');
+  }
+
+  loadSideQuest() {
+    this.loadLevel(-1, SIDE_QUEST);
   }
 
   notify(text) {
@@ -297,6 +319,34 @@ export class Game {
   updateNavigation(dt) {
     this.navTimer -= dt;
     const player = this.player;
+
+    if (this.isSideQuest) {
+      const nextMineral = this.level.minerals.find(node => !this.sideQuestState.minerals.has(node.id));
+      let target;
+      if (nextMineral) {
+        target = nextMineral;
+        this.navLabel = 'GLASSITE SEAM ' + (this.sideQuestState.minerals.size + 1) + ' / 3';
+      } else if (!this.sideQuestState.surveyRecovered) {
+        target = this.level.scavengerCache;
+        this.navLabel = 'OPTIONAL ROOK SURVEY LEDGER';
+      } else {
+        target = this.level.extraction;
+        this.navLabel = 'EXTRACTION ZONE';
+      }
+      if (this.navTimer <= 0) {
+        const targetWorld = { x: target.x * 20, y: target.y * 20 };
+        this.navPath = findPath(this.map, { x: player.x, y: player.y }, targetWorld);
+        this.navTimer = 0.4;
+      }
+      const targetWorld = { x: target.x * 20, y: target.y * 20 };
+      const waypoint = this.navPath[0] || targetWorld;
+      const dx = waypoint.x - player.x;
+      const dy = waypoint.y - player.y;
+      const angle = (Math.atan2(dy, dx) * 180 / Math.PI + 360) % 360;
+      this.navDirection = DIRECTIONS[Math.round(angle / 45) % 8];
+      this.navDistance = Math.hypot(targetWorld.x - player.x, targetWorld.y - player.y) / 20;
+      return;
+    }
     const nextRelay = (this.level.relays || []).findIndex((_, index) => !this.disabledRelays.has(index));
     let target;
 
@@ -356,6 +406,10 @@ export class Game {
   }
 
   updateInteractions(dt, input) {
+    if (this.isSideQuest) {
+      this.updateSideQuestInteractions(dt, input);
+      return;
+    }
     const player = this.player;
     const relays = this.level.relays || [];
     const nextRelayIndex = relays.findIndex((_, index) => !this.disabledRelays.has(index));
@@ -467,6 +521,143 @@ export class Game {
     this.relayProgress = 0;
   }
 
+  updateSideQuestInteractions(dt, input) {
+    const player = this.player;
+    const minerals = this.sideQuestState.minerals;
+    const nextMineral = this.level.minerals.find(node => !minerals.has(node.id));
+    const nearExtraction = Math.hypot(player.x - this.level.extraction.x * 20, player.y - this.level.extraction.y * 20) < 28;
+    const cache = this.level.scavengerCache;
+    const nearCache = !this.sideQuestState.surveyRecovered &&
+      Math.hypot(player.x - cache.x * 20, player.y - cache.y * 20) < 26;
+    this.actionProgress = 0;
+
+    if (nextMineral) {
+      const nearMineral = Math.hypot(player.x - nextMineral.x * 20, player.y - nextMineral.y * 20) < 25;
+      if (nearMineral) {
+        this.interactionHint = player.moving
+          ? 'STOP MOVING — HOLD F TO HARVEST GLASSITE'
+          : input.down('f') ? 'CUTTING GLASSITE CORE — HOLD POSITION' : 'HOLD F — HARVEST ' + nextMineral.label;
+        if (input.down('f') && !player.moving) {
+          this.sideQuestState.mineralProgress += dt;
+          this.actionProgress = Math.min(1, this.sideQuestState.mineralProgress / 1.7);
+          this.applyHackPressure(dt, 42, 'salvage');
+          this.status = 'GLASSITE CUTTER ACTIVE — VIBRATION CARRIES';
+          if (this.sideQuestState.mineralProgress >= 1.7) {
+            minerals.add(nextMineral.id);
+            this.sideQuestState.mineralProgress = 0;
+            player.score += 220;
+            this.security.add(4);
+            this.sound.play('success');
+            this.notify('GLASSITE CORE RECOVERED — ' + minerals.size + ' / 3');
+            if (minerals.size === 3 && !this.sideQuestState.choiceOpened) {
+              this.sideQuestState.choiceOpened = true;
+              this.openSideQuestChoice();
+            }
+          }
+        } else {
+          this.sideQuestState.mineralProgress = 0;
+          if (player.moving) this.status = 'STOP MOVING TO KEEP THE CUTTER ALIGNED';
+        }
+        return;
+      }
+    }
+
+    if (nearCache) {
+      this.interactionHint = player.moving
+        ? 'STOP MOVING — HOLD F TO COPY THE ROOK LEDGER'
+        : input.down('f') ? 'BYPASSING ROOK LOCKBOX — KEEP HOLDING F' : 'OPTIONAL — HOLD F TO STEAL THE ROOK SURVEY LEDGER';
+      if (input.down('f') && !player.moving) {
+        this.sideQuestState.cacheProgress += dt;
+        this.actionProgress = Math.min(1, this.sideQuestState.cacheProgress / 2.8);
+        this.applyHackPressure(dt, 56, 'salvage');
+        this.status = 'ROOK LOCKBOX OPENING — SCAVENGERS MAY HEAR THIS';
+        if (this.sideQuestState.cacheProgress >= 2.8) {
+          this.sideQuestState.surveyRecovered = true;
+          this.sideQuestState.cacheProgress = 0;
+          player.score += 350;
+          this.security.add(6);
+          this.sound.play('success');
+          this.notify('ROOK SURVEY LEDGER STOLEN — FINAL LOADOUT PROFILE UNLOCKED');
+        }
+      } else {
+        this.sideQuestState.cacheProgress = 0;
+        if (player.moving) this.status = 'STOP MOVING TO COPY THE ROOK LEDGER';
+      }
+      return;
+    }
+
+    if (nearExtraction) {
+      if (minerals.size < this.level.minerals.length) {
+        this.interactionHint = 'EXTRACTION LOCKED — GLASSITE CORES ' + minerals.size + ' / 3';
+        this.status = 'THREE GLASSITE CORES REQUIRED BEFORE EXTRACTION';
+        return;
+      }
+      this.interactionHint = player.moving
+        ? 'STOP MOVING — HOLD F TO EXTRACT'
+        : input.down('f') ? 'EXTRACTING GLASSITE — HOLD POSITION' : 'HOLD F — EXTRACT THE GLASSITE';
+      if (input.down('f') && !player.moving) {
+        this.extractProgress += dt;
+        this.actionProgress = Math.min(1, this.extractProgress / this.level.extractionTime);
+        this.applyHackPressure(dt, 48, 'extract');
+        this.status = 'EXTRACTION IN PROGRESS — ROOKS CLOSING IN';
+        if (this.extractProgress >= this.level.extractionTime) this.finish(true);
+      } else {
+        this.extractProgress = 0;
+        if (player.moving) this.status = 'STOP MOVING TO COMPLETE EXTRACTION';
+      }
+      return;
+    }
+
+    this.sideQuestState.mineralProgress = 0;
+    this.sideQuestState.cacheProgress = 0;
+    this.extractProgress = 0;
+    if (minerals.size < 3) this.interactionHint = 'HARVEST GLASSITE CORES ' + minerals.size + ' / 3 — FOLLOW THE SIGNAL';
+    else if (!this.sideQuestState.surveyRecovered) this.interactionHint = 'OPTIONAL: ROOK SURVEY LEDGER — OR HEAD TO EXTRACTION';
+    else this.interactionHint = 'GLASSITE SECURED — REACH THE EXTRACTION BEACON';
+  }
+
+  openSideQuestChoice() {
+    const choice = {
+      kicker: 'THE SHATTERBELT // GLASSITE CLAIM',
+      title: 'WHO GETS THE LAST CORE?',
+      speaker: 'NIX + MARA // OPEN CHANNEL',
+      context: 'The Glassite can be refined into better signal gear, turned into a decoy spool for the Ash Quarter, or sold for an immediate payout. The Rook survey ledger is optional, but it contains a second calibration profile for the final operation.',
+      options: this.level.rewardOptions.map(({ id, title, detail }) => ({ id, title, detail }))
+    };
+    if (!this.hud?.showStoryChoice) return;
+    this.pendingStoryChoice = choice;
+    this.paused = true;
+    if (typeof document !== 'undefined' && document.pointerLockElement && typeof document.exitPointerLock === 'function') document.exitPointerLock();
+    const shown = this.hud.showStoryChoice(choice, rewardId => {
+      if (!this.chooseSideQuestReward(rewardId)) return;
+      this.storyMessage = this.sideQuestState.rewardChoice === 'signal-lens'
+        ? 'NIX // Glassite signal lens calibrated. I have a jammer upgrade waiting.'
+        : this.sideQuestState.rewardChoice === 'echo-spool'
+          ? 'MARA // The Glassite spool is ready. The Ash Quarter will put it to use.'
+          : 'GHOST // The last core stays with me. No more debts.';
+      this.pendingStoryChoice = null;
+      this.paused = false;
+      this.hud.hideStoryChoice?.();
+      this.hud.update(this);
+    });
+    if (shown === false) {
+      this.pendingStoryChoice = null;
+      this.paused = false;
+    }
+  }
+
+  chooseSideQuestReward(rewardId) {
+    const reward = this.level.rewardOptions.find(option => option.id === rewardId);
+    if (!reward || !this.sideQuestState) return false;
+    this.sideQuestState.rewardChoice = rewardId;
+    if (rewardId === 'signal-lens') this.story.state.factions.switchboard += 2;
+    if (rewardId === 'echo-spool') this.story.state.factions.residents += 2;
+    if (rewardId === 'keep-core') this.player.score += 650;
+    this.sound.play('success');
+    this.notify('CONTRACT CHOICE LOCKED — REACH EXTRACTION');
+    return true;
+  }
+
   wakeAntennaZeroBoss() {
     if (this.bossAwakened) return;
     const warden = this.guards.find(guard => guard.type === 'warden');
@@ -549,7 +740,7 @@ export class Game {
   finish(won) {
     if (this.finished) return;
     this.finished = true;
-    this.story?.recordMission(this.level.id, {
+    if (!this.isSideQuest) this.story?.recordMission(this.level.id, {
       won,
       detections: this.player.detections,
       alert: this.security.alert,
@@ -563,7 +754,34 @@ export class Game {
       const score = player.score + 250 +
         (player.detections === 0 ? 500 : 0) +
         (this.security.alert < 100 ? 250 : 0) +
-        Math.max(0, Math.round(300 - this.elapsed * 4));
+        Math.max(0, Math.round(300 - this.elapsed * 4)) +
+        (this.isSideQuest && this.sideQuestState.surveyRecovered ? 350 : 0);
+
+      if (this.isSideQuest) {
+        this.story?.persist();
+        const saved = this.saveManager?.load?.();
+        const rewardId = this.sideQuestState.rewardChoice || 'keep-core';
+        const reward = this.level.rewardOptions.find(option => option.id === rewardId);
+        if (saved && this.saveManager?.save) {
+          const prior = saved.sideQuest || {};
+          saved.sideQuest = {
+            completed: true,
+            reward: rewardId,
+            surveyRecovered: this.sideQuestState.surveyRecovered,
+            bestScore: Math.max(prior.bestScore || 0, score),
+            completions: (prior.completions || 0) + 1
+          };
+          this.saveManager.save(saved);
+        }
+        this.onFinish({
+          won: true, sideQuest: true, score, rank, time: this.elapsed,
+          detections: player.detections, glassite: this.sideQuestState.minerals.size,
+          surveyRecovered: this.sideQuestState.surveyRecovered,
+          rewardTitle: reward?.title || 'PRIVATE PAYOUT', rewardId
+        });
+        return;
+      }
+
       this.saveManager?.record(this.level.id, score);
       const hasNext = this.levelIndex < LEVELS.length - 1;
       this.onFinish({
@@ -581,6 +799,7 @@ export class Game {
       this.sound.play('fail');
       this.onFinish({
         won: false,
+        sideQuest: this.isSideQuest,
         levelIndex: this.levelIndex,
         storyReflection: this.story?.getMissionReflection(this.level.id)
       });
@@ -588,6 +807,19 @@ export class Game {
   }
 
   drawStoryEnvironment(ctx) {
+    if (this.isSideQuest) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(22,13,15,.84)';
+      ctx.fillRect(8, 338, 624, 15);
+      ctx.strokeStyle = 'rgba(239,183,106,.58)';
+      ctx.strokeRect(8.5, 338.5, 623, 14);
+      ctx.font = '7px monospace';
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#f2c486';
+      ctx.fillText('SHATTERBELT // SOUND CARRIES FARTHER THAN YOU THINK // ROOKS ARE LISTENING', 14, 348, 610);
+      ctx.restore();
+      return;
+    }
     const line = this.story?.getEnvironmentText(this.level.id);
     if (!line) return;
     ctx.save();
@@ -619,6 +851,10 @@ export class Game {
   }
 
   drawObjects(ctx) {
+    if (this.isSideQuest) {
+      this.drawSideQuestObjects(ctx);
+      return;
+    }
     const terminal = this.level.terminal;
     const extraction = this.level.extraction;
     const pulse = 0.65 + 0.25 * Math.sin(this.elapsed * 3);
@@ -718,6 +954,77 @@ export class Game {
     }
   }
 
+  drawSideQuestObjects(ctx) {
+    for (const node of this.level.minerals) {
+      const collected = this.sideQuestState.minerals.has(node.id);
+      const x = node.x * 20;
+      const y = node.y * 20;
+      ctx.save();
+      ctx.globalAlpha = collected ? 0.28 : 1;
+      ctx.shadowColor = '#7df1df';
+      ctx.shadowBlur = collected ? 2 : 13;
+      ctx.fillStyle = collected ? '#718c82' : '#7df1df';
+      ctx.beginPath();
+      ctx.moveTo(x, y - 13);
+      ctx.lineTo(x + 9, y - 2);
+      ctx.lineTo(x + 6, y + 12);
+      ctx.lineTo(x - 7, y + 10);
+      ctx.lineTo(x - 10, y - 3);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = collected ? '#82928a' : '#e4fff6';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.font = 'bold 6px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = collected ? '#a0a9a2' : '#aaffed';
+      ctx.fillText(collected ? 'SECURED' : 'GLASSITE', x, y - 18);
+      ctx.restore();
+    }
+
+    const cache = this.level.scavengerCache;
+    const cx = cache.x * 20;
+    const cy = cache.y * 20;
+    ctx.save();
+    ctx.shadowColor = this.sideQuestState.surveyRecovered ? '#7d8c80' : '#ff9b62';
+    ctx.shadowBlur = this.sideQuestState.surveyRecovered ? 2 : 10;
+    ctx.fillStyle = this.sideQuestState.surveyRecovered ? '#56675f' : '#bd6845';
+    ctx.fillRect(cx - 11, cy - 8, 22, 16);
+    ctx.strokeStyle = this.sideQuestState.surveyRecovered ? '#89978a' : '#ffc28b';
+    ctx.strokeRect(cx - 11.5, cy - 8.5, 23, 17);
+    ctx.fillStyle = '#2b2225';
+    ctx.fillRect(cx - 2, cy - 8, 4, 16);
+    ctx.shadowBlur = 0;
+    ctx.font = 'bold 6px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#ffc28b';
+    ctx.fillText(this.sideQuestState.surveyRecovered ? 'LEDGER TAKEN' : 'ROOK CACHE', cx, cy - 15);
+    ctx.restore();
+
+    const exit = this.level.extraction;
+    const ex = exit.x * 20;
+    const ey = exit.y * 20;
+    const pulse = 0.65 + 0.25 * Math.sin(this.elapsed * 3);
+    ctx.save();
+    ctx.shadowColor = '#7df1df';
+    ctx.shadowBlur = 13;
+    ctx.fillStyle = 'rgba(125,241,223,' + (pulse * 0.24) + ')';
+    ctx.beginPath();
+    ctx.arc(ex, ey, 20 + Math.sin(this.elapsed * 4) * 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#7df1df';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(ex - 10, ey - 10, 20, 20);
+    ctx.fillStyle = '#7df1df';
+    ctx.fillRect(ex - 3, ey - 3, 6, 6);
+    ctx.shadowBlur = 0;
+    ctx.font = 'bold 8px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('EXTRACT', ex, ey - 18);
+    ctx.restore();
+  }
+
   drawEffects(ctx) {
     if (this.security.alert > 0) {
       ctx.fillStyle = 'rgba(255,45,65,' + (this.security.alert / 100 * 0.055) + ')';
@@ -727,6 +1034,15 @@ export class Game {
       ctx.fillStyle = '#ff5f66';
       ctx.font = 'bold 9px monospace';
       ctx.fillText('CORE SENTINEL // THE CHORUS ACTIVE', 12, 29);
+    }
+    if (this.isSideQuest) {
+      ctx.fillStyle = '#aaffed';
+      ctx.font = 'bold 9px monospace';
+      ctx.fillText('GLASSITE CORES // ' + this.sideQuestState.minerals.size + ' / 3', 12, 15);
+      if (this.sideQuestState.surveyRecovered) {
+        ctx.fillStyle = '#ffc28b';
+        ctx.fillText('ROOK LEDGER SECURED', 12, 28);
+      }
     }
     if (this.player.memory) {
       ctx.fillStyle = '#55e2dc';

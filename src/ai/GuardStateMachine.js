@@ -133,8 +133,8 @@ export class GuardStateMachine {
         if (!this.detectionConfirmed) {
           p.detections++;
           this.detectionConfirmed = true;
-          game.security.add(30);
-          game.notify('VISUAL CONTACT — MOVE!');
+          game.security.add(g.type === 'stalker' ? 12 : 30);
+          game.notify(g.type === 'stalker' ? 'DUNE STALKER HAS YOUR SCENT — BREAK CONTACT' : 'VISUAL CONTACT — MOVE!');
         }
         this.set(STATES.CHASE);
       } else if (this.state === STATES.PATROL) {

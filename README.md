@@ -52,6 +52,7 @@ Alternatively, use any static file server.
 - **Surveillance:** camera cones sweep across rooms; crouching reduces visibility and sound, while sprinting makes the player easier to detect.
 - **Jammer:** first unlocked after the Dead Channel relay, then included in later mission loadouts. It temporarily blinds cameras and masks player movement noise. Charges are limited, so use them to cross exposed lanes or finish a hack.
 - **Ghost's operative dossier:** read Kael Veyrin's Ash Quarter origins, Lucien Blackthorn's betrayal, the Burning Archive incident, and his search for the Crown of Whispers from the main menu or Field Manual.
+- **Optional side contract — Dust and Static:** travel to the Shatterbelt, harvest three Glassite cores while evading Dune Stalkers and Rook Scavengers, and optionally steal the Rook survey ledger. The extraction choice grants a persistent jammer or decoy upgrade to later campaign operations, or an immediate score payout.
 - **Player-driven story:** decisions at relays and the archive change later equipment, alert pressure and camera coverage.
 - **Remembering factions:** Residents, Switchboard and Quiet-Net track your decisions; Mara and Nix respond to what happened in earlier missions.
 - **Living environment:** diegetic console messages and wall inscriptions change with your choices, diversions and detection history.

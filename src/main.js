@@ -5,7 +5,7 @@ import { SaveManager } from './data/SaveManager.js';
 import { GHOST_DOSSIER } from './data/ghostDossier.js';
 
 const $ = id => document.getElementById(id);
-const screens = ['screen-menu', 'screen-dossier', 'screen-manual', 'screen-game', 'screen-debrief', 'screen-fail', 'screen-pause'];
+const screens = ['screen-menu', 'screen-dossier', 'screen-contract', 'screen-manual', 'screen-game', 'screen-debrief', 'screen-fail', 'screen-pause'];
 const canvas = $('game-canvas');
 let game = null;
 let raf = 0;
@@ -122,12 +122,14 @@ function openDossier(returnScreen) {
 }
 
 renderDossier();
+refreshContractStatus();
 
-function start(index = 0) {
+function start(index = 0, sideQuest = false) {
   cancelAnimationFrame(raf);
   releaseGamePointer();
   game = new Game(canvas, hud, handleFinish, save);
-  game.loadLevel(index);
+  if (sideQuest) game.loadSideQuest();
+  else game.loadLevel(index);
   game.sound.muted = muted;
   show('screen-game');
   focusGame();
@@ -153,6 +155,32 @@ function handleFinish(result) {
   cancelAnimationFrame(raf);
   releaseGamePointer();
   hud.hideStoryChoice();
+  if (result.sideQuest && result.won) {
+    $('debrief-kicker').textContent = 'OPTIONAL CONTRACT // EXTRACTION CONFIRMED';
+    const title = $('debrief-title');
+    title.classList.remove('story-ending-title');
+    title.textContent = 'DUST & STATIC';
+    $('debrief-copy').textContent = result.surveyRecovered
+      ? 'Three Glassite cores and the Rook survey ledger are secure. The Shatterbelt is already swallowing your tracks.'
+      : 'Three Glassite cores are secure. The Rook ledger remains in the dust, but the contract is complete.';
+    $('debrief-story').textContent = 'REWARD // ' + result.rewardTitle +
+      (result.surveyRecovered ? ' · ROOK CALIBRATION PROFILE RECOVERED' : ' · OPTIONAL SURVEY LEDGER NOT RECOVERED');
+    $('journey-ledger').textContent = 'GLASSITE ' + result.glassite + ' / 3 · ' +
+      (result.surveyRecovered ? 'ROOK DATA SECURED' : 'ROOK DATA SKIPPED') +
+      ' · CONTRACT PAYOUT ' + result.score;
+    $('score-value').textContent = String(result.score).padStart(4, '0');
+    $('rank-value').textContent = result.rank;
+    $('debrief-time').textContent = fmt(result.time);
+    $('detection-value').textContent = result.detections;
+    $('next-button').textContent = 'RETURN TO CONTRACT BOARD ↗';
+    $('next-button').onclick = () => {
+      game = null;
+      refreshContractStatus();
+      show('screen-menu');
+    };
+    show('screen-debrief');
+    return;
+  }
   if (result.won) {
     $('debrief-kicker').textContent = result.ending
       ? 'FINAL TRANSMISSION // JOURNEY RECORDED'
@@ -179,13 +207,28 @@ function handleFinish(result) {
     $('next-button').onclick = () => result.hasNext ? start(result.levelIndex + 1) : show('screen-menu');
     show('screen-debrief');
   } else {
-    $('fail-story-reflection').textContent = result.storyReflection || '';
+    $('fail-story-reflection').textContent = result.sideQuest
+      ? 'THE SHATTERBELT CLAIMED THE SIGNAL. RETRY THE CONTRACT, USE FALSE ECHOES TO DIVERT THE STALKERS, OR CIRCLE AROUND THE ROOK CAMP.'
+      : result.storyReflection || '';
     show('screen-fail');
   }
 }
 
 function fmt(sec) {
   return String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(Math.floor(sec % 60)).padStart(2, '0');
+}
+
+function refreshContractStatus() {
+  const quest = save.load().sideQuest || {};
+  const status = $('sidequest-status');
+  const button = $('sidequest-button');
+  if (!status || !button) return;
+  status.textContent = quest.completed
+    ? 'COMPLETED · BEST PAYOUT ' + String(quest.bestScore || 0).padStart(4, '0')
+    : 'NEW CONTRACT · OPTIONAL · CAMPAIGN PROGRESS UNAFFECTED';
+  button.innerHTML = quest.completed
+    ? 'REPLAY CONTRACT // DUST AND STATIC <span>↗</span>'
+    : 'OPTIONAL CONTRACT // DUST AND STATIC <span>↗</span>';
 }
 
 $('start-button').addEventListener('click', () => {
@@ -199,6 +242,12 @@ $('story-button').addEventListener('click', () => {
 $('dossier-begin').addEventListener('click', () => show('screen-manual'));
 $('dossier-back').addEventListener('click', () => show(dossierReturnScreen));
 $('manual-dossier').addEventListener('click', () => openDossier('screen-manual'));
+$('sidequest-button').addEventListener('click', () => {
+  refreshContractStatus();
+  show('screen-contract');
+});
+$('contract-back').addEventListener('click', () => show('screen-menu'));
+$('contract-begin').addEventListener('click', () => start(-1, true));
 $('controls-button').addEventListener('click', () => {
   newCampaignRequested = false;
   show('screen-manual');
@@ -220,16 +269,16 @@ $('resume-button').addEventListener('click', () => {
   show('screen-game');
   focusGame();
 });
-$('restart-button').addEventListener('click', () => start(game?.levelIndex || 0));
+$('restart-button').addEventListener('click', () => game?.isSideQuest ? start(-1, true) : start(game?.levelIndex || 0));
 $('quit-button').addEventListener('click', () => {
   cancelAnimationFrame(raf);
   releaseGamePointer();
   game = null;
   show('screen-menu');
 });
-$('retry-button').addEventListener('click', () => start(game?.levelIndex || 0));
-$('fail-menu').addEventListener('click', () => { game = null; show('screen-menu'); });
-$('debrief-menu').addEventListener('click', () => { game = null; show('screen-menu'); });
+$('retry-button').addEventListener('click', () => game?.isSideQuest ? start(-1, true) : start(game?.levelIndex || 0));
+$('fail-menu').addEventListener('click', () => { game = null; refreshContractStatus(); show('screen-menu'); });
+$('debrief-menu').addEventListener('click', () => { game = null; refreshContractStatus(); show('screen-menu'); });
 $('sound-toggle').addEventListener('click', () => {
   muted = !muted;
   if (game) game.sound.muted = muted;

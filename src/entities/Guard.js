@@ -8,10 +8,10 @@ export class Guard {
     this.type = config.type || 'patrol';
     this.route = config.route || [{ x: config.x, y: config.y }];
     this.routeIndex = 0;
-    this.speed = this.type === 'warden' ? 54 : this.type === 'listener' ? 46 : 40;
-    this.visionRange = this.type === 'listener' ? 102 : this.type === 'warden' ? 146 : 120;
-    this.hearingThreshold = this.type === 'listener' ? 5 : this.type === 'warden' ? 9 : 14;
-    this.fov = this.type === 'warden' ? Math.PI * 0.92 : this.type === 'listener' ? Math.PI * 0.72 : Math.PI * 0.7;
+    this.speed = config.speed ?? (this.type === 'warden' ? 54 : this.type === 'listener' ? 46 : this.type === 'stalker' ? 39 : this.type === 'scavenger' ? 42 : 40);
+    this.visionRange = config.visionRange ?? (this.type === 'listener' ? 102 : this.type === 'warden' ? 146 : this.type === 'stalker' ? 96 : this.type === 'scavenger' ? 114 : 120);
+    this.hearingThreshold = config.hearingThreshold ?? (this.type === 'listener' ? 5 : this.type === 'warden' ? 9 : this.type === 'stalker' ? 6 : this.type === 'scavenger' ? 11 : 14);
+    this.fov = config.fov ?? (this.type === 'warden' ? Math.PI * 0.92 : this.type === 'listener' ? Math.PI * 0.72 : this.type === 'stalker' ? 1.18 : this.type === 'scavenger' ? 0.8 : Math.PI * 0.7);
     this.suspicion = 0;
     this.disabledFor = 3;
     this.machine = new GuardStateMachine(this);
@@ -27,8 +27,10 @@ export class Guard {
     const chasing = state === 'CHASE';
     const disabled = state === 'DISABLED';
     const boss = this.isBoss === true;
-    const color = boss ? '#ff486f' : this.type === 'listener' ? '#f2b65d' : this.type === 'warden' ? '#ff5f66' : '#d66fe8';
-    const coneColor = chasing ? 'rgba(255,95,102,.15)' : boss ? 'rgba(255,72,111,.13)' : 'rgba(214,111,232,.07)';
+    const wildlife = this.type === 'stalker';
+    const scavenger = this.type === 'scavenger';
+    const color = boss ? '#ff486f' : wildlife ? '#d88c55' : scavenger ? '#e27b5c' : this.type === 'listener' ? '#f2b65d' : this.type === 'warden' ? '#ff5f66' : '#d66fe8';
+    const coneColor = chasing ? 'rgba(255,95,102,.15)' : wildlife ? 'rgba(216,140,85,.12)' : scavenger ? 'rgba(226,123,92,.10)' : boss ? 'rgba(255,72,111,.13)' : 'rgba(214,111,232,.07)';
     const radius = this.visionRange;
 
     ctx.save();
@@ -102,6 +104,6 @@ export class Guard {
     ctx.font = boss ? 'bold 8px monospace' : 'bold 6px monospace';
     ctx.textAlign = 'center';
     ctx.fillStyle = boss ? '#ffb0c2' : '#091521';
-    ctx.fillText(boss ? 'CHORUS' : this.type === 'warden' ? 'W' : this.type === 'listener' ? 'L' : 'P', this.x, this.y + (boss ? 27 : 2));
+    ctx.fillText(boss ? 'CHORUS' : wildlife ? 'DUNE' : scavenger ? 'ROOK' : this.type === 'warden' ? 'W' : this.type === 'listener' ? 'L' : 'P', this.x, this.y + (boss ? 27 : 2));
   }
 }

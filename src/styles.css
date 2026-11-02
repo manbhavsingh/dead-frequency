@@ -510,3 +510,32 @@ body.game-active .game-topline>div:first-child{gap:4px}
   .dossier-sections,.dossier-bottom-grid{grid-template-columns:1fr}
   .dossier-header .intro{font-size:11px}
 }
+
+/* Optional contract board: a warmer salvage-zone identity inside the same UI system. */
+.contract-launch{display:grid;gap:4px;justify-items:start;margin-top:2px}
+.contract-launch .text-button{color:#f2b65d}
+.contract-launch .text-button:hover{color:#ffe0a8}
+.contract-status{color:#78909b;font:8px var(--mono);letter-spacing:.05em}
+.contract-screen{width:min(1060px,100%);margin-inline:auto;padding:clamp(24px,5vw,58px) 0 38px}
+.contract-header{position:relative;padding:clamp(22px,4vw,42px);border:1px solid rgba(239,183,106,.38);background:linear-gradient(135deg,rgba(77,52,39,.78),rgba(8,20,29,.97) 78%);overflow:hidden}
+.contract-header::after{content:"砂";position:absolute;right:5%;top:-36px;color:rgba(239,183,106,.07);font:clamp(130px,24vw,250px)/1 var(--sans);pointer-events:none}
+.contract-warning{position:relative;z-index:1;color:#ff9c75;font:9px var(--mono);letter-spacing:.13em}
+.contract-header h2{position:relative;z-index:1;margin:15px 0 12px;color:#f4eee1;font:clamp(34px,7vw,65px)/1.08 var(--pixel),var(--mono);letter-spacing:-.05em}
+.contract-header h2 span{color:#f2b65d}
+.contract-header .intro{position:relative;z-index:1;max-width:760px;margin:0;color:#d1c2b2;font:12px/1.8 var(--mono)}
+.contract-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:10px}
+.contract-card{min-width:0;padding:18px;border:1px solid rgba(169,125,91,.35);background:linear-gradient(145deg,rgba(53,44,43,.9),rgba(10,22,31,.96))}
+.contract-card .eyebrow{font:8px var(--mono);letter-spacing:.08em;color:#f2b65d}
+.contract-card h3{margin:12px 0 8px;color:#f4e6d2;font:11px/1.5 var(--pixel),var(--mono)}
+.contract-card p:last-child{margin:0;color:#b8c0bd;font:10px/1.75 var(--mono)}
+.contract-card kbd{color:#f2b65d;font:10px var(--mono)}
+.contract-primary{border-color:rgba(125,241,223,.4)}
+.contract-primary .eyebrow{color:#7df1df}
+.contract-rewards{display:grid;gap:9px;margin-top:10px;padding:19px;border:1px solid rgba(125,241,223,.27);background:rgba(9,25,34,.9)}
+.contract-rewards>.eyebrow{margin:0 0 3px;font:8px var(--mono)}
+.contract-rewards>div{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;padding-bottom:8px;border-bottom:1px solid rgba(125,241,223,.12)}
+.contract-rewards strong{min-width:150px;color:#7df1df;font:9px var(--pixel),var(--mono)}
+.contract-rewards span{color:#c3cfca;font:10px/1.5 var(--mono)}
+.contract-note{margin:2px 0 0;color:#9db0ae;font:9px/1.65 var(--mono)}
+.contract-actions{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:24px;margin-top:20px}
+@media(max-width:760px){.contract-grid{grid-template-columns:1fr}.contract-screen{padding:20px 0}.contract-header .intro{font-size:11px}.contract-header h2{font-size:42px}.contract-actions{gap:12px}}

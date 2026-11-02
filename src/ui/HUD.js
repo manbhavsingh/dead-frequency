@@ -9,20 +9,26 @@ export class HUD {
     const relayTotal = (level.relays || []).length;
     const relayCount = game.disabledRelays ? game.disabledRelays.size : 0;
 
-    $('mission-number').textContent = 'MISSION ' + pad(level.id);
+    $('mission-number').textContent = game.isSideQuest ? 'SIDE CONTRACT' : 'MISSION ' + pad(level.id);
     $('mission-name').textContent = level.name;
     const pacingStage = $('pacing-stage');
     if (pacingStage) {
-      const stageText = game.pacingRestActive
-        ? 'MAINTENANCE SILENCE · ' + game.pacingRestTimer.toFixed(1) + 's'
-        : 'STAGE ' + game.pacingStage + ' / 6 · ' + (game.pacingStageLabel || 'INFILTRATE');
+      const stageText = game.isSideQuest
+        ? 'SHATTERBELT · WILDLIFE + ROOK SCAVENGERS'
+        : game.pacingRestActive
+          ? 'MAINTENANCE SILENCE · ' + game.pacingRestTimer.toFixed(1) + 's'
+          : 'STAGE ' + game.pacingStage + ' / 6 · ' + (game.pacingStageLabel || 'INFILTRATE');
       pacingStage.textContent = stageText;
     }
-    $('objective-text').textContent = player.memory
-      ? 'REACH EXTRACTION'
-      : relayCount < relayTotal
-        ? 'DISABLE SECURITY RELAYS ' + relayCount + ' / ' + relayTotal
-        : 'RECOVER THE MEMORY FRAGMENT';
+    $('objective-text').textContent = game.isSideQuest
+      ? game.sideQuestState.minerals.size < 3
+        ? 'HARVEST GLASSITE ' + game.sideQuestState.minerals.size + ' / 3'
+        : 'EXTRACT GLASSITE // ROOK LEDGER OPTIONAL'
+      : player.memory
+        ? 'REACH EXTRACTION'
+        : relayCount < relayTotal
+          ? 'DISABLE SECURITY RELAYS ' + relayCount + ' / ' + relayTotal
+          : 'RECOVER THE MEMORY FRAGMENT';
     $('alert-fill').style.width = security.alert + '%';
     $('alert-fill').style.background = security.alert > 70 ? '#ff5f66' : security.alert > 35 ? '#f2b65d' : '#55e2dc';
     $('alert-label').textContent = game.lockdownGraceActive
@@ -34,16 +40,22 @@ export class HUD {
     if (echoValue) echoValue.textContent = pad(game.echoResonance || 0) + '%';
     $('decoy-count').textContent = pad(player.decoys);
     $('jammer-count').textContent = pad(player.jammers);
-    $('relay-count').textContent = relayCount + ' / ' + relayTotal;
-    $('memory-count').textContent = player.memory ? '1 / 1' : '0 / 1';
+    $('relay-label').textContent = game.isSideQuest ? 'GLASSITE' : 'RELAYS';
+    $('memory-label').textContent = game.isSideQuest ? 'ROOK DATA' : 'MEMORY';
+    $('relay-count').textContent = game.isSideQuest ? game.sideQuestState.minerals.size + ' / 3' : relayCount + ' / ' + relayTotal;
+    $('memory-count').textContent = game.isSideQuest
+      ? game.sideQuestState.surveyRecovered ? 'SECURED' : 'OPTIONAL'
+      : player.memory ? '1 / 1' : '0 / 1';
     $('timer').textContent = pad(game.elapsed / 60) + ':' + pad(game.elapsed % 60);
     $('status-line').textContent = game.status;
     $('nav-target').textContent = game.navLabel || 'OBJECTIVE';
     $('nav-direction').textContent = game.navDirection || '—';
     $('nav-distance').textContent = game.navDistance ? String(Math.round(game.navDistance)) : '—';
-    $('interaction-hint').textContent = game.pacingRestActive
-      ? 'SAFE WINDOW — REPOSITION / PLAN · ' + game.pacingRestTimer.toFixed(1) + 's'
-      : game.interactionHint || 'FOLLOW THE SIGNAL TO YOUR OBJECTIVE';
+    $('interaction-hint').textContent = game.isSideQuest
+      ? game.interactionHint || 'FOLLOW THE SIGNAL TO YOUR OBJECTIVE'
+      : game.pacingRestActive
+        ? 'SAFE WINDOW — REPOSITION / PLAN · ' + game.pacingRestTimer.toFixed(1) + 's'
+        : game.interactionHint || 'FOLLOW THE SIGNAL TO YOUR OBJECTIVE';
     const storyFeed = $('story-feed');
     if (storyFeed) storyFeed.textContent = game.storyMessage || 'QUIET-NET // NO NEW TRANSMISSION';
     const progress = $('action-progress-fill');
