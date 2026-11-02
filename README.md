@@ -42,13 +42,16 @@ Alternatively, use any static file server.
 
 ## Gameplay
 
+- **Six-stage campaign curve:** learn one patrol and decoys; earn the jammer after the first relay; combine guards and acoustic surfaces; face staggered camera/guard reinforcements; then confront The Chorus during the final escape.
+- **Earned rest beats:** relay outages create 3.5-, 5- and 6-second maintenance-silence windows. Cameras go dark and active guards reset to patrol before the next wave arrives.
 - **Multi-stage objectives:** disable 1, 2, then 3 security relays across the three missions before the memory terminal unlocks.
 - **Risky interactions:** relay bypasses, terminal downloads, and extraction require holding position; each hack emits a noise trace and slowly raises the network alert.
 - **Listen and manipulate:** noise propagates through the tile map; concrete walls block it, carpet dampens it, and metal floors transmit it farther.
 - **Decoy:** creates a false sound origin that guards can investigate; repeating the same throw location makes guards skeptical.
 - **Enemy AI:** patrol guards, listeners and a warden use finite-state machines, faster pursuit, line-of-sight, hearing thresholds and grid pathfinding.
 - **Surveillance:** camera cones sweep across rooms; crouching reduces visibility and sound, while sprinting makes the player easier to detect.
-- **Jammer:** temporarily blinds cameras and masks player movement noise. Charges are limited, so use them to cross exposed lanes or finish a hack.
+- **Jammer:** first unlocked after the Dead Channel relay, then included in later mission loadouts. It temporarily blinds cameras and masks player movement noise. Charges are limited, so use them to cross exposed lanes or finish a hack.
+- **Campaign finale:** the last extraction gets a distinct epilogue that acknowledges the three-sector escape and The Chorus pursuit.
 
 ## Project structure
 
