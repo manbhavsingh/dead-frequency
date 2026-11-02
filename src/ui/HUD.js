@@ -18,7 +18,13 @@ export class HUD {
         : 'RECOVER THE MEMORY FRAGMENT';
     $('alert-fill').style.width = security.alert + '%';
     $('alert-fill').style.background = security.alert > 70 ? '#ff5f66' : security.alert > 35 ? '#f2b65d' : '#55e2dc';
-    $('alert-label').textContent = security.label;
+    $('alert-label').textContent = game.lockdownGraceActive
+      ? 'LAST CHANCE ' + Math.ceil(game.lockdownGraceTimer) + 's'
+      : security.label;
+    const echoFill = $('echo-fill');
+    const echoValue = $('echo-value');
+    if (echoFill) echoFill.style.width = Math.round(game.echoResonance || 0) + '%';
+    if (echoValue) echoValue.textContent = pad(game.echoResonance || 0) + '%';
     $('decoy-count').textContent = pad(player.decoys);
     $('jammer-count').textContent = pad(player.jammers);
     $('relay-count').textContent = relayCount + ' / ' + relayTotal;
