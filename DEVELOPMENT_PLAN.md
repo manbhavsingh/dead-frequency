@@ -14,6 +14,9 @@
 - [ ] Hands-on browser QA for all missions.
 
 ### P1 — competition quality
+- [x] Build a six-stage difficulty curve with staggered guard/camera waves and short maintenance-silence rest beats.
+- [x] Introduce the jammer after the first relay instead of exposing the full kit at the start.
+- [x] Add a distinct final campaign epilogue after the third extraction.
 - [ ] Refine level layout and difficulty after playtesting.
 - [ ] Add more readable visual feedback for suspicion and acoustic propagation.
 - [ ] Add optional data caches and more meaningful score breakdown.
