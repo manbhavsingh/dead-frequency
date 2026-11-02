@@ -78,3 +78,15 @@ test('a quiet redacted run and a heavily detected run leave different legacies',
   story.recordAction('detections', 5);
   assert.equal(story.getEnding().id, 'quiet-remembers');
 });
+
+test('factions react to repeated play behavior, not only dialogue choices', () => {
+  const { manager } = fixture();
+  const story = new StorySystem(manager);
+  story.recordAction('diversions', 2);
+  story.recordAction('jammersUsed', 1);
+  story.recordAction('detections', 2);
+  story.recordMission(1, { won: true, detections: 0, alert: 24 });
+  assert.ok(story.state.factions.switchboard > 0);
+  assert.ok(story.state.factions.quietNet > 0);
+  assert.ok(story.state.factions.residents > 0);
+});
