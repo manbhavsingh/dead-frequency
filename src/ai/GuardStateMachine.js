@@ -25,6 +25,9 @@ export class GuardStateMachine {
     this.detectionConfirmed = false;
     this.attention = 'none';
     this.attentionTimer = 0;
+    this.canSeePlayer = false;
+    this.lastDecoyEventId = null;
+    this.lastDecoyRewarded = false;
   }
 
   set(state) {
@@ -51,9 +54,12 @@ export class GuardStateMachine {
 
       if (confidence >= 0.45) {
         this.lastKnown = { x: event.x, y: event.y };
+        this.lastDecoyEventId = event.id;
+        this.lastDecoyRewarded = false;
         g.suspicion = Math.max(g.suspicion, 28);
         this.attention = 'decoy';
-        if (this.state !== STATES.CHASE) this.set(STATES.INVESTIGATE);
+        if (this.state !== STATES.CHASE || !this.canSeePlayer) this.set(STATES.INVESTIGATE);
+        game.onDecoyAccepted?.(g, event);
         game.notify('DECOY HEARD — GUARD INVESTIGATING');
       } else {
         this.attention = 'skeptical';
@@ -92,6 +98,7 @@ export class GuardStateMachine {
     const canSee = distance < visualRange &&
       Math.abs(delta) < g.fov / 2 &&
       map.lineOfSight(g.x, g.y, p.x, p.y);
+    this.canSeePlayer = canSee;
 
     if (canSee) {
       const exposure = p.crouching ? 0.58 : p.sprinting ? 1.22 : 1;
@@ -138,6 +145,10 @@ export class GuardStateMachine {
       }
       if (this.lastKnown && Math.hypot(g.x - this.lastKnown.x, g.y - this.lastKnown.y) < 12) {
         this.searchOrigin = { ...this.lastKnown };
+        if (this.attention === 'decoy' && this.lastDecoyEventId != null && !this.lastDecoyRewarded) {
+          this.lastDecoyRewarded = true;
+          game.rewardDecoyDiversion?.(g, this.lastDecoyEventId);
+        }
         this.set(STATES.SEARCH);
       } else if (this.timer > 9) {
         this.set(STATES.RETURN);
