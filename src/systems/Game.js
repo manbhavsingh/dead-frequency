@@ -10,6 +10,13 @@ import { SoundSynth } from '../audio/SoundSynth.js';
 import { findPath } from '../ai/Pathfinding.js';
 
 const DIRECTIONS = ['E', 'SE', 'S', 'SW', 'W', 'NW', 'N', 'NE'];
+const DECOY_RANGE = 112;
+
+export function getDecoyLanding(player, map) {
+  const x = player.x + Math.cos(player.facing) * DECOY_RANGE;
+  const y = player.y + Math.sin(player.facing) * DECOY_RANGE;
+  return { x, y, valid: map.canOccupy(x, y, 5) };
+}
 
 export class Game {
   constructor(canvas, hud, onFinish, saveManager) {
@@ -70,6 +77,9 @@ export class Game {
   }
 
   onDecoyAccepted(guard, event) {
+    const beacon = this.decoys.find(decoy => decoy.eventId === event.id);
+    beacon?.markHeard();
+
     if (this.security?.lockdown && this.lockdownGraceActive) {
       this.breakLockdown('DECOY', event);
     }
@@ -82,6 +92,7 @@ export class Game {
     const key = guardIndex + ':' + eventId;
     if (this.rewardedEchoInvestigations.has(key)) return false;
     this.rewardedEchoInvestigations.add(key);
+    this.decoys.find(decoy => decoy.eventId === eventId)?.markResolved();
 
     this.echoDiversions++;
     this.player.score += 85;
@@ -374,16 +385,15 @@ export class Game {
   handleActions(input) {
     if (input.pressed('e')) {
       if (this.player.decoys > 0) {
-        const x = this.player.x + Math.cos(this.player.facing) * 112;
-        const y = this.player.y + Math.sin(this.player.facing) * 112;
-        if (this.map.canOccupy(x, y, 5)) {
+        const landing = getDecoyLanding(this.player, this.map);
+        if (landing.valid) {
           this.player.decoys--;
-          this.decoys.push(new Decoy(x, y));
-          this.noises.emit(x, y, 100, 'decoy', 1.2);
+          const event = this.noises.emit(landing.x, landing.y, 100, 'decoy', 1.2);
+          this.decoys.push(new Decoy(landing.x, landing.y, event.id));
           this.sound.play('decoy');
-          this.notify('SIGNAL DECOY DEPLOYED — WATCH FOR AMBER GUARD MARKERS');
+          this.notify('ECHO DEPLOYED — WATCH FOR THE CYAN BEACON AND ECHO TAG');
         } else {
-          this.notify('DECOY BLOCKED — CLEAR THE THROW');
+          this.notify('DECOY BLOCKED — ADJUST YOUR FACING');
         }
       } else {
         this.notify('NO DECOY CHARGES REMAINING');
@@ -545,6 +555,7 @@ export class Game {
   }
 
   drawEffects(ctx) {
+    this.drawDecoyGuide(ctx);
     if (this.security.alert > 0) {
       ctx.fillStyle = 'rgba(255,45,65,' + (this.security.alert / 100 * 0.055) + ')';
       ctx.fillRect(0, 0, 640, 360);
@@ -564,5 +575,36 @@ export class Game {
       ctx.lineWidth = 2;
       ctx.strokeRect(2, 2, 636, 356);
     }
+  }
+
+  drawDecoyGuide(ctx) {
+    if (this.player.decoys <= 0) return;
+    const landing = getDecoyLanding(this.player, this.map);
+    const color = landing.valid ? '#55e2dc' : '#ff5f66';
+    const alpha = 0.3 + Math.sin(this.elapsed * 5) * 0.08;
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 4]);
+    ctx.beginPath();
+    ctx.moveTo(this.player.x, this.player.y);
+    ctx.lineTo(landing.x, landing.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.arc(landing.x, landing.y, 8 + Math.sin(this.elapsed * 6) * 1.5, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = color;
+    ctx.fillRect(landing.x - 2, landing.y - 2, 4, 4);
+    ctx.shadowBlur = 0;
+    ctx.font = 'bold 6px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(landing.valid ? 'E / DROP' : 'BLOCKED', landing.x, landing.y - 13);
+    ctx.restore();
   }
 }
