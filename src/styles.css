@@ -329,3 +329,12 @@ body.game-active .game-topline>div:first-child{gap:4px}
   .story-choice-option{padding:12px}
   .story-feed{font-size:6px}
 }
+
+.story-ending-title{
+  max-width:900px;
+  margin-inline:auto;
+  color:#55e2dc;
+  font:clamp(21px,5vw,36px)/1.35 var(--pixel),var(--mono);
+  text-shadow:0 0 18px rgba(85,226,220,.24);
+  text-align:center;
+}
