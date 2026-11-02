@@ -39,6 +39,24 @@ export const LEVELS = [
     extractionTime: 2.2,
     decoys: 3,
     jammers: 1,
+    pacing: {
+      initialStage: 1,
+      initialLabel: 'READ THE PATROL',
+      initialGuards: 1,
+      initialCameras: 0,
+      waves: [
+        {
+          afterRelays: 1,
+          stage: 2,
+          label: 'FALSE ECHO',
+          restSeconds: 3.5,
+          restMessage: 'MAINTENANCE SILENCE — REPOSITION BEFORE THE NEXT SWEEP',
+          releaseMessage: 'LISTENER ONLINE — CAMERAS RESTORED. DIVERT THE SIGNAL.',
+          guards: [1],
+          cameras: [0, 1]
+        }
+      ]
+    },
     relays: [
       { x: 4.5, y: 8.5, hackTime: 2.1 }
     ],
@@ -81,6 +99,24 @@ export const LEVELS = [
     extractionTime: 2.5,
     decoys: 4,
     jammers: 2,
+    pacing: {
+      initialStage: 3,
+      initialLabel: 'READ THE CROWD',
+      initialGuards: 2,
+      initialCameras: 1,
+      waves: [
+        {
+          afterRelays: 1,
+          stage: 4,
+          label: 'CROSSING SIGNALS',
+          restSeconds: 5,
+          restMessage: 'MARKET RELAY DOWN — MAINTENANCE SILENCE. PLAN YOUR CROSSING.',
+          releaseMessage: 'MARKET SECURITY REDEPLOYED — MULTIPLE SIGNALS IN PLAY.',
+          guards: [2],
+          cameras: [1, 2]
+        }
+      ]
+    },
     relays: [
       { x: 3.5, y: 9.5, hackTime: 2.3 },
       { x: 28.5, y: 13.5, hackTime: 2.5 }
@@ -127,6 +163,24 @@ export const LEVELS = [
     extractionTime: 2.8,
     decoys: 4,
     jammers: 2,
+    pacing: {
+      initialStage: 5,
+      initialLabel: 'FINAL APPROACH',
+      initialGuards: 2,
+      initialCameras: 2,
+      waves: [
+        {
+          afterRelays: 2,
+          stage: 6,
+          label: 'THE CHORUS',
+          restSeconds: 6,
+          restMessage: 'TOWER RELAYS 02/03 — SIX SECONDS OF MAINTENANCE SILENCE.',
+          releaseMessage: 'WARDEN ONLINE — THE FINAL SECURITY LAYER IS ACTIVE.',
+          guards: [2, 3],
+          cameras: [2, 3]
+        }
+      ]
+    },
     relays: [
       { x: 3.5, y: 9.5, hackTime: 2.4 },
       { x: 28.5, y: 13.5, hackTime: 2.7 },
