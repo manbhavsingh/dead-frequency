@@ -26,8 +26,9 @@ export class Guard {
     const investigating = state === 'INVESTIGATE' || state === 'SEARCH';
     const chasing = state === 'CHASE';
     const disabled = state === 'DISABLED';
-    const color = this.type === 'listener' ? '#f2b65d' : this.type === 'warden' ? '#ff5f66' : '#d66fe8';
-    const coneColor = chasing ? 'rgba(255,95,102,.12)' : 'rgba(214,111,232,.07)';
+    const boss = this.isBoss === true;
+    const color = boss ? '#ff486f' : this.type === 'listener' ? '#f2b65d' : this.type === 'warden' ? '#ff5f66' : '#d66fe8';
+    const coneColor = chasing ? 'rgba(255,95,102,.15)' : boss ? 'rgba(255,72,111,.13)' : 'rgba(214,111,232,.07)';
     const radius = this.visionRange;
 
     ctx.save();
@@ -45,7 +46,17 @@ export class Guard {
 
     ctx.save();
     ctx.translate(this.x, this.y);
-    if (investigating || chasing) {
+    if (boss) {
+      ctx.strokeStyle = 'rgba(255,72,111,.72)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(0, 0, 18 + Math.sin(performance.now() / 120) * 2, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillStyle = '#ff486f';
+      ctx.fillRect(-3, -13, 6, 3);
+      ctx.fillRect(-10, -10, 3, 5);
+      ctx.fillRect(7, -10, 3, 5);
+    } else if (investigating || chasing) {
       ctx.strokeStyle = chasing ? 'rgba(255,95,102,.85)' : 'rgba(242,182,93,.82)';
       ctx.lineWidth = 1.6;
       ctx.beginPath();
@@ -64,8 +75,13 @@ export class Guard {
     ctx.shadowBlur = 0;
     ctx.fillStyle = '#07111d';
     ctx.fillRect(1, -3, 7, 6);
-    ctx.fillStyle = '#f3f6ed';
-    ctx.fillRect(6, -1, 2, 2);
+    ctx.fillStyle = boss ? '#ffffff' : '#f3f6ed';
+    ctx.fillRect(6, -1, boss ? 3 : 2, boss ? 3 : 2);
+    if (boss) {
+      ctx.fillStyle = '#ffe2a8';
+      ctx.fillRect(-7, -2, 3, 4);
+      ctx.fillRect(-3, -8, 6, 2);
+    }
     ctx.restore();
 
     if (this.suspicion > 2) {
@@ -82,9 +98,9 @@ export class Guard {
       ctx.fillText(chasing ? '!' : state === 'SEARCH' ? '?' : '!', this.x, this.y - 21);
     }
 
-    ctx.font = 'bold 6px monospace';
+    ctx.font = boss ? 'bold 8px monospace' : 'bold 6px monospace';
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#091521';
-    ctx.fillText(this.type === 'warden' ? 'W' : this.type === 'listener' ? 'L' : 'P', this.x, this.y + 2);
+    ctx.fillStyle = boss ? '#ffb0c2' : '#091521';
+    ctx.fillText(boss ? 'CHORUS' : this.type === 'warden' ? 'W' : this.type === 'listener' ? 'L' : 'P', this.x, this.y + (boss ? 27 : 2));
   }
 }
