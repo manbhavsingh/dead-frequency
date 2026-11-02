@@ -44,6 +44,8 @@ export class HUD {
     $('interaction-hint').textContent = game.pacingRestActive
       ? 'SAFE WINDOW — REPOSITION / PLAN · ' + game.pacingRestTimer.toFixed(1) + 's'
       : game.interactionHint || 'FOLLOW THE SIGNAL TO YOUR OBJECTIVE';
+    const storyFeed = $('story-feed');
+    if (storyFeed) storyFeed.textContent = game.storyMessage || 'QUIET-NET // NO NEW TRANSMISSION';
     const progress = $('action-progress-fill');
     const restProgress = game.pacingRestActive && game.pacingRestDuration
       ? game.pacingRestTimer / game.pacingRestDuration
@@ -51,6 +53,38 @@ export class HUD {
     const progressValue = restProgress == null ? (game.actionProgress || 0) : restProgress;
     progress.style.width = Math.round(progressValue * 100) + '%';
     progress.style.opacity = progressValue > 0 ? '1' : '0.22';
+  }
+
+  showStoryChoice(choice, onChoose) {
+    const panel = $('story-choice');
+    const options = $('story-choice-options');
+    if (!panel || !options) return;
+
+    $('story-choice-kicker').textContent = choice.kicker;
+    $('story-choice-title').textContent = choice.title;
+    $('story-choice-speaker').textContent = choice.speaker;
+    $('story-choice-context').textContent = choice.context;
+    options.replaceChildren();
+
+    for (const option of choice.options) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'story-choice-option';
+      const title = document.createElement('strong');
+      title.textContent = option.title;
+      const detail = document.createElement('span');
+      detail.textContent = option.detail;
+      button.append(title, detail);
+      button.addEventListener('click', () => onChoose(option.id), { once: true });
+      options.append(button);
+    }
+
+    panel.classList.remove('hidden');
+    options.querySelector('button')?.focus();
+  }
+
+  hideStoryChoice() {
+    $('story-choice')?.classList.add('hidden');
   }
 
   toast(text) {
