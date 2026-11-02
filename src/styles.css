@@ -147,3 +147,72 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
 }
+
+
+/* Keep the active game inside the viewport and prevent page drift during play. */
+body.game-active{
+  height:100vh;
+  min-height:0;
+  overflow:hidden;
+  overscroll-behavior:none;
+}
+body.game-active .shell{
+  height:100vh;
+  min-height:0;
+}
+body.game-active .game-screen{
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  overflow:hidden;
+  padding:10px 0 8px;
+}
+body.game-active .game-frame{
+  flex:0 0 auto;
+  width:100%;
+}
+body.game-active .game-frame canvas{
+  width:min(100%,calc((100vh - 370px) * 1.77778));
+  max-width:100%;
+  height:auto;
+  margin-inline:auto;
+  touch-action:none;
+}
+body.game-active .game-frame{
+  overscroll-behavior:contain;
+}
+#game-canvas.pointer-locked{
+  cursor:none;
+  outline:2px solid rgba(85,226,220,.45);
+  outline-offset:-3px;
+}
+.game-bottomline{
+  flex-wrap:wrap;
+  align-items:center;
+}
+.pointer-hint{
+  color:var(--cyan);
+  opacity:.88;
+}
+@media(max-height:650px) and (min-width:761px){
+  body.game-active .game-screen{padding:4px 0}
+  body.game-active .game-frame canvas{
+    width:min(100%,calc((100vh - 330px) * 1.77778));
+  }
+}
+@media(max-width:760px){
+  body.game-active{
+    height:auto;
+    min-height:100vh;
+    overflow:auto;
+  }
+  body.game-active .shell{
+    height:auto;
+    min-height:100vh;
+  }
+  body.game-active .game-screen{
+    display:block;
+    overflow:visible;
+  }
+}
