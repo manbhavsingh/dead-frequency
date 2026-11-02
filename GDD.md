@@ -17,11 +17,25 @@ In 2094, an automated surveillance network called THE QUIET monitors movement, s
 4. **Short replayable missions:** compact levels with immediate retries.
 5. **Polished simplicity:** mechanics should be understandable and testable.
 
-## Core loop
+## Core gameplay loop
 
-**Observe → Manipulate → Infiltrate → Recover → Escape → Debrief**
+**Read the patrol → plant a false echo → make a guard commit → slip through the opening → disable relays → recover the memory → extract.**
 
-Observe patrols, surfaces and security devices. Manipulate them with decoys or a jammer. Infiltrate the facility. Hold interact near the terminal to recover the memory fragment. Reach extraction and hold interact again. Review score, time and stealth rank.
+The repeated skill is acoustic misdirection. The player studies patrol routes and sound paths, throws a decoy into useful terrain, waits for a guard to commit to its origin, then crosses the newly opened route or starts a risky hack. The point is not simply to hide: it is to make the surveillance network act on incorrect information.
+
+### The Echo Resonance reward loop
+
+- A guard must accept a decoy and physically reach its origin before it counts as a completed diversion.
+- Each completed diversion awards **85 score** and **34% Echo Resonance**. A single decoy can reward more than one guard, but each guard/event pair pays only once.
+- At 100% Resonance, the player recovers one spent decoy charge (up to the mission's starting capacity) and earns a **125-point recovery bonus**.
+- Guards retain short-term memory of repeated decoy positions. Varying the origin is more reliable; repeating one location makes the guard skeptical and yields no diversion reward if it refuses the signal.
+- The HUD exposes the resonance meter so the player can connect a successful deception with a concrete future tool charge.
+
+This creates a repeatable tactical rhythm: **bait → divert → reposition → exploit → recharge → bait again**. A relay bypass or terminal download is the objective payoff; extraction is the pressure test that follows it.
+
+### Failure and recovery
+
+Alert is readable as a rising signal-integrity meter. At 78%, the game warns the player to break line of sight or set a false echo. The first full lockdown in each mission opens a **3.2-second Last Transmission** window. While no guard has direct visual contact, the player can interrupt it with an accepted decoy (E) or a jammer (Q). The rescue resets alert to 52 and redirects active hunters toward the false signal or stale search position. It is available once per mission; a second lockdown, or failing to act before the window closes, ends the mission. The retry is immediate and the lesson is explicit: break visual contact first, then spend a tool to create the opening.
 
 ## Player controls and abilities
 
