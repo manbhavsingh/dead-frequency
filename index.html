@@ -69,9 +69,19 @@
         <div class="nav-target"><span class="hud-label">OBJECTIVE ROUTE</span><strong id="nav-target">MEMORY TERMINAL</strong></div>
         <div class="nav-direction"><span class="hud-label">NEXT TURN</span><strong id="nav-direction">—</strong></div>
         <div class="nav-distance"><span class="hud-label">STEPS</span><strong id="nav-distance">—</strong></div>
-        <div class="nav-action"><span class="hud-label">FIELD GUIDANCE</span><strong id="interaction-hint">FOLLOW THE SIGNAL TO YOUR OBJECTIVE</strong><div class="action-meter"><div id="action-progress-fill"></div></div></div>
+        <div class="nav-action"><span class="hud-label">FIELD GUIDANCE</span><strong id="interaction-hint">FOLLOW THE SIGNAL TO YOUR OBJECTIVE</strong><small id="story-feed" class="story-feed" aria-live="polite">NIX // The network records movement. It cannot tell who you are trying to save.</small><div class="action-meter"><div id="action-progress-fill"></div></div></div>
       </div>
       <div class="game-bottomline"><span>WASD MOVE · SHIFT SPRINT · C CROUCH · E DECOY · Q JAMMER · F INTERACT</span><span id="pointer-hint" class="pointer-hint" aria-live="polite">CLICK GAME TO CAPTURE MOUSE · ESC TO RELEASE</span><span id="status-line">NO HOSTILES IN RANGE</span></div>
+      <section id="story-choice" class="story-choice hidden" role="dialog" aria-modal="true" aria-labelledby="story-choice-title">
+        <div class="story-choice-card">
+          <p class="eyebrow" id="story-choice-kicker">EMERGENCY FREQUENCY</p>
+          <h2 id="story-choice-title">A CHOICE MUST BE MADE</h2>
+          <p class="story-choice-speaker" id="story-choice-speaker">OPEN CHANNEL</p>
+          <p id="story-choice-context" class="story-choice-context"></p>
+          <div id="story-choice-options" class="story-choice-options"></div>
+          <p class="story-choice-foot">THE NETWORK WILL REMEMBER WHAT YOU CHOOSE.</p>
+        </div>
+      </section>
     </section>
 
     <section id="screen-pause" class="overlay-screen hidden">
@@ -81,12 +91,14 @@
     <section id="screen-debrief" class="screen debrief-screen hidden">
       <p class="eyebrow" id="debrief-kicker">EXTRACTION CONFIRMED</p><h2 id="debrief-title">GHOST<br><span>IN THE WIRES.</span></h2>
       <p id="debrief-copy" class="intro">The memory fragment is secure. The city is still listening.</p>
+      <p id="debrief-story" class="story-reflection"></p>
+      <p id="journey-ledger" class="story-journey"></p>
       <div class="debrief-stats"><div><span>MISSION SCORE</span><strong id="score-value">0000</strong></div><div><span>STEALTH RANK</span><strong id="rank-value">GHOST</strong></div><div><span>TIME</span><strong id="debrief-time">00:00</strong></div><div><span>DETECTIONS</span><strong id="detection-value">0</strong></div></div>
       <button class="primary-button" id="next-button">NEXT OPERATION <span>↗</span></button><button class="text-button" id="debrief-menu">RETURN TO MENU</button>
     </section>
 
     <section id="screen-fail" class="screen debrief-screen hidden">
-      <p class="eyebrow danger-text">QUIET-NET LOCKDOWN</p><h2>SIGNAL<br><span>LOST.</span></h2><p class="intro">QUIET-NET has triangulated your signal. You get one last transmission window to break contact with a decoy or jammer. Vary your decoy locations, watch the guards' reactions, and try a different route.</p>
+      <p class="eyebrow danger-text">QUIET-NET LOCKDOWN</p><h2>SIGNAL<br><span>LOST.</span></h2><p class="intro">QUIET-NET has triangulated your signal. You get one last transmission window to break contact with a decoy or jammer. Vary your decoy locations, watch the guards' reactions, and try a different route.</p><p id="fail-story-reflection" class="story-reflection"></p>
       <button class="primary-button" id="retry-button">RETRY OPERATION <span>↻</span></button><button class="text-button" id="fail-menu">RETURN TO MENU</button>
     </section>
 
